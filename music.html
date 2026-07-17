@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Music | Ali Welekhasia Official</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/animations.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ali Welekhasia Official</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/animations.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+<link rel="manifest" href="manifest.json">
+
+<link rel="icon" href="images/logo.png" type="image/png">
+
+<meta name="theme-color" content="#0d1b4c">
+</head>
+
+<body>
+
+<!-- ==========================
+HEADER
+========================== -->
+
+<header class="header">
+
+<div class="container">
+
+<a href="index.html" class="logo">
+
+<img src="images/logo.png" alt="Ali Welekhasia Logo">
+
+</a>
+
+<nav class="navbar" id="navbar">
+
+<ul>
+
+<li><a href="index.html">Home</a></li>
+
+<li><a href="about.html">About</a></li>
+
+<li><a href="music.html" class="active">Music</a></li>
+
+<li><a href="videos.html">Videos</a></li>
+
+<li><a href="gallery.html">Gallery</a></li>
+
+<li><a href="events.html">Events</a></li>
+
+<li><a href="testimonies.html">Testimonies</a></li>
+
+<li><a href="prayer.html">Prayer</a></li>
+
+<li><a href="blog.html">Blog</a></li>
+
+<li><a href="shop.html">Shop</a></li>
+
+<li><a href="donations.html">Donate</a></li>
+
+<li><a href="contact.html">Contact</a></li>
+
+</ul>
+
+</nav>
+
+<a href="contact.html" class="book-btn">
+
+Book Ministry
+
+</a>
+
+<div class="hamburger" id="hamburger">
+
+<span></span>
+<span></span>
+<span></span>
+
+</div>
+
+</div>
+
+</header>
+
+<!-- ==========================
+HERO
+========================== -->
+
+<section class="hero" style="height:65vh;">
+
+<div class="hero-overlay">
+
+<div class="hero-content">
+
+<h1>Official Music</h1>
+
+<h2>Worship • Praise • Hope • Salvation</h2>
+
+<p>
+
+Experience the music ministry of Ali Welekhasia through songs that inspire faith and draw people closer to Jesus Christ.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ==========================
+MUSIC LIBRARY
+========================== -->
+
+<section class="featured-music">
+
+<div class="container">
+
+<div class="section-title">
+
+<h2>Music Library</h2>
+
+<p>
+
+Browse all official songs.
+
+</p>
+
+</div>
+
+<div class="music-search">
+
+<input
+type="text"
+id="musicSearch"
+placeholder="Search for a song..."
+onkeyup="searchSongs()">
+
+</div>
+
+<div class="music-categories">
+
+<button class="category-btn active">
+
+All Songs
+
+</button>
+
+<button class="category-btn">
+
+Latest
+
+</button>
+
+<button class="category-btn">
+
+Praise
+
+</button>
+
+<button class="category-btn">
+
+Worship
+
+</button>
+
+<button class="category-btn">
+
+Singles
+
+</button>
+
+</div>
+
+<div class="music-grid">
+<!-- SONG 1 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/nachenda-mshialo.jpg" alt="Nachenda Mshialo">
+
+<div class="music-info">
+
+<h3>NACHENDA MSHIALO</h3>
+
+<p class="song-meta">
+Worship • Official Audio
+</p>
+
+<audio id="song1" data-title="NACHENDA MSHIALO">
+
+<source src="music/nachenda-mshialo.mp3" type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song1')">
+▶ Play
+</button>
+
+<button onclick="pauseSong('song1')">
+⏸ Pause
+</button>
+
+</div>
+
+<button class="lyrics-btn"
+onclick="toggleLyrics('lyrics1')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box" id="lyrics1">
+
+<h4>About This Song</h4>
+
+<p>
+
+A worship song declaring complete commitment to follow Jesus Christ.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SONG 2 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/njooni-tumwimbie.jpg" alt="Njooni Tumwimbie">
+
+<div class="music-info">
+
+<h3>NJOONI TUMWIMBIE</h3>
+
+<p class="song-meta">
+
+Praise • Official Audio
+
+</p>
+
+<audio id="song2"
+data-title="NJOONI TUMWIMBIE">
+
+<source src="music/njooni-tumwimbie.mp3" type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song2')">
+
+▶ Play
+
+</button>
+
+<button onclick="pauseSong('song2')">
+
+⏸ Pause
+
+</button>
+
+</div>
+
+<button class="lyrics-btn"
+onclick="toggleLyrics('lyrics2')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box"
+id="lyrics2">
+
+<h4>About This Song</h4>
+
+<p>
+
+A joyful invitation for everyone to worship and praise God together.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SONG 3 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/ni-wewe.jpg" alt="Ni Wewe">
+
+<div class="music-info">
+
+<h3>NI WEWE</h3>
+
+<p class="song-meta">
+
+Worship • Official Audio
+
+</p>
+
+<audio id="song3"
+data-title="NI WEWE">
+
+<source src="music/ni-wewe.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song3')">
+
+▶ Play
+
+</button>
+
+<button onclick="pauseSong('song3')">
+
+⏸ Pause
+
+</button>
+
+</div>
+
+<button class="lyrics-btn"
+onclick="toggleLyrics('lyrics3')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box"
+id="lyrics3">
+
+<h4>About This Song</h4>
+
+<p>
+
+A song proclaiming that Jesus alone is worthy of all praise and glory.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SONG 4 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/vumilia-moyo.jpg" alt="Vumilia Moyo">
+
+<div class="music-info">
+
+<h3>VUMILIA MOYO</h3>
+
+<p class="song-meta">
+
+Encouragement • Official Audio
+
+</p>
+
+<audio id="song4"
+data-title="VUMILIA MOYO">
+
+<source src="music/vumilia-moyo.mp3"
+type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song4')">
+
+▶ Play
+
+</button>
+
+<button onclick="pauseSong('song4')">
+
+⏸ Pause
+
+</button>
+
+</div>
+
+<button class="lyrics-btn"
+onclick="toggleLyrics('lyrics4')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box"
+id="lyrics4">
+
+<h4>About This Song</h4>
+
+<p>
+
+An encouraging song reminding believers to remain faithful and trust God during difficult seasons.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+<!-- SONG 5 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/nasimama.jpg" alt="Nasimama">
+
+<div class="music-info">
+
+<h3>NASIMAMA</h3>
+
+<p class="song-meta">
+
+Worship • Official Audio
+
+</p>
+
+<audio id="song5" data-title="NASIMAMA">
+
+<source src="music/nasimama.mp3" type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song5')">▶ Play</button>
+
+<button onclick="pauseSong('song5')">⏸ Pause</button>
+
+</div>
+
+<button class="lyrics-btn" onclick="toggleLyrics('lyrics5')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box" id="lyrics5">
+
+<h4>About This Song</h4>
+
+<p>
+
+A declaration of standing firm in God's promises and faithfulness.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SONG 6 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/zawadi.jpg" alt="Zawadi">
+
+<div class="music-info">
+
+<h3>ZAWADI</h3>
+
+<p class="song-meta">
+
+Praise • Official Audio
+
+</p>
+
+<audio id="song6" data-title="ZAWADI">
+
+<source src="music/zawadi.mp3" type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song6')">▶ Play</button>
+
+<button onclick="pauseSong('song6')">⏸ Pause</button>
+
+</div>
+
+<button class="lyrics-btn" onclick="toggleLyrics('lyrics6')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box" id="lyrics6">
+
+<h4>About This Song</h4>
+
+<p>
+
+A song celebrating God's precious gift of salvation and grace.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SONG 7 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/lamweli.jpg" alt="Lamweli">
+
+<div class="music-info">
+
+<h3>LAMWELI</h3>
+
+<p class="song-meta">
+
+Praise • Official Audio
+
+</p>
+
+<audio id="song7" data-title="LAMWELI">
+
+<source src="music/lamweli.mp3" type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song7')">▶ Play</button>
+
+<button onclick="pauseSong('song7')">⏸ Pause</button>
+
+</div>
+
+<button class="lyrics-btn" onclick="toggleLyrics('lyrics7')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box" id="lyrics7">
+
+<h4>About This Song</h4>
+
+<p>
+
+A joyful testimony encouraging believers to remain faithful to God.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SONG 8 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/nintsie-hena.jpg" alt="Nintsie Hena">
+
+<div class="music-info">
+
+<h3>NINTSIE HENA</h3>
+
+<p class="song-meta">
+
+Worship • Official Audio
+
+</p>
+
+<audio id="song8" data-title="NINTSIE HENA">
+
+<source src="music/nintsie-hena.mp3" type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song8')">▶ Play</button>
+
+<button onclick="pauseSong('song8')">⏸ Pause</button>
+
+</div>
+
+<button class="lyrics-btn" onclick="toggleLyrics('lyrics8')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box" id="lyrics8">
+
+<h4>About This Song</h4>
+
+<p>
+
+A worship song expressing complete dependence on God's love and guidance.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+<!-- SONG 9 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/umetenda-haya.jpg" alt="Umetenda Haya">
+
+<div class="music-info">
+
+<h3>UMETENDA HAYA</h3>
+
+<p class="song-meta">
+
+Thanksgiving • Official Audio
+
+</p>
+
+<audio id="song9" data-title="UMETENDA HAYA">
+
+<source src="music/umetenda-haya.mp3" type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song9')">
+
+▶ Play
+
+</button>
+
+<button onclick="pauseSong('song9')">
+
+⏸ Pause
+
+</button>
+
+</div>
+
+<button class="lyrics-btn"
+onclick="toggleLyrics('lyrics9')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box" id="lyrics9">
+
+<h4>About This Song</h4>
+
+<p>
+
+A thanksgiving song celebrating God's faithfulness and wonderful works.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SONG 10 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/alibeba.jpg" alt="Alibeba">
+
+<div class="music-info">
+
+<h3>ALIBEBA</h3>
+
+<p class="song-meta">
+
+Worship • Official Audio
+
+</p>
+
+<audio id="song10" data-title="ALIBEBA">
+
+<source src="music/alibeba.mp3" type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song10')">
+
+▶ Play
+
+</button>
+
+<button onclick="pauseSong('song10')">
+
+⏸ Pause
+
+</button>
+
+</div>
+
+<button class="lyrics-btn"
+onclick="toggleLyrics('lyrics10')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box" id="lyrics10">
+
+<h4>About This Song</h4>
+
+<p>
+
+A song reflecting on Jesus carrying our burdens and giving us victory.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SONG 11 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/nainua-macho.jpg" alt="Nainua Macho">
+
+<div class="music-info">
+
+<h3>NAINUA MACHO</h3>
+
+<p class="song-meta">
+
+Worship • Official Audio
+
+</p>
+
+<audio id="song11" data-title="NAINUA MACHO">
+
+<source src="music/nainua-macho.mp3" type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song11')">
+
+▶ Play
+
+</button>
+
+<button onclick="pauseSong('song11')">
+
+⏸ Pause
+
+</button>
+
+</div>
+
+<button class="lyrics-btn"
+onclick="toggleLyrics('lyrics11')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box" id="lyrics11">
+
+<h4>About This Song</h4>
+
+<p>
+
+Inspired by Psalm 121, declaring that our help comes from the Lord.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SONG 12 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/atasema-nini.jpg" alt="Atasema Nini">
+
+<div class="music-info">
+
+<h3>ATASEMA NINI</h3>
+
+<p class="song-meta">
+
+Encouragement • Official Audio
+
+</p>
+
+<audio id="song12" data-title="ATASEMA NINI">
+
+<source src="music/atasema-nini.mp3" type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song12')">
+
+▶ Play
+
+</button>
+
+<button onclick="pauseSong('song12')">
+
+⏸ Pause
+
+</button>
+
+</div>
+
+<button class="lyrics-btn"
+onclick="toggleLyrics('lyrics12')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box" id="lyrics12">
+
+<h4>About This Song</h4>
+
+<p>
+
+A reminder to trust God above people's opinions and expectations.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SONG 13 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/sangalanga.jpg" alt="Sangalanga">
+
+<div class="music-info">
+
+<h3>SANGALANGA</h3>
+
+<p class="song-meta">
+
+Praise • Official Audio
+
+</p>
+
+<audio id="song13" data-title="SANGALANGA">
+
+<source src="music/sangalanga.mp3" type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song13')">
+
+▶ Play
+
+</button>
+
+<button onclick="pauseSong('song13')">
+
+⏸ Pause
+
+</button>
+
+</div>
+
+<button class="lyrics-btn"
+onclick="toggleLyrics('lyrics13')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box" id="lyrics13">
+
+<h4>About This Song</h4>
+
+<p>
+
+A joyful celebration inviting everyone to praise the Lord with gladness.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SONG 14 -->
+
+<div class="music-card">
+
+<img src="images/thumbnails/bado.jpg" alt="Bado">
+
+<div class="music-info">
+
+<h3>BADO</h3>
+
+<p class="song-meta">
+
+Faith • Official Audio
+
+</p>
+
+<audio id="song14" data-title="BADO">
+
+<source src="music/bado.mp3" type="audio/mpeg">
+
+</audio>
+
+<div class="player-buttons">
+
+<button onclick="playSong('song14')">
+
+▶ Play
+
+</button>
+
+<button onclick="pauseSong('song14')">
+
+⏸ Pause
+
+</button>
+
+</div>
+
+<button class="lyrics-btn"
+onclick="toggleLyrics('lyrics14')">
+
+📖 Lyrics
+
+</button>
+
+<div class="lyrics-box" id="lyrics14">
+
+<h4>About This Song</h4>
+
+<p>
+
+A declaration that God is still working, still faithful, and still performing miracles today.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+
+</section>
+
+<!-- ==========================================
+FLOATING MUSIC PLAYER
+========================================== -->
+
+<div class="floating-player">
+
+<div class="player-left">
+
+<img id="player-cover"
+src="images/logo.png"
+alt="Now Playing">
+
+<div>
+
+<h4 id="player-title">
+
+No song playing
+
+</h4>
+
+<p>
+
+Ali Welekhasia
+
+</p>
+
+</div>
+
+</div>
+
+<div class="player-center">
+
+<button onclick="previousSong()">
+
+⏮
+
+</button>
+
+<button onclick="stopSong()">
+
+⏹
+
+</button>
+
+<button onclick="nextSong()">
+
+⏭
+
+</button>
+
+</div>
+
+<div class="player-right">
+
+<input
+type="range"
+min="0"
+max="100"
+value="100"
+oninput="changeVolume(this.value)">
+
+</div>
+
+</div>
+
+<!-- ==========================================
+FOOTER
+========================================== -->
+
+<footer>
+
+<div class="container">
+
+<img
+src="images/logo.png"
+class="footer-logo"
+alt="Ali Welekhasia Logo">
+
+<h3>
+
+Ali Welekhasia Music Ministry
+
+</h3>
+
+<p>
+
+Sharing the Gospel of Jesus Christ through music, worship and ministry.
+
+</p>
+
+<div class="footer-socials">
+
+<a href="#">Facebook</a>
+
+<a href="#">YouTube</a>
+
+<a href="#">Instagram</a>
+
+<a href="#">TikTok</a>
+
+</div>
+
+<p class="copyright">
+
+© 2026 Ali Welekhasia Music Ministry.
+All Rights Reserved.
+
+</p>
+
+</div>
+
+</footer>
+
+<script src="js/menu.js"></script>
+
+<script src="js/player.js"></script>
+
+<script src="js/main.js"></script>
+
+</body>
+
+</html>

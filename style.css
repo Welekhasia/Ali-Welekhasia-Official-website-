@@ -1,1119 +1,2009 @@
 /* ==========================================
    ALI WELEKHASIA OFFICIAL WEBSITE
-      Premium Theme
-      ========================================== */
+   MAIN STYLESHEET
+========================================== */
+
+/* Google Font Reset */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:#0a0a0a;
+    color:#ffffff;
+    overflow-x:hidden;
+    line-height:1.7;
+}
+
+/* ==============================
+   CONTAINER
+============================== */
+
+.container{
+    width:90%;
+    max-width:1300px;
+    margin:auto;
+}
+
+/* ==============================
+   LINKS
+============================== */
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+/* ==============================
+   IMAGES
+============================== */
+
+img{
+    max-width:100%;
+    display:block;
+}
+
+/* ==============================
+   HEADER
+============================== */
+
+.header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    z-index:999;
+    background:rgba(0,0,0,.35);
+    backdrop-filter:blur(12px);
+}
+
+.header .container{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 0;
+}
+
+/* ==============================
+   LOGO
+============================== */
+
+.logo img{
+    height:70px;
+    transition:.3s;
+}
+
+.logo img:hover{
+    transform:scale(1.05);
+}
+
+/* ==============================
+   NAVIGATION
+============================== */
+
+.navbar ul{
+    display:flex;
+    list-style:none;
+    gap:35px;
+}
+
+.navbar a{
+    color:#ffffff;
+    font-size:16px;
+    font-weight:500;
+    transition:.3s;
+}
+
+.navbar a:hover,
+.navbar a.active{
+    color:#d4af37;
+}
+
+/* ==============================
+   BOOK BUTTON
+============================== */
+
+.book-btn{
+    padding:12px 28px;
+    border-radius:40px;
+    background:#d4af37;
+    color:#000;
+    font-weight:700;
+    transition:.3s;
+}
+
+.book-btn:hover{
+    background:#ffffff;
+}
+
+/* ==============================
+   HAMBURGER
+============================== */
+
+.hamburger{
+    display:none;
+    flex-direction:column;
+    gap:6px;
+    cursor:pointer;
+}
+
+.hamburger span{
+    width:30px;
+    height:3px;
+    background:#ffffff;
+    border-radius:20px;
+}
+
+/* ==============================
+   HERO
+============================== */
+
+.hero{
+    height:100vh;
+    background:url("../images/hero.jpg") center center/cover no-repeat;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.hero-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:20px;
+}
+
+.hero-content{
+    max-width:900px;
+}
+
+.hero-content h3{
+    color:#d4af37;
+    letter-spacing:3px;
+    margin-bottom:20px;
+}
+
+.hero-content h1{
+    font-size:70px;
+    margin-bottom:20px;
+    font-weight:800;
+}
+
+.hero-content h2{
+    font-size:28px;
+    font-weight:400;
+    margin-bottom:30px;
+}
+
+.hero-content p{
+    font-size:18px;
+    color:#dddddd;
+    margin-bottom:40px;
+}
+
+/* ==============================
+   HERO BUTTONS
+============================== */
+
+.hero-buttons{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.btn-primary{
+    background:#d4af37;
+    color:#000;
+    padding:15px 35px;
+    border-radius:40px;
+    font-weight:700;
+    transition:.3s;
+}
+
+.btn-primary:hover{
+    background:#ffffff;
+}
+
+.btn-secondary{
+    border:2px solid #d4af37;
+    color:#ffffff;
+    padding:15px 35px;
+    border-radius:40px;
+    transition:.3s;
+}
+
+.btn-secondary:hover{
+    background:#d4af37;
+    color:#000;
+}
+
+.hero-verse{
+    margin-top:45px;
+    font-size:20px;
+    color:#d4af37;
+    font-style:italic;
+}
+/* ==========================================
+   SECTION TITLE
+========================================== */
+
+section{
+    padding:100px 0;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:60px;
+}
+
+.section-title h2{
+    font-size:42px;
+    color:#d4af37;
+    margin-bottom:15px;
+    font-weight:700;
+}
+
+.section-title p{
+    max-width:750px;
+    margin:0 auto;
+    color:#cccccc;
+    font-size:18px;
+    line-height:1.8;
+}
+
+/* ==========================================
+   WELCOME SECTION
+========================================== */
+
+.welcome{
+    background:#111111;
+}
+
+.welcome p{
+    font-size:20px;
+}
+
+/* ==========================================
+   MINISTRY SECTION
+========================================== */
+
+.ministry{
+    background:#0a0a0a;
+}
+
+.ministry-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:60px;
+    align-items:center;
+}
+
+.ministry-image img{
+    width:100%;
+    border-radius:20px;
+    box-shadow:0 20px 45px rgba(0,0,0,.45);
+}
+
+.subtitle{
+    display:inline-block;
+    color:#d4af37;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    margin-bottom:15px;
+    font-weight:600;
+}
+
+.ministry-content h2{
+    font-size:42px;
+    margin-bottom:25px;
+}
+
+.ministry-content p{
+    color:#d8d8d8;
+    margin-bottom:20px;
+    line-height:1.9;
+}
+
+/* ==========================================
+   MISSION & VISION
+========================================== */
+
+.mission-boxes{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+    margin:40px 0;
+}
+
+.box{
+    background:#151515;
+    border-left:5px solid #d4af37;
+    padding:30px;
+    border-radius:15px;
+    transition:.35s;
+}
+
+.box:hover{
+    transform:translateY(-8px);
+    box-shadow:0 15px 35px rgba(212,175,55,.18);
+}
+
+.box h3{
+    color:#d4af37;
+    margin-bottom:15px;
+    font-size:24px;
+}
+
+.box p{
+    color:#dddddd;
+}
+
+/* ==========================================
+   FEATURED MUSIC
+========================================== */
+
+.featured-music{
+    background:#111111;
+}
+
+.music-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:35px;
+}
+
+.music-card{
+    background:#181818;
+    border-radius:20px;
+    overflow:hidden;
+    transition:.35s;
+    text-align:center;
+}
+
+.music-card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 20px 45px rgba(0,0,0,.45);
+}
+
+.music-card img{
+    width:100%;
+    height:320px;
+    object-fit:cover;
+}
+
+.music-card h3{
+    padding:25px;
+    color:#ffffff;
+    font-size:22px;
+}
+
+.center-button{
+    text-align:center;
+    margin-top:50px;
+}
+/* ==========================================
+   FEATURED VIDEOS
+========================================== */
+
+.featured-videos{
+    background:#0a0a0a;
+}
+
+.video-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:35px;
+}
+
+.video-card{
+    background:#151515;
+    border-radius:20px;
+    overflow:hidden;
+    transition:.35s;
+}
+
+.video-card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 20px 40px rgba(0,0,0,.4);
+}
+
+.video-card iframe{
+    width:100%;
+    height:350px;
+    border:none;
+}
+
+.video-card h3{
+    padding:20px;
+    text-align:center;
+    color:#ffffff;
+}
+
+/* ==========================================
+   GALLERY
+========================================== */
+
+.gallery-preview{
+    background:#111111;
+}
+
+.gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:25px;
+}
+
+.gallery-grid img{
+    width:100%;
+    height:280px;
+    object-fit:cover;
+    border-radius:18px;
+    cursor:pointer;
+    transition:.4s;
+}
+
+.gallery-grid img:hover{
+    transform:scale(1.05);
+    box-shadow:0 15px 35px rgba(212,175,55,.25);
+}
+
+/* ==========================================
+   EVENTS
+========================================== */
+
+.events{
+    background:#0a0a0a;
+}
+
+.events-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:30px;
+}
+
+.event-card{
+    background:#151515;
+    padding:35px;
+    border-radius:20px;
+    transition:.35s;
+    border-top:4px solid #d4af37;
+}
+
+.event-card:hover{
+    transform:translateY(-10px);
+}
+
+.event-date{
+    display:inline-block;
+    background:#d4af37;
+    color:#000;
+    padding:8px 18px;
+    border-radius:30px;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+.event-card h3{
+    margin-bottom:15px;
+    color:#ffffff;
+}
+
+.event-card p{
+    color:#cccccc;
+    line-height:1.8;
+}
+/* ==========================================
+   TESTIMONIES
+========================================== */
+
+.testimonies{
+    background:#111111;
+}
+
+.testimony-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:30px;
+}
+
+.testimony-card{
+    background:#181818;
+    padding:35px;
+    border-radius:20px;
+    border-left:5px solid #d4af37;
+    transition:.35s;
+}
+
+.testimony-card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 20px 40px rgba(0,0,0,.35);
+}
+
+.testimony-card p{
+    color:#dddddd;
+    line-height:1.9;
+    margin-bottom:20px;
+}
+
+.testimony-card h4{
+    color:#d4af37;
+    font-size:18px;
+}
+
+/* ==========================================
+   PRAYER SECTION
+========================================== */
+
+.prayer-preview{
+    background:#0a0a0a;
+    text-align:center;
+}
+
+.prayer-preview p{
+    max-width:700px;
+    margin:20px auto 40px;
+    color:#cccccc;
+    line-height:1.8;
+}
+
+/* ==========================================
+   BLOG SECTION
+========================================== */
+
+.latest-blog{
+    background:#111111;
+}
+
+.blog-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:30px;
+}
+
+.blog-card{
+    background:#181818;
+    padding:30px;
+    border-radius:20px;
+    transition:.35s;
+}
+
+.blog-card:hover{
+    transform:translateY(-10px);
+}
+
+.blog-card h3{
+    color:#d4af37;
+    margin-bottom:18px;
+    font-size:24px;
+}
+
+.blog-card p{
+    color:#cccccc;
+    line-height:1.8;
+}
+
+/* ==========================================
+   NEWSLETTER
+========================================== */
+
+.newsletter{
+    background:#d4af37;
+    text-align:center;
+    color:#000;
+}
+
+.newsletter h2{
+    font-size:40px;
+    margin-bottom:15px;
+}
+
+.newsletter p{
+    max-width:650px;
+    margin:0 auto 35px;
+}
+
+.newsletter form{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.newsletter input{
+    width:380px;
+    max-width:100%;
+    padding:18px;
+    border:none;
+    border-radius:50px;
+    font-size:16px;
+}
+
+.newsletter button{
+    padding:18px 35px;
+    border:none;
+    border-radius:50px;
+    background:#000;
+    color:#fff;
+    cursor:pointer;
+    font-weight:700;
+    transition:.3s;
+}
+
+.newsletter button:hover{
+    background:#222;
+}
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+footer{
+    background:#050505;
+    padding:80px 0 40px;
+    text-align:center;
+}
+
+.footer-logo{
+    width:120px;
+    margin:0 auto 25px;
+}
+
+footer h3{
+    color:#d4af37;
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+footer p{
+    color:#cccccc;
+    margin-bottom:15px;
+}
+
+.footer-links{
+    margin:30px 0;
+}
+
+.footer-links a{
+    margin:0 15px;
+    color:#ffffff;
+    transition:.3s;
+}
+
+.footer-links a:hover{
+    color:#d4af37;
+}
+
+.copyright{
+    border-top:1px solid #222;
+    padding-top:25px;
+    margin-top:30px;
+    color:#777;
+    font-size:15px;
+}
+.music-info{
+
+padding:25px;
+
+text-align:center;
+
+}
+
+.music-info p{
+
+color:#bbbbbb;
+
+margin:15px 0;
+
+}
+
+.player-buttons{
+
+display:flex;
+
+justify-content:center;
+
+gap:15px;
+
+margin:20px 0;
+
+flex-wrap:wrap;
+
+}
+
+.player-buttons button{
+
+padding:12px 24px;
+
+border:none;
+
+border-radius:30px;
+
+background:#d4af37;
+
+color:#000;
+
+font-weight:700;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.player-buttons button:hover{
+
+background:#fff;
+
+transform:translateY(-3px);
+
+}
+
+.streaming-links{
+
+display:flex;
+
+justify-content:center;
+
+gap:15px;
+
+flex-wrap:wrap;
+
+margin-top:20px;
+
+}
+
+.streaming-links a{
+
+padding:10px 18px;
+
+border:1px solid #d4af37;
+
+border-radius:25px;
+
+color:#d4af37;
+
+transition:.3s;
+
+font-size:14px;
+
+}
+
+.streaming-links a:hover{
+
+background:#d4af37;
+
+color:#000;
+
+}
+/* ==========================================
+   FLOATING PLAYER
+========================================== */
 
-      *{
-          margin:0;
-              padding:0;
-                  box-sizing:border-box;
-                      scroll-behavior:smooth;
-                      }
+.floating-player{
 
-                      body{
-                          font-family:'Poppins',sans-serif;
-                              background:#050505;
-                                  color:#ffffff;
-                                      line-height:1.7;
-                                      }
+position:fixed;
 
-                                      /* Scroll Bar */
+bottom:0;
 
-                                      ::-webkit-scrollbar{
-                                          width:10px;
-                                          }
+left:0;
 
-                                          ::-webkit-scrollbar-track{
-                                              background:#111;
-                                              }
+width:100%;
 
-                                              ::-webkit-scrollbar-thumb{
-                                                  background:#d4af37;
-                                                      border-radius:20px;
-                                                      }
+background:#111;
 
-                                                      /* HEADER */
+border-top:2px solid #d4af37;
 
-                                                      header{
+display:flex;
 
-                                                          position:fixed;
+justify-content:space-between;
 
-                                                              top:0;
+align-items:center;
 
-                                                                  width:100%;
+padding:15px 30px;
 
-                                                                      display:flex;
+z-index:9999;
 
-                                                                          justify-content:space-between;
+}
 
-                                                                              align-items:center;
+.player-left h4{
 
-                                                                                  padding:18px 8%;
+color:#fff;
 
-                                                                                      background:rgba(0,0,0,.85);
+font-size:18px;
 
-                                                                                          backdrop-filter:blur(10px);
+}
 
-                                                                                              z-index:9999;
+.player-center button{
 
-                                                                                              }
+background:#d4af37;
 
-                                                                                              .logo img{
+color:#000;
 
-                                                                                                  width:170px;
+border:none;
 
-                                                                                                  }
+padding:12px 28px;
 
-                                                                                                  nav ul{
+border-radius:30px;
 
-                                                                                                      display:flex;
+cursor:pointer;
 
-                                                                                                          list-style:none;
+font-weight:bold;
 
-                                                                                                          }
+transition:.3s;
 
-                                                                                                          nav ul li{
+}
 
-                                                                                                              margin-left:30px;
+.player-center button:hover{
 
-                                                                                                              }
+background:#fff;
 
-                                                                                                              nav ul li a{
+}
+/* ==========================================
+   LYRICS SECTION
+========================================== */
 
-                                                                                                                  text-decoration:none;
+.lyrics-btn{
 
-                                                                                                                      color:white;
+margin-top:20px;
 
-                                                                                                                          font-weight:500;
+padding:12px 25px;
 
-                                                                                                                              transition:.4s;
+border:none;
 
-                                                                                                                              }
+background:#d4af37;
 
-                                                                                                                              nav ul li a:hover{
+color:#000;
 
-                                                                                                                                  color:#d4af37;
+border-radius:30px;
 
-                                                                                                                                  }
+cursor:pointer;
 
-                                                                                                                                  /* HERO */
+font-weight:bold;
 
-                                                                                                                                  .hero{
+transition:.3s;
 
-                                                                                                                                      height:100vh;
+}
 
-                                                                                                                                          background:
+.lyrics-btn:hover{
 
-                                                                                                                                              linear-gradient(rgba(0,0,0,.65),
+background:#ffffff;
 
-                                                                                                                                                  rgba(0,0,0,.75)),
+}
 
-                                                                                                                                                      url("images/hero.jpg");
+.lyrics-box{
 
-                                                                                                                                                          background-size:cover;
+display:none;
 
-                                                                                                                                                              background-position:center;
+margin-top:20px;
 
-                                                                                                                                                                  display:flex;
+padding:20px;
 
-                                                                                                                                                                      justify-content:center;
+background:#111;
 
-                                                                                                                                                                          align-items:center;
+border-left:4px solid #d4af37;
 
-                                                                                                                                                                              text-align:center;
+border-radius:12px;
 
-                                                                                                                                                                              }
+text-align:left;
 
-                                                                                                                                                                              .overlay{
+line-height:1.8;
 
-                                                                                                                                                                                  max-width:900px;
+color:#dddddd;
 
-                                                                                                                                                                                  }
+}
 
-                                                                                                                                                                                  .hero h1{
+.lyrics-box h4{
 
-                                                                                                                                                                                      font-size:65px;
+color:#d4af37;
 
-                                                                                                                                                                                          color:#d4af37;
+margin-bottom:10px;
 
-                                                                                                                                                                                              margin-bottom:20px;
+}
+/* ==============================
+   MUSIC SEARCH
+============================== */
 
-                                                                                                                                                                                              }
+.music-search{
 
-                                                                                                                                                                                              .hero p{
+margin:35px auto;
 
-                                                                                                                                                                                                  font-size:22px;
+max-width:500px;
 
-                                                                                                                                                                                                      margin-bottom:40px;
+}
 
-                                                                                                                                                                                                      }
+.music-search input{
 
-                                                                                                                                                                                                      /* BUTTONS */
+width:100%;
 
-                                                                                                                                                                                                      .buttons{
+padding:18px 25px;
 
-                                                                                                                                                                                                          display:flex;
+border-radius:40px;
 
-                                                                                                                                                                                                              justify-content:center;
+border:2px solid #d4af37;
 
-                                                                                                                                                                                                                  gap:20px;
+background:#111;
 
-                                                                                                                                                                                                                      flex-wrap:wrap;
+color:#fff;
 
-                                                                                                                                                                                                                      }
+font-size:17px;
 
-                                                                                                                                                                                                                      .btn{
+outline:none;
 
-                                                                                                                                                                                                                          background:#d4af37;
+}
 
-                                                                                                                                                                                                                              color:#000;
+.music-search input::placeholder{
 
-                                                                                                                                                                                                                                  padding:15px 40px;
+color:#999;
 
-                                                                                                                                                                                                                                      border-radius:50px;
+}
+/* ==========================================
+   MUSIC CATEGORIES
+========================================== */
 
-                                                                                                                                                                                                                                          text-decoration:none;
+.music-categories{
 
-                                                                                                                                                                                                                                              font-weight:bold;
+display:flex;
 
-                                                                                                                                                                                                                                                  transition:.4s;
+justify-content:center;
 
-                                                                                                                                                                                                                                                  }
+flex-wrap:wrap;
 
-                                                                                                                                                                                                                                                  .btn:hover{
+gap:15px;
 
-                                                                                                                                                                                                                                                      transform:translateY(-5px);
+margin:40px 0;
 
-                                                                                                                                                                                                                                                          background:#ffffff;
+}
 
-                                                                                                                                                                                                                                                          }
+.category-btn{
 
-                                                                                                                                                                                                                                                          .btn2{
+padding:12px 24px;
 
-                                                                                                                                                                                                                                                              border:2px solid #d4af37;
+background:#111;
 
-                                                                                                                                                                                                                                                                  color:white;
+border:2px solid #d4af37;
 
-                                                                                                                                                                                                                                                                      padding:15px 40px;
+border-radius:30px;
 
-                                                                                                                                                                                                                                                                          border-radius:50px;
+color:#d4af37;
 
-                                                                                                                                                                                                                                                                              text-decoration:none;
+font-weight:600;
 
-                                                                                                                                                                                                                                                                                  transition:.4s;
+cursor:pointer;
 
-                                                                                                                                                                                                                                                                                  }
+transition:.3s;
 
-                                                                                                                                                                                                                                                                                  .btn2:hover{
+}
 
-                                                                                                                                                                                                                                                                                      background:#d4af37;
+.category-btn:hover,
+.category-btn.active{
 
-                                                                                                                                                                                                                                                                                          color:#000;
+background:#d4af37;
 
-                                                                                                                                                                                                                                                                                          }
-  .logo img{
-        width:180px;
-            height:auto;
-                display:block;
-                }
-  /* ==========================================
-     WELCOME & MINISTRY
-     ========================================== */
+color:#000;
 
-     .welcome,
-     .ministry{
+transform:translateY(-3px);
 
-         padding:100px 10%;
-             text-align:center;
-                 background:#0b0b0b;
+}
+.song-meta{
 
-                 }
+color:#999;
 
-                 .welcome h2,
-                 .ministry h2{
+font-size:14px;
 
-                     font-size:42px;
-                         color:#d4af37;
-                             margin-bottom:25px;
+margin:10px 0 18px;
 
-                             }
+font-style:italic;
 
-                             .welcome p,
-                             .ministry p{
+}
+/* ==========================================
+PREMIUM FLOATING PLAYER
+========================================== */
 
-                                 max-width:900px;
-                                     margin:auto;
-                                         font-size:18px;
-                                             line-height:1.9;
-                                                 color:#dddddd;
+.floating-player{
 
-                                                 }
+position:fixed;
 
-                                                 /* ==========================================
-                                                    SECTION TITLES
-                                                    ========================================== */
+bottom:0;
 
-                                                    .section-title{
+left:0;
 
-                                                        text-align:center;
-                                                            margin-bottom:60px;
+width:100%;
 
-                                                            }
+background:#0b0b0b;
 
-                                                            .section-title h2{
+border-top:2px solid #d4af37;
 
-                                                                font-size:45px;
-                                                                    color:#d4af37;
-                                                                        margin-bottom:15px;
+display:flex;
 
-                                                                        }
+justify-content:space-between;
 
-                                                                        .section-title p{
+align-items:center;
 
-                                                                            color:#cccccc;
-                                                                                font-size:18px;
+padding:15px 30px;
 
-                                                                                }
+z-index:9999;
 
-                                                                                /* ==========================================
-                                                                                   MUSIC SECTION
-                                                                                   ========================================== */
+}
 
-                                                                                   .music-section{
+.player-left{
 
-                                                                                       padding:100px 8%;
-                                                                                           background:#050505;
+display:flex;
 
-                                                                                           }
+align-items:center;
 
-                                                                                           .music-grid{
+gap:15px;
 
-                                                                                               display:grid;
+}
 
-                                                                                                   grid-template-columns:
-                                                                                                       repeat(auto-fit,minmax(280px,1fr));
+.player-left img{
 
-                                                                                                           gap:35px;
+width:60px;
 
-                                                                                                           }
+height:60px;
 
-                                                                                                           .music-card{
+border-radius:8px;
 
-                                                                                                               background:#111111;
+object-fit:cover;
 
-                                                                                                                   border-radius:20px;
+}
 
-                                                                                                                       overflow:hidden;
+.player-left h4{
 
-                                                                                                                           transition:.4s;
+color:#fff;
 
-                                                                                                                               box-shadow:0 10px 30px rgba(0,0,0,.4);
+margin:0;
 
-                                                                                                                               }
+}
 
-                                                                                                                               .music-card:hover{
+.player-left p{
 
-                                                                                                                                   transform:translateY(-10px);
+color:#999;
 
-                                                                                                                                       box-shadow:0 15px 40px rgba(212,175,55,.35);
+font-size:14px;
 
-                                                                                                                                       }
+}
 
-                                                                                                                                       .music-card img{
+.player-center{
 
-                                                                                                                                           width:100%;
-                                                                                                                                               display:block;
+display:flex;
 
-                                                                                                                                               }
+gap:15px;
 
-                                                                                                                                               .music-card h3{
+}
 
-                                                                                                                                                   padding:20px 20px 10px;
-                                                                                                                                                       color:#ffffff;
-                                                                                                                                                           font-size:24px;
+.player-center button{
 
-                                                                                                                                                           }
+width:45px;
 
-                                                                                                                                                           .music-card p{
+height:45px;
 
-                                                                                                                                                               padding:0 20px;
-                                                                                                                                                                   color:#bbbbbb;
+border:none;
 
-                                                                                                                                                                   }
+border-radius:50%;
 
-                                                                                                                                                                   .music-buttons{
+background:#d4af37;
 
-                                                                                                                                                                       display:flex;
-                                                                                                                                                                           justify-content:space-between;
-                                                                                                                                                                               padding:20px;
+cursor:pointer;
 
-                                                                                                                                                                               }
+font-size:18px;
 
-                                                                                                                                                                               .music-buttons a{
+font-weight:bold;
 
-                                                                                                                                                                                   text-decoration:none;
+transition:.3s;
 
-                                                                                                                                                                                       background:#d4af37;
+}
 
-                                                                                                                                                                                           color:#000;
+.player-center button:hover{
 
-                                                                                                                                                                                               padding:12px 22px;
+transform:scale(1.1);
 
-                                                                                                                                                                                                   border-radius:40px;
+}
 
-                                                                                                                                                                                                       font-weight:600;
+.player-right input{
 
-                                                                                                                                                                                                           transition:.3s;
+width:180px;
 
-                                                                                                                                                                                                           }
+}
+/* ==========================================
+GALLERY
+========================================== */
 
-                                                                                                                                                                                                           .music-buttons a:hover{
+.gallery-grid{
 
-                                                                                                                                                                                                               background:white;
+display:grid;
 
-                                                                                                                                                                                                               }              
-  }     
-     /* ==========================================
-        FEATURED VIDEO
-        ========================================== */
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
 
-        .video-section{
+gap:25px;
 
-            padding:100px 8%;
-                background:#0b0b0b;
+margin-top:40px;
 
-                }
+}
 
-                .video-container{
+.gallery-item{
 
-                    display:grid;
+overflow:hidden;
 
-                        grid-template-columns:2fr 1fr;
+border-radius:15px;
 
-                            gap:40px;
+cursor:pointer;
 
-                                align-items:center;
+box-shadow:0 5px 20px rgba(0,0,0,.3);
 
-                                }
+}
 
-                                .video-player iframe{
+.gallery-item img{
 
-                                    width:100%;
-                                        border:none;
-                                            border-radius:20px;
-                                                min-height:450px;
+width:100%;
 
-                                                }
+display:block;
 
-                                                .video-info h3{
+transition:.4s;
 
-                                                    color:#d4af37;
-                                                        font-size:32px;
-                                                            margin-bottom:20px;
+}
 
-                                                            }
+.gallery-item:hover img{
 
-                                                            .video-info p{
+transform:scale(1.08);
 
-                                                                color:#dddddd;
-                                                                    line-height:1.8;
-                                                                        margin-bottom:30px;
+}
 
-                                                                        }
+/* LIGHTBOX */
 
-                                                                        .video-info a{
+.lightbox{
 
-                                                                            display:inline-block;
-                                                                                text-decoration:none;
-                                                                                    background:#d4af37;
-                                                                                        color:#000;
-                                                                                            padding:15px 35px;
-                                                                                                border-radius:40px;
-                                                                                                    font-weight:600;
-                                                                                                        transition:.3s;
+display:none;
 
-                                                                                                        }
+position:fixed;
 
-                                                                                                        .video-info a:hover{
+top:0;
 
-                                                                                                            background:#ffffff;
+left:0;
 
-                                                                                                            }
+width:100%;
 
-                                                                                                            /* ==========================================
-                                                                                                               GALLERY
-                                                                                                               ========================================== */
+height:100%;
 
-                                                                                                               .gallery-section{
+background:rgba(0,0,0,.95);
 
-                                                                                                                   padding:100px 8%;
-                                                                                                                       background:#050505;
+justify-content:center;
 
-                                                                                                                       }
+align-items:center;
 
-                                                                                                                       .gallery-grid{
+z-index:99999;
 
-                                                                                                                           display:grid;
+}
 
-                                                                                                                               grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+.lightbox img{
 
-                                                                                                                                   gap:20px;
+max-width:90%;
 
-                                                                                                                                   }
+max-height:90%;
 
-                                                                                                                                   .gallery-grid img{
+border-radius:10px;
 
-                                                                                                                                       width:100%;
-                                                                                                                                           border-radius:20px;
-                                                                                                                                               cursor:pointer;
-                                                                                                                                                   transition:.4s;
-                                                                                                                                                       box-shadow:0 8px 20px rgba(0,0,0,.4);
+}
 
-                                                                                                                                                       }
+.close-lightbox{
 
-                                                                                                                                                       .gallery-grid img:hover{
+position:absolute;
 
-                                                                                                                                                           transform:scale(1.05);
-                                                                                                                                                               box-shadow:0 10px 35px rgba(212,175,55,.35);
+top:20px;
 
-                                                                                                                                                               }
+right:35px;
 
-                                                                                                                                                               /* ==========================================
-                                                                                                                                                                  EVENTS
-                                                                                                                                                                  ========================================== */
+font-size:45px;
 
-                                                                                                                                                                  .events-section{
+color:#fff;
 
-                                                                                                                                                                      padding:100px 8%;
-                                                                                                                                                                          background:#0b0b0b;
+cursor:pointer;
 
-                                                                                                                                                                          }
+font-weight:bold;
 
-                                                                                                                                                                          .events-grid{
+}
+/* ==========================================
+EVENTS
+========================================== */
 
-                                                                                                                                                                              display:grid;
+.events-grid{
 
-                                                                                                                                                                                  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+display:grid;
 
-                                                                                                                                                                                      gap:30px;
+grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
 
-                                                                                                                                                                                      }
+gap:30px;
 
-                                                                                                                                                                                      .event-card{
+margin-top:40px;
 
-                                                                                                                                                                                          background:#111111;
-                                                                                                                                                                                              padding:35px;
-                                                                                                                                                                                                  border-radius:20px;
-                                                                                                                                                                                                      text-align:center;
-                                                                                                                                                                                                          transition:.4s;
+}
 
-                                                                                                                                                                                                          }
+.event-card{
 
-                                                                                                                                                                                                          .event-card:hover{
+display:flex;
 
-                                                                                                                                                                                                              transform:translateY(-10px);
+background:#111;
 
-                                                                                                                                                                                                              }
+border-radius:15px;
 
-                                                                                                                                                                                                              .event-card h3{
+overflow:hidden;
 
-                                                                                                                                                                                                                  color:#d4af37;
-                                                                                                                                                                                                                      margin-bottom:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.25);
 
-                                                                                                                                                                                                                      }
+transition:.3s;
 
-                                                                                                                                                                                                                      .event-card p{
+}
 
-                                                                                                                                                                                                                          color:#dddddd;
-                                                                                                                                                                                                                              margin-bottom:25px;
+.event-card:hover{
 
-                                                                                                                                                                                                                              }
+transform:translateY(-8px);
 
-                                                                                                                                                                                                                              .event-card a{
+}
 
-                                                                                                                                                                                                                                  display:inline-block;
-                                                                                                                                                                                                                                      background:#d4af37;
-                                                                                                                                                                                                                                          color:#000;
-                                                                                                                                                                                                                                              padding:12px 30px;
-                                                                                                                                                                                                                                                  text-decoration:none;
-                                                                                                                                                                                                                                                      border-radius:40px;
-                                                                                                                                                                                                                                                          font-weight:600;
+.event-date{
 
-                                                                                                                                                                                                                                                          }
+background:#d4af37;
 
-                                                                                                                                                                                                                                                          /* ==========================================
-                                                                                                                                                                                                                                                             TESTIMONIES
-                                                                                                                                                                                                                                                             ========================================== */
+color:#000;
 
-                                                                                                                                                                                                                                                             .testimony-section{
+padding:25px;
 
-                                                                                                                                                                                                                                                                 padding:100px 8%;
-                                                                                                                                                                                                                                                                     background:#050505;
+text-align:center;
 
-                                                                                                                                                                                                                                                                     }
+min-width:90px;
 
-                                                                                                                                                                                                                                                                     .testimony-grid{
+}
 
-                                                                                                                                                                                                                                                                         display:grid;
+.event-date h3{
 
-                                                                                                                                                                                                                                                                             grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+font-size:34px;
 
-                                                                                                                                                                                                                                                                                 gap:30px;
+margin:0;
 
-                                                                                                                                                                                                                                                                                 }
+}
 
-                                                                                                                                                                                                                                                                                 .testimony-card{
+.event-date p{
 
-                                                                                                                                                                                                                                                                                     background:#111111;
-                                                                                                                                                                                                                                                                                         padding:35px;
-                                                                                                                                                                                                                                                                                             border-left:5px solid #d4af37;
-                                                                                                                                                                                                                                                                                                 border-radius:15px;
-                                                                                                                                                                                                                                                                                                     transition:.3s;
+font-weight:bold;
 
-                                                                                                                                                                                                                                                                                                     }
+margin-top:8px;
 
-                                                                                                                                                                                                                                                                                                     .testimony-card:hover{
+}
 
-                                                                                                                                                                                                                                                                                                         transform:translateY(-8px);
+.event-info{
 
-                                                                                                                                                                                                                                                                                                         }
+padding:25px;
 
-                                                                                                                                                                                                                                                                                                         .testimony-card p{
+flex:1;
 
-                                                                                                                                                                                                                                                                                                             color:#dddddd;
-                                                                                                                                                                                                                                                                                                                 line-height:1.8;
-                                                                                                                                                                                                                                                                                                                     margin-bottom:20px;
+}
 
-                                                                                                                                                                                                                                                                                                                     }
+.event-info h3{
 
-                                                                                                                                                                                                                                                                                                                     .testimony-card h4{
+color:#fff;
 
-                                                                                                                                                                                                                                                                                                                         color:#d4af37;
+margin-bottom:15px;
 
-                                                                                                                                                                                                                                                                                                                         }     
-                                                                                                                                                                                               /* ==========================================
-                                                                                                                                                                                                  PRAYER REQUEST
-                                                                                                                                                                                                  ========================================== */
+}
 
-                                                                                                                                                                                                  .prayer-section{
+.event-info p{
 
-                                                                                                                                                                                                      padding:100px 8%;
-                                                                                                                                                                                                          background:#0b0b0b;
+color:#ccc;
 
-                                                                                                                                                                                                          }
+margin:8px 0;
 
-                                                                                                                                                                                                          .prayer-section form{
+}
 
-                                                                                                                                                                                                              max-width:800px;
-                                                                                                                                                                                                                  margin:auto;
-                                                                                                                                                                                                                      display:flex;
-                                                                                                                                                                                                                          flex-direction:column;
-                                                                                                                                                                                                                              gap:20px;
+.event-buttons{
 
-                                                                                                                                                                                                                              }
+margin-top:20px;
 
-                                                                                                                                                                                                                              .prayer-section input,
-                                                                                                                                                                                                                              .prayer-section textarea{
+display:flex;
 
-                                                                                                                                                                                                                                  width:100%;
-                                                                                                                                                                                                                                      padding:18px;
-                                                                                                                                                                                                                                          border:none;
-                                                                                                                                                                                                                                              border-radius:12px;
-                                                                                                                                                                                                                                                  background:#1b1b1b;
-                                                                                                                                                                                                                                                      color:#ffffff;
-                                                                                                                                                                                                                                                          font-size:16px;
+gap:15px;
 
-                                                                                                                                                                                                                                                          }
+flex-wrap:wrap;
 
-                                                                                                                                                                                                                                                          .prayer-section input:focus,
-                                                                                                                                                                                                                                                          .prayer-section textarea:focus{
+}
 
-                                                                                                                                                                                                                                                              outline:2px solid #d4af37;
+.ministry-invitation,
+.newsletter{
 
-                                                                                                                                                                                                                                                              }
+padding:80px 20px;
 
-                                                                                                                                                                                                                                                              .prayer-section button{
+text-align:center;
 
-                                                                                                                                                                                                                                                                  background:#d4af37;
-                                                                                                                                                                                                                                                                      color:#000;
-                                                                                                                                                                                                                                                                          border:none;
-                                                                                                                                                                                                                                                                              padding:18px;
-                                                                                                                                                                                                                                                                                  border-radius:40px;
-                                                                                                                                                                                                                                                                                      cursor:pointer;
-                                                                                                                                                                                                                                                                                          font-size:18px;
-                                                                                                                                                                                                                                                                                              font-weight:bold;
-                                                                                                                                                                                                                                                                                                  transition:.3s;
+}
 
-                                                                                                                                                                                                                                                                                                  }
+.newsletter-form{
 
-                                                                                                                                                                                                                                                                                                  .prayer-section button:hover{
+margin-top:30px;
 
-                                                                                                                                                                                                                                                                                                      background:#ffffff;
+display:flex;
 
-                                                                                                                                                                                                                                                                                                      }
+justify-content:center;
 
-                                                                                                                                                                                                                                                                                                      /* ==========================================
-                                                                                                                                                                                                                                                                                                         BLOG
-                                                                                                                                                                                                                                                                                                         ========================================== */
+gap:15px;
 
-                                                                                                                                                                                                                                                                                                         .blog-section{
+flex-wrap:wrap;
 
-                                                                                                                                                                                                                                                                                                             padding:100px 8%;
-                                                                                                                                                                                                                                                                                                                 background:#050505;
+}
 
-                                                                                                                                                                                                                                                                                                                 }
+.newsletter-form input{
 
-                                                                                                                                                                                                                                                                                                                 .blog-grid{
+padding:15px;
 
-                                                                                                                                                                                                                                                                                                                     display:grid;
-                                                                                                                                                                                                                                                                                                                         grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-                                                                                                                                                                                                                                                                                                                             gap:30px;
+width:320px;
 
-                                                                                                                                                                                                                                                                                                                             }
+border-radius:8px;
 
-                                                                                                                                                                                                                                                                                                                             .blog-card{
+border:1px solid #d4af37;
 
-                                                                                                                                                                                                                                                                                                                                 background:#111111;
-                                                                                                                                                                                                                                                                                                                                     border-radius:20px;
-                                                                                                                                                                                                                                                                                                                                         padding:30px;
-                                                                                                                                                                                                                                                                                                                                             transition:.4s;
+background:#111;
 
-                                                                                                                                                                                                                                                                                                                                             }
+color:#fff;
 
-                                                                                                                                                                                                                                                                                                                                             .blog-card:hover{
+}
 
-                                                                                                                                                                                                                                                                                                                                                 transform:translateY(-10px);
+.newsletter-form button{
 
-                                                                                                                                                                                                                                                                                                                                                 }
+padding:15px 30px;
 
-                                                                                                                                                                                                                                                                                                                                                 .blog-card h3{
+background:#d4af37;
 
-                                                                                                                                                                                                                                                                                                                                                     color:#d4af37;
-                                                                                                                                                                                                                                                                                                                                                         margin-bottom:20px;
+border:none;
 
-                                                                                                                                                                                                                                                                                                                                                         }
+border-radius:8px;
 
-                                                                                                                                                                                                                                                                                                                                                         .blog-card p{
+cursor:pointer;
 
-                                                                                                                                                                                                                                                                                                                                                             color:#dddddd;
-                                                                                                                                                                                                                                                                                                                                                                 margin-bottom:25px;
-                                                                                                                                                                                                                                                                                                                                                                     line-height:1.8;
+font-weight:bold;
 
-                                                                                                                                                                                                                                                                                                                                                                     }
+}/* ==========================================
+TESTIMONIES
+========================================== */
 
-                                                                                                                                                                                                                                                                                                                                                                     .blog-card a{
+.testimony-grid{
 
-                                                                                                                                                                                                                                                                                                                                                                         color:#d4af37;
-                                                                                                                                                                                                                                                                                                                                                                             text-decoration:none;
-                                                                                                                                                                                                                                                                                                                                                                                 font-weight:bold;
+display:grid;
 
-                                                                                                                                                                                                                                                                                                                                                                                 }
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
 
-                                                                                                                                                                                                                                                                                                                                                                                 /* ==========================================
-                                                                                                                                                                                                                                                                                                                                                                                    SHOP
-                                                                                                                                                                                                                                                                                                                                                                                    ========================================== */
+gap:30px;
 
-                                                                                                                                                                                                                                                                                                                                                                                    .shop-section{
+margin-top:40px;
 
-                                                                                                                                                                                                                                                                                                                                                                                        padding:100px 8%;
-                                                                                                                                                                                                                                                                                                                                                                                            background:#0b0b0b;
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                            }
+.testimony-card{
 
-                                                                                                                                                                                                                                                                                                                                                                                            .shop-grid{
+background:#111;
 
-                                                                                                                                                                                                                                                                                                                                                                                                display:grid;
-                                                                                                                                                                                                                                                                                                                                                                                                    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-                                                                                                                                                                                                                                                                                                                                                                                                        gap:30px;
+padding:30px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                        }
+border-radius:15px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                        .product-card{
+box-shadow:0 10px 25px rgba(0,0,0,.25);
 
-                                                                                                                                                                                                                                                                                                                                                                                                            background:#111111;
-                                                                                                                                                                                                                                                                                                                                                                                                                border-radius:20px;
-                                                                                                                                                                                                                                                                                                                                                                                                                    overflow:hidden;
-                                                                                                                                                                                                                                                                                                                                                                                                                        transition:.4s;
-                                                                                                                                                                                                                                                                                                                                                                                                                            text-align:center;
+transition:.3s;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                            }
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                            .product-card:hover{
+.testimony-card:hover{
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                transform:translateY(-10px);
+transform:translateY(-8px);
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                }
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                .product-card img{
+.quote-icon{
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                    width:100%;
+font-size:50px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+color:#d4af37;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                    .product-card h3{
+margin-bottom:15px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                        margin:20px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                            color:#d4af37;
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+.testimony-card p{
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                            .product-card p{
+color:#ddd;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                color:#dddddd;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    margin:0 20px 20px;
+line-height:1.8;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+margin-bottom:20px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    .product-card a{
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        display:inline-block;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            margin-bottom:25px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                padding:12px 30px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    background:#d4af37;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        color:#000;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            border-radius:40px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                text-decoration:none;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    font-weight:600;
+.testimony-card h3{
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+color:#fff;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    /* ==========================================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       DONATIONS
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ========================================== */
+margin-bottom:5px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       .donation-section{
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           padding:100px 8%;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               text-align:center;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   background:#050505;
+.testimony-card span{
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   }
+color:#d4af37;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   .donation-buttons{
+font-size:14px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       display:flex;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           justify-content:center;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               flex-wrap:wrap;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   gap:20px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       margin-top:40px;
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       }
+.share-testimony{
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       .donation-buttons a{
+padding:80px 20px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           text-decoration:none;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               background:#d4af37;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   color:#000;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       padding:16px 35px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           border-radius:50px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               font-weight:bold;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   transition:.3s;
+text-align:center;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   }
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   .donation-buttons a:hover{
+.share-testimony .contact-form{
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       background:#ffffff;
+max-width:700px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       }
+margin:40px auto 0;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       /* ==========================================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          CONTACT
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ========================================== */
+display:flex;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          .contact-section{
+flex-direction:column;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              padding:100px 8%;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  background:#0b0b0b;
+gap:20px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  }
+}
+/* ==========================================
+PRAYER PAGE
+========================================== */
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  .contact-section form{
+.prayer-grid{
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      max-width:900px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          margin:auto;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              display:flex;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  flex-direction:column;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      gap:20px;
+display:grid;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      }
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      .contact-section input,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      .contact-section textarea{
+gap:30px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          padding:18px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              border:none;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  border-radius:12px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      background:#1b1b1b;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          color:#ffffff;
+margin-top:40px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          .contact-section button{
+.prayer-card{
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              background:#d4af37;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  color:#000;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      border:none;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          padding:18px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              border-radius:40px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  cursor:pointer;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      font-size:18px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          font-weight:bold;
+background:#111;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }
+padding:30px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          /* ==========================================
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             FOOTER
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ========================================== */
+border-radius:15px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             footer{
+box-shadow:0 10px 25px rgba(0,0,0,.25);
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 background:#000000;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     padding:60px 8%;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         text-align:center;
+transition:.3s;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         .footer-logo img{
+.prayer-card:hover{
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             width:140px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 margin-bottom:20px;
+transform:translateY(-8px);
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 }
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 footer h3{
+.prayer-card h3{
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     color:#d4af37;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         margin-bottom:15px;
+color:#d4af37;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }
+margin-bottom:15px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         footer p{
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             color:#cccccc;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 margin-bottom:12px;
+.prayer-card p{
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 }
+color:#ddd;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 .social-links{
+line-height:1.8;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     margin:30px 0;
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     }
+.prayer-card span{
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     .social-links a{
+display:block;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         color:#d4af37;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             text-decoration:none;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 margin:0 15px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     transition:.3s;
+margin-top:15px;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     }
+color:#fff;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     .social-links a:hover{
+font-weight:bold;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         color:#ffffff;
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }
-   /* ==========================================
-      RESPONSIVE DESIGN
-      ========================================== */
+.call-to-prayer{
 
-      @media (max-width:992px){
+padding:80px 20px;
 
-      header{
+text-align:center;
 
-      flex-direction:column;
+}
+/* ==========================================
+BLOG PAGE
+========================================== */
 
-      padding:20px;
+.blog-search{
 
-      }
+margin:30px 0;
 
-      nav ul{
+text-align:center;
 
-      flex-wrap:wrap;
+}
 
-      justify-content:center;
+.blog-search input{
 
-      margin-top:20px;
+width:100%;
 
-      }
+max-width:500px;
 
-      nav ul li{
+padding:15px;
 
-      margin:10px;
+border:1px solid #d4af37;
 
-      }
+border-radius:8px;
 
-      .hero h1{
+background:#111;
 
-      font-size:48px;
+color:#fff;
 
-      }
+}
 
-      .hero p{
+.blog-grid{
 
-      font-size:18px;
+display:grid;
 
-      }
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
 
-      .video-container{
+gap:30px;
 
-      grid-template-columns:1fr;
+margin-top:40px;
 
-      }
+}
 
-      }
+.blog-card{
 
-      /* Tablets */
+background:#111;
 
-      @media (max-width:768px){
+border-radius:15px;
 
-      .hero{
+overflow:hidden;
 
-      padding:0 20px;
+box-shadow:0 10px 25px rgba(0,0,0,.25);
 
-      }
+transition:.3s;
 
-      .hero h1{
+}
 
-      font-size:38px;
+.blog-card:hover{
 
-      }
+transform:translateY(-8px);
 
-      .hero p{
+}
 
-      font-size:17px;
+.blog-card img{
 
-      }
+width:100%;
 
-      .buttons{
+height:220px;
 
-      flex-direction:column;
+object-fit:cover;
 
-      align-items:center;
+}
 
-      }
+.blog-content{
 
-      .music-grid,
-      .gallery-grid,
-      .events-grid,
-      .testimony-grid,
-      .blog-grid,
-      .shop-grid{
+padding:25px;
 
-      grid-template-columns:1fr;
+}
 
-      }
+.blog-date{
 
-      }
+color:#d4af37;
 
-      /* Phones */
+font-size:14px;
 
-      @media (max-width:480px){
+font-weight:600;
 
-      .logo img{
+}
 
-      width:130px;
+.blog-content h3{
 
-      }
+margin:15px 0;
 
-      .hero h1{
+color:#fff;
 
-      font-size:30px;
+}
 
-      }
+.blog-content p{
 
-      .hero p{
+color:#ccc;
 
-      font-size:15px;
+line-height:1.7;
 
-      }
+margin-bottom:20px;
 
-      .section-title h2{
+}
+/* ==========================================
+SHOP
+========================================== */
 
-      font-size:30px;
+.shop-grid{
 
-      }
+display:grid;
 
-      .welcome,
-      .ministry,
-      .music-section,
-      .video-section,
-      .gallery-section,
-      .events-section,
-      .testimony-section,
-      .prayer-section,
-      .blog-section,
-      .shop-section,
-      .donation-section,
-      .contact-section{
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
 
-      padding:70px 20px;
+gap:30px;
 
-      }
+margin-top:40px;
 
-      footer{
+}
 
-      padding:50px 20px;
+.product-card{
 
-      }
+background:#111;
 
-      }
+border-radius:15px;
 
-      /* ==========================================
-         IMAGE EFFECTS
-         ========================================== */
+overflow:hidden;
 
-         img{
+box-shadow:0 10px 25px rgba(0,0,0,.25);
 
-         max-width:100%;
-         height:auto;
-         display:block;
+transition:.3s;
 
-         }
+}
 
-         .music-card img,
-         .gallery-grid img,
-         .product-card img{
+.product-card:hover{
 
-         transition:0.4s ease;
+transform:translateY(-8px);
 
-         }
+}
 
-         .music-card:hover img,
-         .gallery-grid img:hover,
-         .product-card:hover img{
+.product-card img{
 
-         transform:scale(1.05);
+width:100%;
 
-         }
+height:260px;
 
-         /* ==========================================
-            SMOOTH TRANSITIONS
-            ========================================== */
+object-fit:cover;
 
-            a,
-            button,
-            .music-card,
-            .event-card,
-            .blog-card,
-            .product-card,
-            .testimony-card{
+}
 
-            transition:0.3s ease;
+.product-info{
 
-            }
+padding:25px;
 
-            /* ==========================================
-               SELECTION COLOR
-               ========================================== */
+text-align:center;
 
-               ::selection{
+}
 
-               background:#d4af37;
+.product-info h3{
 
-               color:#000;
+color:#fff;
 
-               }   
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+margin-bottom:10px;
+
+}
+
+.product-info p{
+
+color:#ccc;
+
+margin-bottom:15px;
+
+}
+
+.product-info h4{
+
+color:#d4af37;
+
+font-size:24px;
+
+margin-bottom:20px;
+
+}
+
+.product-buttons{
+
+display:flex;
+
+flex-direction:column;
+
+gap:12px;
+
+}
+
+.shopping-cart{
+
+padding:80px 20px;
+
+}
+
+.cart-total{
+
+margin-top:30px;
+
+font-size:24px;
+
+font-weight:bold;
+
+color:#d4af37;
+
+}
+
+.cart-buttons{
+
+display:flex;
+
+gap:20px;
+
+margin-top:30px;
+
+flex-wrap:wrap;
+
+}
+
+.mpesa-section{
+
+padding:80px 20px;
+
+text-align:center;
+
+}
+
+.mpesa-box{
+
+max-width:600px;
+
+margin:30px auto;
+
+padding:30px;
+
+background:#111;
+
+border-radius:15px;
+
+border:2px solid #d4af37;
+
+}
+/* ==========================================
+DONATIONS PAGE
+========================================== */
+
+.donation-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+
+gap:30px;
+
+margin-top:40px;
+
+}
+
+.donation-card{
+
+background:#111;
+
+padding:30px;
+
+border-radius:15px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.25);
+
+transition:.3s;
+
+text-align:center;
+
+}
+
+.donation-card:hover{
+
+transform:translateY(-8px);
+
+}
+
+.donation-card h3{
+
+color:#d4af37;
+
+margin-bottom:15px;
+
+}
+
+.donation-card h2{
+
+color:#fff;
+
+margin:15px 0;
+
+font-size:28px;
+
+}
+
+.donation-card h4{
+
+color:#d4af37;
+
+margin-top:15px;
+
+}
+
+.donation-card p{
+
+color:#ddd;
+
+line-height:1.7;
+
+}
+
+.donation-card ul{
+
+margin-top:20px;
+
+padding-left:20px;
+
+color:#ddd;
+
+text-align:left;
+
+}
+
+.donation-card li{
+
+margin-bottom:10px;
+
+}
+
+.thank-you-section{
+
+padding:80px 20px;
+
+text-align:center;
+
+}
+
+.thank-you-section h2{
+
+margin-bottom:20px;
+
+}
+
+.thank-you-section h3{
+
+margin:30px 0;
+
+color:#d4af37;
+
+font-style:italic;
+
+}
+/* ==========================================
+CONTACT PAGE
+========================================== */
+
+.contact-wrapper{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:40px;
+
+margin-top:40px;
+
+}
+
+.contact-info{
+
+background:#111;
+
+padding:30px;
+
+border-radius:15px;
+
+}
+
+.contact-info p{
+
+margin:20px 0;
+
+line-height:1.8;
+
+}
+
+.contact-info a{
+
+color:#d4af37;
+
+text-decoration:none;
+
+}
+
+.contact-form-box{
+
+background:#111;
+
+padding:30px;
+
+border-radius:15px;
+
+}
+
+.contact-form-box form{
+
+display:flex;
+
+flex-direction:column;
+
+gap:20px;
+
+}
+
+.contact-form-box input,
+
+.contact-form-box textarea{
+
+padding:15px;
+
+border:1px solid #333;
+
+border-radius:8px;
+
+background:#1b1b1b;
+
+color:#fff;
+
+}
+
+.map-section{
+
+padding:80px 20px;
+
+text-align:center;
+
+}
+
+.map-placeholder{
+
+margin-top:30px;
+
+padding:80px 20px;
+
+border:2px dashed #d4af37;
+
+border-radius:15px;
+
+}
+/* ==========================================
+404 PAGE
+========================================== */
+
+.hero-content h1{
+
+font-size:120px;
+
+color:#d4af37;
+
+margin-bottom:20px;
+
+}

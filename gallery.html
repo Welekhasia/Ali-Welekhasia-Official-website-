@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gallery | Ali Welekhasia Official</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/animations.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ali Welekhasia Official</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/animations.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+<link rel="manifest" href="manifest.json">
+
+<link rel="icon" href="images/logo.png" type="image/png">
+
+<meta name="theme-color" content="#0d1b4c">
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header class="header">
+
+<div class="container">
+
+<a href="index.html" class="logo">
+
+<img src="images/logo.png" alt="Ali Welekhasia">
+
+</a>
+
+<nav class="navbar" id="navbar">
+
+<ul>
+
+<li><a href="index.html">Home</a></li>
+<li><a href="about.html">About</a></li>
+<li><a href="music.html">Music</a></li>
+<li><a href="videos.html">Videos</a></li>
+<li><a href="gallery.html" class="active">Gallery</a></li>
+<li><a href="events.html">Events</a></li>
+<li><a href="testimonies.html">Testimonies</a></li>
+<li><a href="prayer.html">Prayer</a></li>
+<li><a href="blog.html">Blog</a></li>
+<li><a href="shop.html">Shop</a></li>
+<li><a href="donations.html">Donate</a></li>
+<li><a href="contact.html">Contact</a></li>
+
+</ul>
+
+</nav>
+
+<a href="contact.html" class="book-btn">
+
+Book Ministry
+
+</a>
+
+<div class="hamburger" id="hamburger">
+
+<span></span>
+<span></span>
+<span></span>
+
+</div>
+
+</div>
+
+</header>
+
+<!-- HERO -->
+
+<section class="hero" style="height:60vh;">
+
+<div class="hero-overlay">
+
+<div class="hero-content">
+
+<h1>Gallery</h1>
+
+<h2>Moments in Ministry</h2>
+
+<p>
+
+Explore worship moments, ministry events, concerts, outreach programs and behind-the-scenes memories.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- GALLERY -->
+
+<section class="gallery-section">
+
+<div class="container">
+
+<div class="section-title">
+
+<h2>Photo Gallery</h2>
+
+<p>
+
+Click any image to view it in full size.
+
+</p>
+
+</div>
+
+<div class="gallery-grid">
+    <!-- PHOTO 1 -->
+
+<div class="gallery-item">
+
+<img src="images/gallery/photo1.jpg"
+alt="Ministry Photo 1"
+onclick="openLightbox(this.src)">
+
+</div>
+
+<!-- PHOTO 2 -->
+
+<div class="gallery-item">
+
+<img src="images/gallery/photo2.jpg"
+alt="Ministry Photo 2"
+onclick="openLightbox(this.src)">
+
+</div>
+
+<!-- PHOTO 3 -->
+
+<div class="gallery-item">
+
+<img src="images/gallery/photo3.jpg"
+alt="Ministry Photo 3"
+onclick="openLightbox(this.src)">
+
+</div>
+
+<!-- PHOTO 4 -->
+
+<div class="gallery-item">
+
+<img src="images/gallery/photo4.jpg"
+alt="Ministry Photo 4"
+onclick="openLightbox(this.src)">
+
+</div>
+
+<!-- PHOTO 5 -->
+
+<div class="gallery-item">
+
+<img src="images/gallery/photo5.jpg"
+alt="Ministry Photo 5"
+onclick="openLightbox(this.src)">
+
+</div>
+
+<!-- PHOTO 6 -->
+
+<div class="gallery-item">
+
+<img src="images/gallery/photo6.jpg"
+alt="Ministry Photo 6"
+onclick="openLightbox(this.src)">
+
+</div>
+
+<!-- PHOTO 7 -->
+
+<div class="gallery-item">
+
+<img src="images/gallery/photo7.jpg"
+alt="Ministry Photo 7"
+onclick="openLightbox(this.src)">
+
+</div>
+
+<!-- PHOTO 8 -->
+
+<div class="gallery-item">
+
+<img src="images/gallery/photo8.jpg"
+alt="Ministry Photo 8"
+onclick="openLightbox(this.src)">
+
+</div>
+
+<!-- PHOTO 9 -->
+
+<div class="gallery-item">
+
+<img src="images/gallery/photo9.jpg"
+alt="Ministry Photo 9"
+onclick="openLightbox(this.src)">
+
+</div>
+
+<!-- PHOTO 10 -->
+
+<div class="gallery-item">
+
+<img src="images/gallery/photo10.jpg"
+alt="Ministry Photo 10"
+onclick="openLightbox(this.src)">
+
+</div>
+
+<!-- PHOTO 11 -->
+
+<div class="gallery-item">
+
+<img src="images/gallery/photo11.jpg"
+alt="Ministry Photo 11"
+onclick="openLightbox(this.src)">
+
+</div>
+
+<!-- PHOTO 12 -->
+
+<div class="gallery-item">
+
+<img src="images/gallery/photo12.jpg"
+alt="Ministry Photo 12"
+onclick="openLightbox(this.src)">
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- LIGHTBOX -->
+
+<div id="lightbox" class="lightbox">
+
+<span class="close-lightbox"
+onclick="closeLightbox()">
+
+&times;
+
+</span>
+
+<img id="lightbox-img"
+src=""
+alt="Gallery Image">
+
+</div>
+
+<!-- FOOTER -->
+
+<footer>
+
+<div class="container">
+
+<img src="images/logo.png"
+class="footer-logo"
+alt="Ali Welekhasia Logo">
+
+<h3>Ali Welekhasia Music Ministry</h3>
+
+<p>
+
+Sharing the Gospel of Jesus Christ through music and ministry.
+
+</p>
+
+<div class="footer-socials">
+
+<a href="#">Facebook</a>
+
+<a href="#">YouTube</a>
+
+<a href="#">Instagram</a>
+
+<a href="#">TikTok</a>
+
+</div>
+
+<p>
+
+© 2026 Ali Welekhasia Music Ministry. All Rights Reserved.
+
+</p>
+
+</div>
+
+</footer>
+
+<script src="js/menu.js"></script>
+<script src="js/gallery.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+
+</html>

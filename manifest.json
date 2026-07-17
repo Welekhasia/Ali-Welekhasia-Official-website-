@@ -1,0 +1,16 @@
+{
+  "name": "Ali Welekhasia Official",
+  "short_name": "Ali Welekhasia",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#0d1b4c",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
