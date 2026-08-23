@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ali Welekhasia | Gospel Music, Crusades &amp; Devotionals Feed</title>
+    <link>https://aliwelekhasia.com/</link>
+    <description>Official RSS feed of Ali Welekhasia. Stay updated with new Swahili worship releases, upcoming open-air gospel crusades, weekly devotionals, and ministry highlights.</description>
+    <language>en-US</language>
+    <lastBuildDate>Sun, 23 Aug 2026 10:00:00 +0300</lastBuildDate>
+    <atom:link href="https://aliwelekhasia.com/rss.xml" rel="self" type="application/rss+xml" />
+
+    <item>
+      <title>Upcoming Crusade: 3-Day Open Grounds Gospel Crusade - Nakuru</title>
+      <link>https://aliwelekhasia.com/#countdown</link>
+      <guid isPermaLink="false">crusade-nakuru-2026-08-30</guid>
+      <pubDate>Sun, 23 Aug 2026 08:00:00 +0300</pubDate>
+      <description>Join Evangelist Ali Welekhasia and the ministry team at Afraha Grounds, Nakuru for three power-packed days of salvation, healing, deliverance, and intense praise worship.</description>
+      <category>Crusades</category>
+    </item>
+
+    <item>
+      <title>Devotional: The Unstoppable Power of Unwavering Faith</title>
+      <link>https://aliwelekhasia.com/#blog</link>
+      <guid isPermaLink="false">devotional-unwavering-faith-2026</guid>
+      <pubDate>Sat, 22 Aug 2026 09:00:00 +0300</pubDate>
+      <description>Hebrews 11:1 reminds us that faith is the assurance of things hoped for. When facing impossible walls, faith anchors our spirit in God's eternal promises.</description>
+      <category>Devotionals</category>
+    </item>
+
+    <item>
+      <title>Devotional: Deepening Your Secret Place of Worship</title>
+      <link>https://aliwelekhasia.com/#blog</link>
+      <guid isPermaLink="false">devotional-secret-place-worship-2026</guid>
+      <pubDate>Tue, 18 Aug 2026 10:00:00 +0300</pubDate>
+      <description>True worship is an intimate surrender that begins when no spotlight is shining. Discover practical ways to cultivate a vibrant daily prayer altar.</description>
+      <category>Devotionals</category>
+    </item>
+
+    <item>
+      <title>Devotional: Enduring the Storm with Joy &amp; Patience</title>
+      <link>https://aliwelekhasia.com/#blog</link>
+      <guid isPermaLink="false">devotional-enduring-storm-2026</guid>
+      <pubDate>Thu, 13 Aug 2026 07:30:00 +0300</pubDate>
+      <description>Inspired by the song 'Vumilia Moyo', explore how biblical perseverance transforms trials into enduring faith and spiritual authority.</description>
+      <category>Devotionals</category>
+    </item>
+
+    <item>
+      <title>Music Release: Ni Wewe (Live Worship Experience)</title>
+      <link>https://aliwelekhasia.com/#music</link>
+      <guid isPermaLink="false">song-ni-wewe-single</guid>
+      <pubDate>Sat, 01 Aug 2026 12:00:00 +0300</pubDate>
+      <description>Experience the anointed live recording of 'Ni Wewe' featuring chord progressions, Swahili lyrics, and English translations.</description>
+      <category>Music Releases</category>
+    </item>
+  </channel>
+</rss>

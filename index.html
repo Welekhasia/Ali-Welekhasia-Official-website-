@@ -1,633 +1,2619 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ali Welekhasia | Gospel Music & Ministry</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali Welekhasia | Official Gospel Music, Crusades & Ministry Website</title>
 
-<link rel="stylesheet" href="style.css">
+    <!-- Immediate Theme Preference Load from localStorage to prevent flash -->
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('ali_theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } catch (e) {}
+        })();
+    </script>
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Ali Welekhasia | Gospel Music & Ministry Official Website">
+    <meta name="description" content="Official website of Ali Welekhasia. Explore gospel worship music, live revival crusades, video highlights, devotionals, voice prayer recordings, and partner with us.">
+    <meta name="keywords" content="Ali Welekhasia, Gospel Music, Swahili Worship, Ni Wewe, Vumilia Moyo, Kenya Gospel Artist, Christian Ministry, Evangelism Crusades, Devotionals, Prayer Requests, Apple Music, Spotify, Boomplay, Audiomack, SoundCloud, Deezer">
+    <meta name="author" content="Ali Welekhasia Ministry">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://aliwelekhasia.com/">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- RSS & Sitemap Auto-Discovery -->
+    <link rel="alternate" type="application/rss+xml" title="Ali Welekhasia Ministry RSS Feed" href="rss.xml">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">
+
+    <!-- JSON-LD Structured Data for Person & Music Ministry SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://aliwelekhasia.com/#person",
+          "name": "Ali Welekhasia",
+          "url": "https://aliwelekhasia.com/",
+          "jobTitle": "Gospel Minister, Evangelist & Worship Artist",
+          "description": "Evangelist and gospel worship singer proclaiming Jesus Christ through Swahili gospel songs and open-air crusades across Kenya and Africa.",
+          "sameAs": [
+            "https://youtube.com/@aliwelekhasia",
+            "https://www.facebook.com/aliwelekhasiaofficial",
+            "https://www.instagram.com/ali_welekhasia",
+            "https://open.spotify.com/artist/7MPLduzN6gHJRufAH8x8TJ",
+            "https://music.apple.com/ke/artist/ali-welekhasia/6792720164",
+            "https://www.boomplay.com/artists/EQJUvS61hprEevRNMXOoKk0z",
+            "https://audiomack.com/aliwelekhasia",
+            "https://soundcloud.com/ali-welekhasia",
+            "https://www.deezer.com/en/artist/405078712"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://aliwelekhasia.com/#website",
+          "url": "https://aliwelekhasia.com/",
+          "name": "Ali Welekhasia Official Website",
+          "description": "Official personal gospel music, crusades, and ministry website of Ali Welekhasia.",
+          "publisher": {
+            "@id": "https://aliwelekhasia.com/#person"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Open Graph / Facebook / WhatsApp Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://aliwelekhasia.com/">
+    <meta property="og:title" content="Ali Welekhasia | Gospel Music & Ministry Official Website">
+    <meta property="og:description" content="Experience anointed Swahili gospel worship music, sermon highlights, live revival crusade photography, and submit prayer requests.">
+    <meta property="og:image" content="https://aliwelekhasia.com/images/hero.jpg">
+
+    <!-- Twitter Card -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://aliwelekhasia.com/">
+    <meta property="twitter:title" content="Ali Welekhasia | Gospel Music & Ministry Official Website">
+    <meta property="twitter:description" content="Experience anointed Swahili gospel worship music, sermon highlights, live revival crusade photography, and submit prayer requests.">
+    <meta property="twitter:image" content="https://aliwelekhasia.com/images/hero.jpg">
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3137123958548928" crossorigin="anonymous"></script>
+    
+    <!-- D3.js for Global Reach & Charts -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header>
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
+    <!-- LIVE NOW BROADCAST BANNER -->
+    <div id="liveBroadcastBanner" class="live-banner">
+        <div class="live-banner-content">
+            <span class="live-pulse"><i class="fa-solid fa-circle"></i> LIVE NOW</span>
+            <span class="live-text">Evangelist Ali Welekhasia is currently streaming Live: <strong>Sunday Revival Service & Praise Worship</strong></span>
+            <div class="live-actions">
+                <a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="live-btn" rel="noopener noreferrer">
+                    <i class="fa-brands fa-youtube"></i> Watch Stream
+                </a>
+                <button class="live-close-btn" onclick="dismissLiveBanner()" title="Dismiss banner">&times;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN STATUS BANNER (ACTIVE WHEN LOGGED IN) -->
+    <div id="adminModeBanner" class="admin-mode-banner" style="display: none;">
+        <div class="admin-banner-inner">
+            <div class="admin-banner-info">
+                <span class="admin-shield-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                <span><strong>Admin Portal Active:</strong> Evangelist Ali Welekhasia (Live Content Management)</span>
+            </div>
+            <div class="admin-banner-actions">
+                <button type="button" class="btn-admin-pill" onclick="openAdminDashboardModal()">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard
+                </button>
+                <button type="button" class="btn-admin-logout" onclick="logoutAdmin()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER NAVIGATION -->
+    <header class="main-header" id="mainHeader">
         <div class="logo">
+            <a href="#home" class="logo-link">
+                <span class="logo-badge">AW</span>
+                <span class="logo-text">ALI WELEKHASIA</span>
+            </a>
+        </div>
 
-                <img src="images/logo.png" alt="Ali Welekhasia Music Logo">
+        <!-- Desktop Navigation Menu -->
+        <nav class="nav-menu" id="navMenu">
+            <ul>
+                <li><a href="#home" onclick="closeMobileMenu()">Home</a></li>
+                <li><a href="#music" onclick="closeMobileMenu()">Music</a></li>
+                <li><a href="#videos" onclick="closeMobileMenu()">Videos</a></li>
+                <li><a href="#gallery" onclick="closeMobileMenu()">Crusade Gallery</a></li>
+                <li><a href="#blog" onclick="closeMobileMenu()">Devotionals</a></li>
+                <li><a href="#countdown" onclick="closeMobileMenu()">Next Crusade</a></li>
+                <li><a href="#reach" onclick="closeMobileMenu()">Global Reach</a></li>
+                <li><a href="#partner" onclick="closeMobileMenu()" class="nav-highlight">Partner</a></li>
+                <li><a href="#social" onclick="closeMobileMenu()">Social</a></li>
+                <li><a href="#prayer" onclick="closeMobileMenu()">Prayer</a></li>
+                <li><a href="#faq" onclick="closeMobileMenu()">FAQ</a></li>
+            </ul>
+        </nav>
 
+        <!-- Right Header Tools: Global Search + Theme Toggle + Admin Portal + Mobile Hamburger -->
+        <div class="header-tools">
+            <!-- Global Search Trigger -->
+            <button class="tool-btn" id="searchTriggerBtn" onclick="toggleSearchModal()" title="Search songs, sermons, devotionals" aria-label="Search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
+            <!-- Theme Toggle Button -->
+            <button class="tool-btn theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Light/Dark Mode" aria-label="Toggle Theme">
+                <i class="fa-solid fa-moon" id="themeIcon"></i>
+            </button>
+
+            <!-- Admin Portal Quick Access Trigger -->
+            <button class="tool-btn admin-portal-btn" id="adminPortalHeaderBtn" onclick="openAdminPortal()" title="Admin Content Management Portal" aria-label="Admin Portal">
+                <i class="fa-solid fa-lock" id="adminLockIcon"></i>
+            </button>
+
+            <!-- Mobile Nav Toggle -->
+            <button class="mobile-nav-toggle" id="mobileNavToggle" onclick="toggleMobileMenu()" aria-label="Toggle Navigation Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+    <div class="nav-overlay" id="navOverlay" onclick="closeMobileMenu()"></div>
+
+    <!-- GLOBAL SEARCH MODAL -->
+    <div id="searchModal" class="modal-overlay" onclick="handleModalBackdropClick(event, 'searchModal')">
+        <div class="search-modal-content">
+            <div class="search-modal-header">
+                <div class="search-input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="globalSearchInput" placeholder="Search songs, sermons, devotionals, events..." oninput="handleGlobalSearch(this.value)" autocomplete="off" autofocus>
+                    <button class="clear-search-btn" onclick="clearSearchInput()" id="clearSearchBtn" style="display:none;">&times;</button>
+                </div>
+                <button class="modal-close-icon" onclick="toggleSearchModal()">&times;</button>
+            </div>
+            
+            <div class="search-categories">
+                <button class="search-cat-pill active" onclick="filterSearchResults('all', this)">All</button>
+                <button class="search-cat-pill" onclick="filterSearchResults('music', this)">Music</button>
+                <button class="search-cat-pill" onclick="filterSearchResults('video', this)">Videos</button>
+                <button class="search-cat-pill" onclick="filterSearchResults('devotional', this)">Devotionals</button>
+                <button class="search-cat-pill" onclick="filterSearchResults('event', this)">Crusades</button>
+            </div>
+
+            <div id="searchResultsContainer" class="search-results-list">
+                <div class="search-empty-state">
+                    <i class="fa-solid fa-book-bible"></i>
+                    <p>Type keywords to discover songs, lyrics, sermon notes, or upcoming crusades.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section id="home" class="hero-section">
+        <div class="hero-content">
+            <span class="hero-tag"><i class="fa-solid fa-dove"></i> Official Ministry Platform</span>
+            <h1 class="hero-title">ALI WELEKHASIA MUSIC</h1>
+            <p class="hero-subtitle">Proclaiming the Gospel of Jesus Christ across Kenya and the nations through anointed worship music, live revival crusades, and life-transforming scriptures.</p>
+            <div class="hero-btn-group">
+                <a href="#music" class="btn btn-primary"><i class="fa-solid fa-play"></i> Listen to Music</a>
+                <a href="#countdown" class="btn btn-secondary"><i class="fa-solid fa-calendar-star"></i> Upcoming Crusade</a>
+                <a href="#partner" class="btn btn-accent"><i class="fa-solid fa-hand-holding-heart"></i> Partner With Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERACTIVE EVENT COUNTDOWN SECTION -->
+    <section id="countdown" class="countdown-section">
+        <div class="countdown-card">
+            <div class="countdown-header">
+                <span class="countdown-badge"><i class="fa-solid fa-fire"></i> NEXT MAJOR EVENT</span>
+                <h2>Mombasa Mega Revival Crusade & Worship Night</h2>
+                <p class="countdown-location"><i class="fa-solid fa-location-dot"></i> Treasury Square Grounds, Mombasa, Kenya • Sept 12–14, 2026</p>
+            </div>
+
+            <div class="countdown-grid" id="countdownGrid">
+                <div class="countdown-box">
+                    <span class="countdown-number" id="countDays">00</span>
+                    <span class="countdown-label">Days</span>
+                </div>
+                <div class="countdown-box">
+                    <span class="countdown-number" id="countHours">00</span>
+                    <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-box">
+                    <span class="countdown-number" id="countMinutes">00</span>
+                    <span class="countdown-label">Minutes</span>
+                </div>
+                <div class="countdown-box">
+                    <span class="countdown-number" id="countSeconds">00</span>
+                    <span class="countdown-label">Seconds</span>
+                </div>
+            </div>
+
+            <div class="countdown-actions">
+                <button class="btn btn-gold" onclick="handleDynamicGoogleCalendar()">
+                    <i class="fa-solid fa-calendar-plus"></i> Add to Google Calendar
+                </button>
+                <button class="btn btn-outline" onclick="handleDynamicIcalDownload()">
+                    <i class="fa-solid fa-file-arrow-down"></i> Download iCal / Outlook
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- MUSIC AUDIO & LYRICS SECTION -->
+    <section id="music" class="section-container">
+        <div class="section-header">
+            <span class="section-tag">Anointed Swahili & Luhya Worship</span>
+            <h2 class="section-title">Gospel Music & Lyrics Catalogue</h2>
+            <p class="section-desc">Stream anointed worship audio releases across worldwide digital platforms, view complete lyrics with English translations, and generate official printable PDF chord sheets for all featured songs.</p>
+        </div>
+
+        <!-- OFFICIAL STREAMING PLATFORMS SHOWCASE -->
+        <div class="streaming-platforms-showcase">
+            <div class="streaming-showcase-title">
+                <i class="fa-solid fa-compact-disc streaming-disc-icon"></i>
+                <span>Stream Ali Welekhasia On Your Favorite Platform:</span>
+            </div>
+            <div class="streaming-pills-wrap">
+                <a href="https://music.apple.com/ke/artist/ali-welekhasia/6792720164" target="_blank" rel="noopener noreferrer" class="streaming-pill pill-apple" title="Listen on Apple Music">
+                    <i class="fa-brands fa-apple"></i> Apple Music
+                </a>
+                <a href="https://open.spotify.com/artist/7MPLduzN6gHJRufAH8x8TJ?si=dbTN2u5qRoan-D2I2cpdOw&nd=1&dlsi=824e67e0cf8d4008" target="_blank" rel="noopener noreferrer" class="streaming-pill pill-spotify" title="Listen on Spotify">
+                    <i class="fa-brands fa-spotify"></i> Spotify
+                </a>
+                <a href="https://www.boomplay.com/artists/EQJUvS61hprEevRNMXOoKk0z?from=search&srModel=COPYLINK&srList=WEB&share_content=artist&share_channel=copylink&share_platform=web" target="_blank" rel="noopener noreferrer" class="streaming-pill pill-boomplay" title="Listen on Boomplay">
+                    <i class="fa-solid fa-play-circle"></i> Boomplay
+                </a>
+                <a href="https://youtube.com/@aliwelekhasia" target="_blank" rel="noopener noreferrer" class="streaming-pill pill-youtube" title="Watch & Listen on YouTube">
+                    <i class="fa-brands fa-youtube"></i> YouTube
+                </a>
+                <a href="https://audiomack.com/aliwelekhasia" target="_blank" rel="noopener noreferrer" class="streaming-pill pill-audiomack" title="Stream on Audiomack">
+                    <i class="fa-solid fa-headphones"></i> Audiomack
+                </a>
+                <a href="https://soundcloud.com/ali-welekhasia" target="_blank" rel="noopener noreferrer" class="streaming-pill pill-soundcloud" title="Listen on SoundCloud">
+                    <i class="fa-brands fa-soundcloud"></i> SoundCloud
+                </a>
+                <a href="https://www.deezer.com/en/artist/405078712" target="_blank" rel="noopener noreferrer" class="streaming-pill pill-deezer" title="Listen on Deezer">
+                    <i class="fa-brands fa-deezer"></i> Deezer
+                </a>
+            </div>
+        </div>
+
+        <!-- Music Skeleton Placeholder Grid (Displayed dynamically during load) -->
+        <div id="musicSkeletonGrid" class="skeleton-grid music-skeleton-grid" style="display: none;">
+            <div class="skeleton-card skeleton-music-card">
+                <div class="skeleton-header">
+                    <div class="skeleton-box skeleton-icon-box"></div>
+                    <div class="skeleton-header-lines">
+                        <div class="skeleton-box skeleton-line skeleton-w60"></div>
+                        <div class="skeleton-box skeleton-line skeleton-w40"></div>
+                    </div>
+                </div>
+                <div class="skeleton-box skeleton-line skeleton-w90"></div>
+                <div class="skeleton-box skeleton-line skeleton-w75"></div>
+                <div class="skeleton-meta-row">
+                    <div class="skeleton-box skeleton-pill"></div>
+                    <div class="skeleton-box skeleton-pill"></div>
+                </div>
+                <div class="skeleton-actions-row">
+                    <div class="skeleton-box skeleton-btn-ph"></div>
+                    <div class="skeleton-box skeleton-btn-ph skeleton-btn-sm"></div>
+                </div>
+            </div>
+            <div class="skeleton-card skeleton-music-card">
+                <div class="skeleton-header">
+                    <div class="skeleton-box skeleton-icon-box"></div>
+                    <div class="skeleton-header-lines">
+                        <div class="skeleton-box skeleton-line skeleton-w60"></div>
+                        <div class="skeleton-box skeleton-line skeleton-w40"></div>
+                    </div>
+                </div>
+                <div class="skeleton-box skeleton-line skeleton-w90"></div>
+                <div class="skeleton-box skeleton-line skeleton-w75"></div>
+                <div class="skeleton-meta-row">
+                    <div class="skeleton-box skeleton-pill"></div>
+                    <div class="skeleton-box skeleton-pill"></div>
+                </div>
+                <div class="skeleton-actions-row">
+                    <div class="skeleton-box skeleton-btn-ph"></div>
+                    <div class="skeleton-box skeleton-btn-ph skeleton-btn-sm"></div>
+                </div>
+            </div>
+            <div class="skeleton-card skeleton-music-card">
+                <div class="skeleton-header">
+                    <div class="skeleton-box skeleton-icon-box"></div>
+                    <div class="skeleton-header-lines">
+                        <div class="skeleton-box skeleton-line skeleton-w60"></div>
+                        <div class="skeleton-box skeleton-line skeleton-w40"></div>
+                    </div>
+                </div>
+                <div class="skeleton-box skeleton-line skeleton-w90"></div>
+                <div class="skeleton-box skeleton-line skeleton-w75"></div>
+                <div class="skeleton-meta-row">
+                    <div class="skeleton-box skeleton-pill"></div>
+                    <div class="skeleton-box skeleton-pill"></div>
+                </div>
+                <div class="skeleton-actions-row">
+                    <div class="skeleton-box skeleton-btn-ph"></div>
+                    <div class="skeleton-box skeleton-btn-ph skeleton-btn-sm"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="music-grid" id="musicCardsGrid">
+            <!-- Song 1: ZAWADI -->
+            <div class="music-card">
+                <div class="music-card-header">
+                    <div class="music-icon"><i class="fa-solid fa-music"></i></div>
+                    <div class="music-info">
+                        <h3>ZAWADI</h3>
+                        <span class="music-artist">Ali Welekhasia • Worship Anthem</span>
+                    </div>
+                </div>
+                <p class="music-snippet">"Zawadi ya uzima, zawadi ya wokovu, Ulinipa bure Yesu wangu, Nitaishi nikikutukuza daima..."</p>
+                <div class="music-meta-tags">
+                    <span class="meta-tag">Key: D Major</span>
+                    <span class="meta-tag">BPM: 76</span>
+                </div>
+                <div class="music-actions">
+                    <button class="btn-song-action" onclick="openLyricsModal('ZAWADI')">
+                        <i class="fa-solid fa-file-lines"></i> View & Download Lyrics PDF
+                    </button>
+                    <a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="btn-song-play" rel="noopener noreferrer">
+                        <i class="fa-solid fa-play"></i> Play Audio
+                    </a>
+                </div>
+            </div>
+
+            <!-- Song 2: NI WEWE -->
+            <div class="music-card">
+                <div class="music-card-header">
+                    <div class="music-icon"><i class="fa-solid fa-music"></i></div>
+                    <div class="music-info">
+                        <h3>NI WEWE</h3>
+                        <span class="music-artist">Ali Welekhasia • Official Worship Anthem</span>
+                    </div>
+                </div>
+                <p class="music-snippet">"Ni Wewe, Ni Wewe Bwana, Hakuna mwingine wa kulinganishwa nawe, Mwanzo na Mwisho..."</p>
+                <div class="music-meta-tags">
+                    <span class="meta-tag">Key: D Major</span>
+                    <span class="meta-tag">BPM: 72</span>
+                </div>
+                <div class="music-actions">
+                    <button class="btn-song-action" onclick="openLyricsModal('NI WEWE')">
+                        <i class="fa-solid fa-file-lines"></i> View & Download Lyrics PDF
+                    </button>
+                    <a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="btn-song-play" rel="noopener noreferrer">
+                        <i class="fa-solid fa-play"></i> Play Audio
+                    </a>
+                </div>
+            </div>
+
+            <!-- Song 3: BADO -->
+            <div class="music-card">
+                <div class="music-card-header">
+                    <div class="music-icon"><i class="fa-solid fa-music"></i></div>
+                    <div class="music-info">
+                        <h3>BADO</h3>
+                        <span class="music-artist">Ali Welekhasia • Faith & Prophetic Song</span>
+                    </div>
+                </div>
+                <p class="music-snippet">"Bado Mungu yuko kazini, bado hajafunga mlango wa neema, ushindi wako unakuja..."</p>
+                <div class="music-meta-tags">
+                    <span class="meta-tag">Key: G Major</span>
+                    <span class="meta-tag">BPM: 80</span>
+                </div>
+                <div class="music-actions">
+                    <button class="btn-song-action" onclick="openLyricsModal('BADO')">
+                        <i class="fa-solid fa-file-lines"></i> View & Download Lyrics PDF
+                    </button>
+                    <a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="btn-song-play" rel="noopener noreferrer">
+                        <i class="fa-solid fa-play"></i> Play Audio
+                    </a>
+                </div>
+            </div>
+
+            <!-- Song 4: NASIMAMA -->
+            <div class="music-card">
+                <div class="music-card-header">
+                    <div class="music-icon"><i class="fa-solid fa-music"></i></div>
+                    <div class="music-info">
+                        <h3>NASIMAMA</h3>
+                        <span class="music-artist">Ali Welekhasia • Warfare & Victory</span>
+                    </div>
+                </div>
+                <p class="music-snippet">"Nasimama imara juu ya Mwamba Yesu Kristo, sitashindwa kamwe, nina ushindi tele..."</p>
+                <div class="music-meta-tags">
+                    <span class="meta-tag">Key: E Major</span>
+                    <span class="meta-tag">BPM: 70</span>
+                </div>
+                <div class="music-actions">
+                    <button class="btn-song-action" onclick="openLyricsModal('NASIMAMA')">
+                        <i class="fa-solid fa-file-lines"></i> View & Download Lyrics PDF
+                    </button>
+                    <a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="btn-song-play" rel="noopener noreferrer">
+                        <i class="fa-solid fa-play"></i> Play Audio
+                    </a>
+                </div>
+            </div>
+
+            <!-- Song 5: NINTSIE HENA -->
+            <div class="music-card">
+                <div class="music-card-header">
+                    <div class="music-icon"><i class="fa-solid fa-music"></i></div>
+                    <div class="music-info">
+                        <h3>NINTSIE HENA</h3>
+                        <span class="music-artist">Ali Welekhasia • Luhya / Swahili Praise</span>
+                    </div>
+                </div>
+                <p class="music-snippet">"Nintsie hena wele wange? Halelujah, Wele wange ni wewesi! Mikononi mwako nina salama..."</p>
+                <div class="music-meta-tags">
+                    <span class="meta-tag">Key: A Major</span>
+                    <span class="meta-tag">BPM: 112</span>
+                </div>
+                <div class="music-actions">
+                    <button class="btn-song-action" onclick="openLyricsModal('NINTSIE HENA')">
+                        <i class="fa-solid fa-file-lines"></i> View & Download Lyrics PDF
+                    </button>
+                    <a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="btn-song-play" rel="noopener noreferrer">
+                        <i class="fa-solid fa-play"></i> Play Audio
+                    </a>
+                </div>
+            </div>
+
+            <!-- Song 6: NJOONI TUMWIMBIE -->
+            <div class="music-card">
+                <div class="music-card-header">
+                    <div class="music-icon"><i class="fa-solid fa-music"></i></div>
+                    <div class="music-info">
+                        <h3>NJOONI TUMWIMBIE</h3>
+                        <span class="music-artist">Ali Welekhasia • Joyful Praise Psalm</span>
+                    </div>
+                </div>
+                <p class="music-snippet">"Njooni tumwimbie Bwana, tumfanyie shangwe, Mwamba wa wokovu wetu, tumsifu kwa vigelegele!..."</p>
+                <div class="music-meta-tags">
+                    <span class="meta-tag">Key: F Major</span>
+                    <span class="meta-tag">BPM: 105</span>
+                </div>
+                <div class="music-actions">
+                    <button class="btn-song-action" onclick="openLyricsModal('NJOONI TUMWIMBIE')">
+                        <i class="fa-solid fa-file-lines"></i> View & Download Lyrics PDF
+                    </button>
+                    <a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="btn-song-play" rel="noopener noreferrer">
+                        <i class="fa-solid fa-play"></i> Play Audio
+                    </a>
+                </div>
+            </div>
+
+            <!-- Song 7: LAMWELI_UMEPENDWA -->
+            <div class="music-card">
+                <div class="music-card-header">
+                    <div class="music-icon"><i class="fa-solid fa-music"></i></div>
+                    <div class="music-info">
+                        <h3>LAMWELI_UMEPENDWA</h3>
+                        <span class="music-artist">Ali Welekhasia • Healing & Comfort Ballad</span>
+                    </div>
+                </div>
+                <p class="music-snippet">"Lamweli, Umependwa na Mungu Mkuu, hauko peke yako katika safari hii, alitoa damu yake kwako..."</p>
+                <div class="music-meta-tags">
+                    <span class="meta-tag">Key: C Major</span>
+                    <span class="meta-tag">BPM: 74</span>
+                </div>
+                <div class="music-actions">
+                    <button class="btn-song-action" onclick="openLyricsModal('LAMWELI_UMEPENDWA')">
+                        <i class="fa-solid fa-file-lines"></i> View & Download Lyrics PDF
+                    </button>
+                    <a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="btn-song-play" rel="noopener noreferrer">
+                        <i class="fa-solid fa-play"></i> Play Audio
+                    </a>
+                </div>
+            </div>
+
+            <!-- Song 8: NACHENDA MUSHIALO -->
+            <div class="music-card">
+                <div class="music-card-header">
+                    <div class="music-icon"><i class="fa-solid fa-music"></i></div>
+                    <div class="music-info">
+                        <h3>NACHENDA MUSHIALO</h3>
+                        <span class="music-artist">Ali Welekhasia • Luhya Pilgrimage Song</span>
+                    </div>
+                </div>
+                <p class="music-snippet">"Nachenda mushialo muno muli amapereka, Yesu niwe mulolele wange, taa ya miguu yangu..."</p>
+                <div class="music-meta-tags">
+                    <span class="meta-tag">Key: G Major</span>
+                    <span class="meta-tag">BPM: 82</span>
+                </div>
+                <div class="music-actions">
+                    <button class="btn-song-action" onclick="openLyricsModal('NACHENDA MUSHIALO')">
+                        <i class="fa-solid fa-file-lines"></i> View & Download Lyrics PDF
+                    </button>
+                    <a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="btn-song-play" rel="noopener noreferrer">
+                        <i class="fa-solid fa-play"></i> Play Audio
+                    </a>
+                </div>
+            </div>
+
+            <!-- Song 9: ALIBEBA -->
+            <div class="music-card">
+                <div class="music-card-header">
+                    <div class="music-icon"><i class="fa-solid fa-music"></i></div>
+                    <div class="music-info">
+                        <h3>ALIBEBA</h3>
+                        <span class="music-artist">Ali Welekhasia • Cross & Redemption</span>
+                    </div>
+                </div>
+                <p class="music-snippet">"Alibeba mizigo yangu yote, alibeba magonjwa yangu msalabani, sasa niko huru kabisa..."</p>
+                <div class="music-meta-tags">
+                    <span class="meta-tag">Key: Bm / D</span>
+                    <span class="meta-tag">BPM: 68</span>
+                </div>
+                <div class="music-actions">
+                    <button class="btn-song-action" onclick="openLyricsModal('ALIBEBA')">
+                        <i class="fa-solid fa-file-lines"></i> View & Download Lyrics PDF
+                    </button>
+                    <a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="btn-song-play" rel="noopener noreferrer">
+                        <i class="fa-solid fa-play"></i> Play Audio
+                    </a>
+                </div>
+            </div>
+
+            <!-- Song 10: VUMILIA MOYO -->
+            <div class="music-card">
+                <div class="music-card-header">
+                    <div class="music-icon"><i class="fa-solid fa-music"></i></div>
+                    <div class="music-info">
+                        <h3>VUMILIA MOYO</h3>
+                        <span class="music-artist">Ali Welekhasia ft. Mercy Lukio</span>
+                    </div>
+                </div>
+                <p class="music-snippet">"Vumilia moyo, uvumilivu una thawabu, Mungu uliyemwamini hawezi kukuacha kamwe..."</p>
+                <div class="music-meta-tags">
+                    <span class="meta-tag">Key: G Major</span>
+                    <span class="meta-tag">BPM: 75</span>
+                </div>
+                <div class="music-actions">
+                    <button class="btn-song-action" onclick="openLyricsModal('VUMILIA MOYO')">
+                        <i class="fa-solid fa-file-lines"></i> View & Download Lyrics PDF
+                    </button>
+                    <a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="btn-song-play" rel="noopener noreferrer">
+                        <i class="fa-solid fa-play"></i> Play Audio
+                    </a>
+                </div>
+            </div>
+
+            <!-- Song 11: UMETENDA HAYA -->
+            <div class="music-card">
+                <div class="music-card-header">
+                    <div class="music-icon"><i class="fa-solid fa-music"></i></div>
+                    <div class="music-info">
+                        <h3>UMETENDA HAYA</h3>
+                        <span class="music-artist">Ali Welekhasia • Praise & Thanksgiving</span>
+                    </div>
+                </div>
+                <p class="music-snippet">"Umetenda haya Bwana, Mungu wangu Mkuu, Sifa na utukufu zikurudie Wewe milele..."</p>
+                <div class="music-meta-tags">
+                    <span class="meta-tag">Key: C Major</span>
+                    <span class="meta-tag">BPM: 98</span>
+                </div>
+                <div class="music-actions">
+                    <button class="btn-song-action" onclick="openLyricsModal('UMETENDA HAYA')">
+                        <i class="fa-solid fa-file-lines"></i> View & Download Lyrics PDF
+                    </button>
+                    <a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="btn-song-play" rel="noopener noreferrer">
+                        <i class="fa-solid fa-play"></i> Play Audio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RESPONSIVE VIDEO GALLERY SECTION -->
+    <section id="videos" class="section-container bg-darker">
+        <div class="section-header">
+            <span class="section-tag">Video Gallery & Highlights</span>
+            <h2 class="section-title">Music Videos & Sermon Highlights</h2>
+            <p class="section-desc">Watch full music video releases, live concert performances, and inspiring sermon teachings directly on our platform.</p>
+            
+            <!-- Category Filters -->
+            <div class="filter-pills" id="videoFilters">
+                <button class="filter-btn active" onclick="filterVideos('all', this)">All Media</button>
+                <button class="filter-btn" onclick="filterVideos('music', this)">Music Videos</button>
+                <button class="filter-btn" onclick="filterVideos('sermon', this)">Sermon Highlights</button>
+            </div>
+        </div>
+
+        <!-- Video Grid -->
+        <div class="video-grid" id="videoGrid">
+            <!-- Video Item 1 -->
+            <div class="video-card music">
+                <div class="video-thumb" onclick="openVideoPlayer('NI WEWE - Official Gospel Music Video', 'Music Video', 'dQw4w9WgXcQ')">
+                    <span class="video-badge badge-gold">MUSIC VIDEO</span>
+                    <span class="video-duration">4:35</span>
+                    <div class="video-play-overlay">
+                        <div class="play-circle"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3>NI WEWE - Official Worship Video</h3>
+                    <p>A soulful worship anthem proclaiming God's sovereignty, majesty, and eternal presence in every season.</p>
+                    <button class="btn-card-action" onclick="openVideoPlayer('NI WEWE - Official Gospel Music Video', 'Music Video', 'dQw4w9WgXcQ')">Watch Video</button>
+                </div>
+            </div>
+
+            <!-- Video Item 2 -->
+            <div class="video-card sermon">
+                <div class="video-thumb" onclick="openVideoPlayer('Walking by Faith in Dark Valleys', 'Sermon Highlight', 'dQw4w9WgXcQ')">
+                    <span class="video-badge badge-blue">SERMON HIGHLIGHT</span>
+                    <span class="video-duration">12:40</span>
+                    <div class="video-play-overlay">
+                        <div class="play-circle"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3>Walking by Faith in Dark Valleys</h3>
+                    <p>Sermon Highlight by Evangelist Ali Welekhasia. Powerful encouragement on trusting God's promises in adversity.</p>
+                    <button class="btn-card-action" onclick="openVideoPlayer('Walking by Faith in Dark Valleys', 'Sermon Highlight', 'dQw4w9WgXcQ')">Watch Sermon</button>
+                </div>
+            </div>
+
+            <!-- Video Item 3 -->
+            <div class="video-card music">
+                <div class="video-thumb" onclick="openVideoPlayer('VUMILIA MOYO (ft. Mercy Lukio) - Live Worship', 'Music Video', 'dQw4w9WgXcQ')">
+                    <span class="video-badge badge-gold">MUSIC VIDEO</span>
+                    <span class="video-duration">5:10</span>
+                    <div class="video-play-overlay">
+                        <div class="play-circle"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3>VUMILIA MOYO (ft. Mercy Lukio)</h3>
+                    <p>Live worship performance from the Nairobi Assembly. Anointed duet inspiring endurance and patience.</p>
+                    <button class="btn-card-action" onclick="openVideoPlayer('VUMILIA MOYO (ft. Mercy Lukio) - Live Worship', 'Music Video', 'dQw4w9WgXcQ')">Watch Live Worship</button>
+                </div>
+            </div>
+
+            <!-- Video Item 4 -->
+            <div class="video-card sermon">
+                <div class="video-thumb" onclick="openVideoPlayer('The Power of Praise & Thanksgiving', 'Sermon Highlight', 'dQw4w9WgXcQ')">
+                    <span class="video-badge badge-blue">SERMON HIGHLIGHT</span>
+                    <span class="video-duration">18:15</span>
+                    <div class="video-play-overlay">
+                        <div class="play-circle"><i class="fa-solid fa-play"></i></div>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3>The Power of Praise & Thanksgiving</h3>
+                    <p>Exposition from Psalm 100 on how thanksgiving releases divine joy, spiritual authority, and supernatural breakthrough.</p>
+                    <button class="btn-card-action" onclick="openVideoPlayer('The Power of Praise & Thanksgiving', 'Sermon Highlight', 'dQw4w9WgXcQ')">Watch Sermon</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CRUSADE PHOTO GALLERY WITH LIGHTBOX SECTION -->
+    <section id="gallery" class="section-container bg-darker">
+        <div class="section-header">
+            <span class="section-tag"><i class="fa-solid fa-camera-retro"></i> Revival in Pictures</span>
+            <h2 class="section-title">Crusade Photo Gallery & Moments</h2>
+            <p class="section-desc">Visual testimonies of open-air gospel crusades, powerful praise worship nights, altar calls, and soul harvests across Kenya and East Africa. Click any photo to view in high-resolution full-screen lightbox.</p>
+            
+            <!-- Category Filter Tabs for Gallery -->
+            <div class="filter-pills" id="galleryFilterTabs" role="tablist" aria-label="Gallery Categories">
+                <button type="button" class="filter-btn active" onclick="filterGalleryPhotos('all', this)" role="tab" aria-selected="true">
+                    <i class="fa-solid fa-border-all"></i> All Photos (<span id="galleryCountAll">8</span>)
+                </button>
+                <button type="button" class="filter-btn" onclick="filterGalleryPhotos('crusade', this)" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-fire-flame-curved"></i> Open-Air Crusades
+                </button>
+                <button type="button" class="filter-btn" onclick="filterGalleryPhotos('worship', this)" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-hands-holding-child"></i> Worship & Praise
+                </button>
+                <button type="button" class="filter-btn" onclick="filterGalleryPhotos('altar', this)" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-cross"></i> Altar Call & Miracles
+                </button>
+                <button type="button" class="filter-btn" onclick="filterGalleryPhotos('stage', this)" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-microphone-lines"></i> Stage & Ministry
+                </button>
+            </div>
+        </div>
+
+        <!-- Gallery Skeleton Placeholder Grid -->
+        <div id="gallerySkeletonGrid" class="skeleton-grid gallery-skeleton-grid" style="display: none;">
+            <div class="skeleton-card skeleton-gallery-card">
+                <div class="skeleton-box skeleton-img-ph"></div>
+                <div class="skeleton-gallery-body">
+                    <div class="skeleton-box skeleton-line skeleton-w75"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w50"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w90"></div>
+                </div>
+            </div>
+            <div class="skeleton-card skeleton-gallery-card">
+                <div class="skeleton-box skeleton-img-ph"></div>
+                <div class="skeleton-gallery-body">
+                    <div class="skeleton-box skeleton-line skeleton-w75"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w50"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w90"></div>
+                </div>
+            </div>
+            <div class="skeleton-card skeleton-gallery-card">
+                <div class="skeleton-box skeleton-img-ph"></div>
+                <div class="skeleton-gallery-body">
+                    <div class="skeleton-box skeleton-line skeleton-w75"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w50"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w90"></div>
+                </div>
+            </div>
+            <div class="skeleton-card skeleton-gallery-card">
+                <div class="skeleton-box skeleton-img-ph"></div>
+                <div class="skeleton-gallery-body">
+                    <div class="skeleton-box skeleton-line skeleton-w75"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w50"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w90"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gallery Grid Container (Populated with rich interactive cards) -->
+        <div class="gallery-photo-grid" id="crusadePhotoGrid">
+            <!-- Photos will be dynamically rendered & hydrated with lightbox capabilities -->
+        </div>
+
+        <!-- Gallery Footer Action -->
+        <div class="gallery-footer-bar">
+            <div class="gallery-counter-pill">
+                <i class="fa-solid fa-images"></i> 50+ Regional Crusades Documented • 70,000+ Souls Touched
+            </div>
+            <a href="#countdown" class="btn btn-gold btn-sm">
+                <i class="fa-solid fa-calendar-check"></i> Join Next Live Crusade
+            </a>
+        </div>
+    </section>
+
+    <!-- DEVOTIONALS & BLOG SECTION -->
+    <section id="blog" class="section-container">
+        <div class="section-header">
+            <span class="section-tag">Spiritual Nourishment</span>
+            <h2 class="section-title">Devotionals & Ministry Blog</h2>
+            <p class="section-desc">Weekly scripture study materials, written sermons, and reflections by Evangelist Ali Welekhasia to strengthen your daily walk with Christ.</p>
+        </div>
+
+        <!-- Blog Skeleton Placeholder Grid -->
+        <div id="blogSkeletonGrid" class="skeleton-grid blog-skeleton-grid" style="display: none;">
+            <div class="skeleton-card skeleton-blog-card">
+                <div class="skeleton-box skeleton-blog-img-ph"></div>
+                <div class="skeleton-blog-body">
+                    <div class="skeleton-meta-row">
+                        <div class="skeleton-box skeleton-pill"></div>
+                        <div class="skeleton-box skeleton-pill"></div>
+                    </div>
+                    <div class="skeleton-box skeleton-line skeleton-w80"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w90"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w60"></div>
+                    <div class="skeleton-box skeleton-btn-ph skeleton-w40" style="margin-top: 14px;"></div>
+                </div>
+            </div>
+            <div class="skeleton-card skeleton-blog-card">
+                <div class="skeleton-box skeleton-blog-img-ph"></div>
+                <div class="skeleton-blog-body">
+                    <div class="skeleton-meta-row">
+                        <div class="skeleton-box skeleton-pill"></div>
+                        <div class="skeleton-box skeleton-pill"></div>
+                    </div>
+                    <div class="skeleton-box skeleton-line skeleton-w80"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w90"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w60"></div>
+                    <div class="skeleton-box skeleton-btn-ph skeleton-w40" style="margin-top: 14px;"></div>
+                </div>
+            </div>
+            <div class="skeleton-card skeleton-blog-card">
+                <div class="skeleton-box skeleton-blog-img-ph"></div>
+                <div class="skeleton-blog-body">
+                    <div class="skeleton-meta-row">
+                        <div class="skeleton-box skeleton-pill"></div>
+                        <div class="skeleton-box skeleton-pill"></div>
+                    </div>
+                    <div class="skeleton-box skeleton-line skeleton-w80"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w90"></div>
+                    <div class="skeleton-box skeleton-line skeleton-w60"></div>
+                    <div class="skeleton-box skeleton-btn-ph skeleton-w40" style="margin-top: 14px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="blog-grid" id="blogGrid">
+            <!-- Article 1 -->
+            <article class="blog-card">
+                <div class="blog-card-img" style="background: linear-gradient(135deg, #1e293b, #0f172a);">
+                    <span class="blog-tag">DEVOTIONAL</span>
+                    <i class="fa-solid fa-hands-praying blog-watermark"></i>
+                </div>
+                <div class="blog-body">
+                    <div class="blog-meta">
+                        <span><i class="fa-regular fa-calendar"></i> August 22, 2026</span>
+                        <span><i class="fa-solid fa-book-bible"></i> Isaiah 40:31</span>
+                    </div>
+                    <h3>Renewing Your Strength in the Waiting Season</h3>
+                    <p>Those who wait on the Lord shall renew their strength; they shall mount up with wings like eagles. Waiting is not wasted time in God's kingdom...</p>
+                    <button class="blog-read-btn" onclick="openBlogModal('devotional-1')">
+                        Read Full Message <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </article>
+
+            <!-- Article 2 -->
+            <article class="blog-card">
+                <div class="blog-card-img" style="background: linear-gradient(135deg, #2b1f3d, #140d21);">
+                    <span class="blog-tag">WORSHIP INSIGHT</span>
+                    <i class="fa-solid fa-guitar blog-watermark"></i>
+                </div>
+                <div class="blog-body">
+                    <div class="blog-meta">
+                        <span><i class="fa-regular fa-calendar"></i> August 15, 2026</span>
+                        <span><i class="fa-solid fa-book-bible"></i> John 4:23-24</span>
+                    </div>
+                    <h3>The Anointing of True Spirit & Truth Worship</h3>
+                    <p>Worship is not merely an artistic melody; it is a lifestyle of wholehearted devotion that draws down the raw presence of the Holy Spirit...</p>
+                    <button class="blog-read-btn" onclick="openBlogModal('devotional-2')">
+                        Read Full Message <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </article>
+
+            <!-- Article 3 -->
+            <article class="blog-card">
+                <div class="blog-card-img" style="background: linear-gradient(135deg, #1a2f3a, #081720);">
+                    <span class="blog-tag">EVANGELISM</span>
+                    <i class="fa-solid fa-bullhorn blog-watermark"></i>
+                </div>
+                <div class="blog-body">
+                    <div class="blog-meta">
+                        <span><i class="fa-regular fa-calendar"></i> August 08, 2026</span>
+                        <span><i class="fa-solid fa-book-bible"></i> Mark 16:15</span>
+                    </div>
+                    <h3>The Great Commission: Winning Souls in Our Cities</h3>
+                    <p>Why open-air crusades and community outreach remain God's sharpest spearhead for touching thousands of unreached souls across East Africa...</p>
+                    <button class="blog-read-btn" onclick="openBlogModal('devotional-3')">
+                        Read Full Message <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- GLOBAL REACH & IMPACT VISUALIZATION SECTION -->
+    <section id="reach" class="section-container bg-darker">
+        <div class="section-header">
+            <span class="section-tag">Evangelism Across the Globe</span>
+            <h2 class="section-title">Ministry Global Reach & Locations</h2>
+            <p class="section-desc">Explore cities and regional towns where Ali Welekhasia has conducted revival crusades, alongside active prayer intercession origins.</p>
+        </div>
+
+        <div class="reach-dashboard-grid">
+            <!-- Map Visualization Card -->
+            <div class="reach-map-card">
+                <div class="reach-map-header">
+                    <div class="map-legend">
+                        <span class="legend-item"><span class="dot-crusade"></span> Crusades Held</span>
+                        <span class="legend-item"><span class="dot-prayer"></span> Prayer Requests</span>
+                    </div>
+                    <span class="reach-badge">50+ Crusades Conducted</span>
+                </div>
+
+                <!-- Interactive SVG Map / Visualization Container -->
+                <div id="reachMapContainer" class="reach-map-svg-container">
+                    <svg viewBox="0 0 800 450" class="reach-svg" id="interactiveMapSvg">
+                        <!-- Background Coordinates Grid -->
+                        <defs>
+                            <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(212,175,55,0.06)" stroke-width="1"/>
+                            </pattern>
+                            <radialGradient id="pulseGlow" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#d4af37" stop-opacity="0.8"/>
+                                <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#gridPattern)"/>
+
+                        <!-- Stylized Region Boundaries (East Africa & Diaspora hub) -->
+                        <path d="M 320,80 Q 420,70 480,120 T 540,240 T 480,380 T 360,390 T 300,280 T 260,180 Z" fill="rgba(30, 41, 59, 0.6)" stroke="rgba(212, 175, 55, 0.3)" stroke-width="1.5"/>
+                        
+                        <!-- Connecting Mission Arcs -->
+                        <path d="M 430,220 Q 460,180 500,250" fill="none" stroke="#d4af37" stroke-dasharray="4,4" stroke-width="1.5" opacity="0.6"/>
+                        <path d="M 430,220 Q 380,180 340,210" fill="none" stroke="#d4af37" stroke-dasharray="4,4" stroke-width="1.5" opacity="0.6"/>
+                        <path d="M 430,220 Q 390,270 380,310" fill="none" stroke="#d4af37" stroke-dasharray="4,4" stroke-width="1.5" opacity="0.6"/>
+                        <path d="M 430,220 Q 250,140 180,130" fill="none" stroke="#38bdf8" stroke-dasharray="4,4" stroke-width="1.5" opacity="0.4"/>
+
+                        <!-- City Hotspot Nodes -->
+                        <!-- 1. Nairobi (HQ) -->
+                        <g class="map-node" onclick="showReachLocation('Nairobi, Kenya', 'National Gospel Assemblies, 15+ Major Concerts, 25,000+ In Attendance')">
+                            <circle cx="430" cy="220" r="16" fill="url(#pulseGlow)" class="map-pulse"/>
+                            <circle cx="430" cy="220" r="7" fill="#d4af37" stroke="#fff" stroke-width="2"/>
+                            <text x="442" y="224" fill="#fff" font-size="12" font-weight="700">Nairobi (HQ)</text>
+                        </g>
+
+                        <!-- 2. Mombasa -->
+                        <g class="map-node" onclick="showReachLocation('Mombasa, Coast', 'Open-Air Revival Rallies, 5,000+ Gathered at Treasury Square')">
+                            <circle cx="500" cy="250" r="12" fill="url(#pulseGlow)" class="map-pulse"/>
+                            <circle cx="500" cy="250" r="6" fill="#d4af37" stroke="#fff" stroke-width="2"/>
+                            <text x="512" y="254" fill="#fff" font-size="11" font-weight="600">Mombasa</text>
+                        </g>
+
+                        <!-- 3. Kisumu & Western -->
+                        <g class="map-node" onclick="showReachLocation('Kisumu & Lake Region', 'Lake Region Gospel Explosion, 8,000+ Worshippers')">
+                            <circle cx="340" cy="210" r="12" fill="url(#pulseGlow)" class="map-pulse"/>
+                            <circle cx="340" cy="210" r="6" fill="#d4af37" stroke="#fff" stroke-width="2"/>
+                            <text x="275" y="214" fill="#fff" font-size="11" font-weight="600">Kisumu</text>
+                        </g>
+
+                        <!-- 4. Eldoret & Rift Valley -->
+                        <g class="map-node" onclick="showReachLocation('Eldoret & North Rift', 'Revival Praise Nights & Youth Leadership Conferences')">
+                            <circle cx="360" cy="170" r="12" fill="url(#pulseGlow)" class="map-pulse"/>
+                            <circle cx="360" cy="170" r="6" fill="#d4af37" stroke="#fff" stroke-width="2"/>
+                            <text x="295" y="174" fill="#fff" font-size="11" font-weight="600">Eldoret</text>
+                        </g>
+
+                        <!-- 5. Tanzania & East Africa -->
+                        <g class="map-node" onclick="showReachLocation('Arusha & Dar es Salaam', 'Cross-Border Gospel Mission & Choir Mentorship')">
+                            <circle cx="420" cy="330" r="10" fill="url(#pulseGlow)" class="map-pulse"/>
+                            <circle cx="420" cy="330" r="5" fill="#38bdf8" stroke="#fff" stroke-width="1.5"/>
+                            <text x="432" y="334" fill="#94a3b8" font-size="11">Tanzania Outreach</text>
+                        </g>
+
+                        <!-- 6. Global Diaspora Streaming -->
+                        <g class="map-node" onclick="showReachLocation('International Diaspora', 'UK, USA & Europe Online Prayer Intercessions & Live Streamers')">
+                            <circle cx="180" cy="130" r="10" fill="url(#pulseGlow)" class="map-pulse"/>
+                            <circle cx="180" cy="130" r="5" fill="#a855f7" stroke="#fff" stroke-width="1.5"/>
+                            <text x="90" y="134" fill="#a855f7" font-size="11" font-weight="600">Global Diaspora</text>
+                        </g>
+                    </svg>
+                </div>
+                
+                <div id="reachInfoBox" class="reach-info-box">
+                    <i class="fa-solid fa-map-pin"></i>
+                    <div>
+                        <strong id="reachInfoTitle">Nairobi Central Ministry Hub</strong>
+                        <p id="reachInfoDesc">Click on any city node above to inspect crusade milestones and local prayer impact.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Impact Statistics & Bar Chart -->
+            <div class="reach-stats-card">
+                <h3 class="stats-title"><i class="fa-solid fa-chart-column"></i> 5-Year Ministry Impact Growth</h3>
+                <p class="stats-desc">Documented reach across souls saved, crusade attendance, and prayer intercessions.</p>
+
+                <!-- D3/Canvas Bar Chart Container -->
+                <div class="impact-bars" id="impactChart">
+                    <div class="chart-row">
+                        <div class="chart-label">2022</div>
+                        <div class="chart-bar-wrap"><div class="chart-bar" style="width: 45%;"><span>12,000 Souls</span></div></div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-label">2023</div>
+                        <div class="chart-bar-wrap"><div class="chart-bar" style="width: 62%;"><span>24,500 Souls</span></div></div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-label">2024</div>
+                        <div class="chart-bar-wrap"><div class="chart-bar" style="width: 78%;"><span>38,000 Souls</span></div></div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-label">2025</div>
+                        <div class="chart-bar-wrap"><div class="chart-bar" style="width: 90%;"><span>52,000 Souls</span></div></div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-label">2026 (YTD)</div>
+                        <div class="chart-bar-wrap"><div class="chart-bar gold-bar" style="width: 100%;"><span>70,000+ Reached</span></div></div>
+                    </div>
+                </div>
+
+                <div class="stat-tiles">
+                    <div class="stat-tile">
+                        <span class="stat-num">50+</span>
+                        <span class="stat-name">Crusades Held</span>
+                    </div>
+                    <div class="stat-tile">
+                        <span class="stat-num">120K+</span>
+                        <span class="stat-name">Music Streams</span>
+                    </div>
+                    <div class="stat-tile">
+                        <span class="stat-num">4,800+</span>
+                        <span class="stat-name">Prayers Answered</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REAL-TIME SOCIAL MEDIA FEED SECTION -->
+    <section id="social" class="section-container">
+        <div class="section-header">
+            <span class="section-tag">Stay Connected</span>
+            <h2 class="section-title">Official Social Media Feeds</h2>
+            <p class="section-desc">Latest video uploads, devotional snippets, and live announcements directly from YouTube & Facebook.</p>
+        </div>
+
+        <div class="social-feed-grid">
+            <!-- Feed Item 1 (YouTube) -->
+            <div class="social-feed-card">
+                <div class="social-card-top">
+                    <div class="social-avatar"><i class="fa-brands fa-youtube" style="color: #ff0000;"></i></div>
+                    <div>
+                        <h4>Ali Welekhasia Official YouTube</h4>
+                        <span class="social-timestamp">Uploaded 2 days ago</span>
+                    </div>
+                </div>
+                <div class="social-card-body">
+                    <p>🔴 <strong>NEW PRAISE RELEASE:</strong> "Ni Wewe" Full Studio Performance is now streaming. Receive divine encouragement and share with family!</p>
+                    <div class="social-embed-preview">
+                        <i class="fa-solid fa-play-circle social-play-icon"></i>
+                        <span>Watch on YouTube • 4.2k views</span>
+                    </div>
+                </div>
+                <div class="social-card-footer">
+                    <a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="social-link" rel="noopener noreferrer">
+                        <i class="fa-brands fa-youtube"></i> Visit Channel & Subscribe
+                    </a>
+                </div>
+            </div>
+
+            <!-- Feed Item 2 (Facebook) -->
+            <div class="social-feed-card">
+                <div class="social-card-top">
+                    <div class="social-avatar"><i class="fa-brands fa-facebook-f" style="color: #1877f2;"></i></div>
+                    <div>
+                        <h4>Ali Welekhasia Ministry Facebook</h4>
+                        <span class="social-timestamp">Posted 3 days ago</span>
+                    </div>
+                </div>
+                <div class="social-card-body">
+                    <p>"Bwana asifiwe sana wapendwa! Join us as we prepare for the Mombasa Revival Crusade. Let us agree in prayer for soul salvation and spiritual breakthrough!" 🙏✨</p>
+                    <div class="social-embed-preview" style="background: rgba(24, 119, 242, 0.1);">
+                        <i class="fa-solid fa-newspaper" style="color: #1877f2;"></i>
+                        <span>Official Ministry Announcement</span>
+                    </div>
+                </div>
+                <div class="social-card-footer">
+                    <a href="https://www.facebook.com/aliwelekhasia" target="_blank" class="social-link" rel="noopener noreferrer">
+                        <i class="fa-brands fa-facebook"></i> Follow on Facebook
+                    </a>
+                </div>
+            </div>
+
+            <!-- Feed Item 3 (Instagram / Shorts) -->
+            <div class="social-feed-card">
+                <div class="social-card-top">
+                    <div class="social-avatar"><i class="fa-solid fa-bell" style="color: #d4af37;"></i></div>
+                    <div>
+                        <h4>Ministry Alert & Live Updates</h4>
+                        <span class="social-timestamp">Weekly Schedule</span>
+                    </div>
+                </div>
+                <div class="social-card-body">
+                    <p>Catch the weekly devotionals broadcast every Wednesday at 7:30 PM EAT. Submit your prayer items on our official website portal.</p>
+                    <div class="social-embed-preview">
+                        <i class="fa-solid fa-radio" style="color: #d4af37;"></i>
+                        <span>Live Broadcast Every Wednesday</span>
+                    </div>
+                </div>
+                <div class="social-card-footer">
+                    <a href="#prayer" class="social-link">
+                        <i class="fa-solid fa-hands-praying"></i> Submit Prayer Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PARTNER WITH US / FINANCIAL GIVING SECTION -->
+    <section id="partner" class="section-container bg-darker">
+        <div class="section-header">
+            <span class="section-tag">Kingdom Advancement</span>
+            <h2 class="section-title">Partner with Ali Welekhasia Ministry</h2>
+            <p class="section-desc">Your prayer and financial support empower open-air crusades across villages and cities, gospel music production, and charitable outreach.</p>
+        </div>
+
+        <div class="partner-card">
+            <div class="partner-grid">
+                <!-- Giving Details Column -->
+                <div class="partner-giving-col">
+                    <h3><i class="fa-solid fa-hand-holding-heart"></i> Ways to Give & Support</h3>
+                    <p class="partner-intro">Every seed sown helps print bibles, stage massive sound systems for open-air crusades, and produce spirit-filled gospel songs.</p>
+
+                    <!-- M-PESA Box -->
+                    <div class="giving-method-card">
+                        <div class="giving-method-header">
+                            <span class="mpesa-logo">M-PESA</span>
+                            <span class="giving-badge">Direct & Instant</span>
+                        </div>
+                        <div class="giving-detail-row">
+                            <span>Paybill / Business No:</span>
+                            <strong id="mpesaPaybill">247247</strong>
+                            <button class="copy-pill-btn" onclick="copyToClipboard('247247', 'Paybill Number')"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                        <div class="giving-detail-row">
+                            <span>Account Name:</span>
+                            <strong id="mpesaAccount">ALI WELEKHASIA</strong>
+                            <button class="copy-pill-btn" onclick="copyToClipboard('ALI WELEKHASIA', 'Account Name')"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                        <div class="giving-detail-row">
+                            <span>Direct Line:</span>
+                            <strong>+254 736 024 024</strong>
+                            <button class="copy-pill-btn" onclick="copyToClipboard('+254736024024', 'Direct Phone')"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
                     </div>
 
-                        <nav>
+                    <!-- Bank Transfer Box -->
+                    <div class="giving-method-card">
+                        <div class="giving-method-header">
+                            <span class="bank-logo"><i class="fa-solid fa-building-columns"></i> Bank Transfer (Kenya & International)</span>
+                        </div>
+                        <div class="giving-detail-row">
+                            <span>Bank:</span>
+                            <strong>Equity Bank Kenya</strong>
+                        </div>
+                        <div class="giving-detail-row">
+                            <span>Account Name:</span>
+                            <strong>Ali Welekhasia Gospel Ministries</strong>
+                        </div>
+                        <div class="giving-detail-row">
+                            <span>Branch / SWIFT:</span>
+                            <strong>Nairobi Hub • EQBLKENA</strong>
+                        </div>
+                    </div>
+                </div>
 
-                                <ul>
-                                            <li><a href="#">Home</a></li>
-                                                        <li><a href="#">Music</a></li>
-                                                                    <li><a href="#">Videos</a></li>
-                                                                                <li><a href="#">Gallery</a></li>
-                                                                                            <li><a href="#">Events</a></li>
-                                                                                                        <li><a href="#">Blog</a></li>
-                                                                                                                    <li><a href="#">Shop</a></li>
-                                                                                                                                <li><a href="#">Contact</a></li>
-                                                                                                                                        </ul>
+                <!-- Partnership Form & Pledge Column -->
+                <div class="partner-form-col">
+                    <h3><i class="fa-solid fa-seedling"></i> Partnership Covenant Form</h3>
+                    <p>Let us know your giving commitment so we can pray with you and send ministry updates.</p>
 
-                                                                                                                                            </nav>
+                    <form id="partnerForm" onsubmit="handlePartnerSubmit(event)">
+                        <div class="form-group">
+                            <label for="partnerName">Your Full Name</label>
+                            <input type="text" id="partnerName" placeholder="e.g. John Doe" required aria-label="Your Full Name" aria-describedby="partnerNameHint">
+                            <small id="partnerNameHint" class="form-hint">Enter your full official name for partner covenant records.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="partnerEmail">Email Address</label>
+                            <input type="email" id="partnerEmail" placeholder="e.g. john@example.com" required aria-label="Email Address" aria-describedby="partnerEmailHint">
+                            <small id="partnerEmailHint" class="form-hint">Ministry newsletters and giving receipts will be sent here.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="partnerPhone">Phone / WhatsApp Number</label>
+                            <input type="tel" id="partnerPhone" placeholder="e.g. +254 700 000 000" required aria-label="Phone or WhatsApp Number" aria-describedby="partnerPhoneHint">
+                            <small id="partnerPhoneHint" class="form-hint">Include country code for direct WhatsApp updates and prayer communion.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="partnerCategory">Giving Category</label>
+                            <select id="partnerCategory" required aria-label="Giving Category" aria-describedby="partnerCategoryHint">
+                                <option value="crusade">Crusade Evangelism & Logistics</option>
+                                <option value="music">Gospel Music & Video Production</option>
+                                <option value="sound">Sound Equipment & Bibles Fund</option>
+                                <option value="general">Monthly Ministry Partner Covenant</option>
+                            </select>
+                            <small id="partnerCategoryHint" class="form-hint">Select the specific gospel mission initiative you wish to sponsor.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="partnerAmount">Intended Support Amount (Optional)</label>
+                            <input type="text" id="partnerAmount" placeholder="e.g. KES 5,000 / $50 USD" aria-label="Intended Support Amount (Optional)" aria-describedby="partnerAmountHint">
+                            <small id="partnerAmountHint" class="form-hint">Specify your one-time or monthly pledge amount and currency.</small>
+                        </div>
+                        <button type="submit" class="btn btn-gold btn-block" aria-label="Submit Partnership Covenant">
+                            <i class="fa-solid fa-lock"></i> Submit Partnership Covenant
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                                                                                                                                            </header>
-<h2>ALI WELEKHASIA</h2>
-</div>
+    <!-- MINISTRY TESTIMONIALS SECTION (SWIPE GESTURE + 15S AUTO-PLAY + LIKE COUNTER) -->
+    <section id="testimonials" class="section-container text-center">
+        <div class="testimonials-wrapper">
+            <span class="section-tag">Transforming Lives & Faith</span>
+            <h2 class="section-title">Ministry Testimonials</h2>
+            <p class="section-desc">Praise reports and heartfelt testimonies from believers touched by worship songs, open-air revival crusades, and prayer intercession.</p>
 
-<nav>
-<ul>
-<li><a href="#">Home</a></li>
-<li><a href="#">Music</a></li>
-<li><a href="#">Videos</a></li>
-<li><a href="#">Gallery</a></li>
-<li><a href="#">Events</a></li>
-<li><a href="#">Blog</a></li>
-<li><a href="#">Shop</a></li>
-<li><a href="#">Contact</a></li>
-</ul>
-</nav>
+            <!-- Testimonials Filter Category Tabs -->
+            <div class="testimonials-filter-tabs" role="tablist" aria-label="Testimonial Categories">
+                <button type="button" class="testimony-filter-btn active" onclick="filterTestimonials('all', this)" role="tab" aria-selected="true">
+                    <i class="fa-solid fa-layer-group"></i> All Testimonies
+                </button>
+                <button type="button" class="testimony-filter-btn" onclick="filterTestimonials('music', this)" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-music"></i> Music Ministry
+                </button>
+                <button type="button" class="testimony-filter-btn" onclick="filterTestimonials('crusade', this)" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-fire-flame-curved"></i> Crusade Impact
+                </button>
+                <button type="button" class="testimony-filter-btn" onclick="filterTestimonials('prayer', this)" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-hands-praying"></i> Healing & Miracles
+                </button>
+            </div>
 
-</header>
+            <!-- Mobile Swipe Gesture Guidance Hint -->
+            <div class="carousel-swipe-hint">
+                <i class="fa-solid fa-hand-pointer"></i> <span>Swipe left or right to browse praise reports</span>
+            </div>
 
-<section class="hero">
+            <!-- Testimonials Slider Container with Swipe Gestures, 15s Auto-play & Pop-up Scale Hover Animation -->
+            <div class="testimonial-box testimonial-card-pop" id="testimonialCarousel" aria-live="polite">
+                <div class="quote-icon"><i class="fa-solid fa-quote-left"></i></div>
 
-<div class="overlay">
+                <div class="testimonial-slides-container" id="testimonialSlidesContainer">
+                    <!-- Slide 1: Pastor David Ochieng -->
+                    <div class="testimonial-slide active-slide" data-id="testimony-1" data-category="music">
+                        <span class="testimony-badge badge-music"><i class="fa-solid fa-music"></i> Music Ministry</span>
+                        <p class="testimonial-text">
+                            "Through the worship song 'Ni Wewe', I experienced divine peace and physical healing during a critical hospital recovery..."
+                        </p>
+                        <div class="testimonial-actions-row">
+                            <button type="button" class="btn-read-more-testimony" onclick="openFullTestimonyModal('testimony-1')">
+                                <i class="fa-solid fa-book-open"></i> Read Full Testimony
+                            </button>
+                            <button type="button" class="btn-like-testimony" id="likeBtn-testimony-1" onclick="toggleLikeTestimony('testimony-1', event)">
+                                <i class="fa-regular fa-heart"></i> <span class="like-label">Amen</span> (<span class="like-count" id="likeCount-testimony-1">142</span>)
+                            </button>
+                        </div>
+                        <h4 class="testimonial-author">Pastor David Ochieng</h4>
+                        <span class="testimonial-city">Victory Ministries, Nairobi</span>
+                    </div>
 
-<h1>WELCOME TO ALI WELEKHASIA MUSIC</h1>
+                    <!-- Slide 2: Mary A. Wambui -->
+                    <div class="testimonial-slide" data-id="testimony-2" data-category="crusade">
+                        <span class="testimony-badge badge-crusade"><i class="fa-solid fa-fire-flame-curved"></i> Crusade Impact</span>
+                        <p class="testimonial-text">
+                            "The open-air revival crusade in Mombasa changed my life completely. The message on unwavering faith brought my entire household to surrender to Christ..."
+                        </p>
+                        <div class="testimonial-actions-row">
+                            <button type="button" class="btn-read-more-testimony" onclick="openFullTestimonyModal('testimony-2')">
+                                <i class="fa-solid fa-book-open"></i> Read Full Testimony
+                            </button>
+                            <button type="button" class="btn-like-testimony" id="likeBtn-testimony-2" onclick="toggleLikeTestimony('testimony-2', event)">
+                                <i class="fa-regular fa-heart"></i> <span class="like-label">Amen</span> (<span class="like-count" id="likeCount-testimony-2">98</span>)
+                            </button>
+                        </div>
+                        <h4 class="testimonial-author">Mary A. Wambui</h4>
+                        <span class="testimonial-city">Mombasa, Kenya</span>
+                    </div>
 
-<p>
-Sharing the Gospel of Jesus Christ through Worship,
-Music, Ministry and Life-Changing Messages.
-</p>
+                    <!-- Slide 3: Brother Joseph Kipchirchir -->
+                    <div class="testimonial-slide" data-id="testimony-3" data-category="music">
+                        <span class="testimony-badge badge-music"><i class="fa-solid fa-music"></i> Music Ministry</span>
+                        <p class="testimonial-text">
+                            "Listening to 'Vumilia Moyo' every morning gives me supernatural endurance through trials. The devotional study materials continuously deepen my faith..."
+                        </p>
+                        <div class="testimonial-actions-row">
+                            <button type="button" class="btn-read-more-testimony" onclick="openFullTestimonyModal('testimony-3')">
+                                <i class="fa-solid fa-book-open"></i> Read Full Testimony
+                            </button>
+                            <button type="button" class="btn-like-testimony" id="likeBtn-testimony-3" onclick="toggleLikeTestimony('testimony-3', event)">
+                                <i class="fa-regular fa-heart"></i> <span class="like-label">Amen</span> (<span class="like-count" id="likeCount-testimony-3">215</span>)
+                            </button>
+                        </div>
+                        <h4 class="testimonial-author">Brother Joseph Kipchirchir</h4>
+                        <span class="testimonial-city">Eldoret, Kenya</span>
+                    </div>
 
-<div class="buttons">
+                    <!-- Slide 4: Elder Peter Mutua -->
+                    <div class="testimonial-slide" data-id="testimony-4" data-category="crusade">
+                        <span class="testimony-badge badge-crusade"><i class="fa-solid fa-fire-flame-curved"></i> Crusade Impact</span>
+                        <p class="testimonial-text">
+                            "During the Eldoret Open Grounds Crusade, over 400 souls gave their lives to Jesus Christ and my father was delivered from decades of addiction..."
+                        </p>
+                        <div class="testimonial-actions-row">
+                            <button type="button" class="btn-read-more-testimony" onclick="openFullTestimonyModal('testimony-4')">
+                                <i class="fa-solid fa-book-open"></i> Read Full Testimony
+                            </button>
+                            <button type="button" class="btn-like-testimony" id="likeBtn-testimony-4" onclick="toggleLikeTestimony('testimony-4', event)">
+                                <i class="fa-regular fa-heart"></i> <span class="like-label">Amen</span> (<span class="like-count" id="likeCount-testimony-4">187</span>)
+                            </button>
+                        </div>
+                        <h4 class="testimonial-author">Elder Peter Mutua</h4>
+                        <span class="testimonial-city">Eldoret Sports Grounds, Kenya</span>
+                    </div>
 
-<a href="#" class="btn">Watch on YouTube</a>
+                    <!-- Slide 5: Sister Grace & Family -->
+                    <div class="testimonial-slide" data-id="testimony-5" data-category="prayer">
+                        <span class="testimony-badge badge-prayer"><i class="fa-solid fa-hands-praying"></i> Healing & Miracles</span>
+                        <p class="testimonial-text">
+                            "The prayer intercessors stood with us when my daughter fell critically ill. God performed a divine miracle and she was declared completely healed!..."
+                        </p>
+                        <div class="testimonial-actions-row">
+                            <button type="button" class="btn-read-more-testimony" onclick="openFullTestimonyModal('testimony-5')">
+                                <i class="fa-solid fa-book-open"></i> Read Full Testimony
+                            </button>
+                            <button type="button" class="btn-like-testimony" id="likeBtn-testimony-5" onclick="toggleLikeTestimony('testimony-5', event)">
+                                <i class="fa-regular fa-heart"></i> <span class="like-label">Amen</span> (<span class="like-count" id="likeCount-testimony-5">164</span>)
+                            </button>
+                        </div>
+                        <h4 class="testimonial-author">Sister Grace & Family</h4>
+                        <span class="testimonial-city">Kisumu, Kenya</span>
+                    </div>
+                </div>
 
-<a href="#" class="btn2">Listen to Music</a>
+                <!-- Slider Controls & Progress Indicator -->
+                <div class="carousel-controls">
+                    <button class="carousel-btn" onclick="prevTestimonial()" title="Previous Testimonial (or swipe right)" aria-label="Previous Testimonial">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    
+                    <div class="carousel-dots" id="testimonialDots">
+                        <!-- Injected dynamically -->
+                    </div>
 
-</div>
+                    <button class="carousel-btn" onclick="nextTestimonial()" title="Next Testimonial (or swipe left)" aria-label="Next Testimonial">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
 
-</div>
+                <!-- Auto-play 15s indicator bar -->
+                <div class="carousel-progress-container">
+                    <div class="carousel-progress-bar" id="carouselProgressBar"></div>
+                </div>
+            </div>
 
-</section>
+            <!-- Submit Your Testimony Action Button Beneath Carousel -->
+            <div class="testimonials-cta-container">
+                <p class="testimonials-cta-subtitle">Has God done a mighty work in your life through this ministry?</p>
+                <button type="button" class="btn btn-outline-gold btn-submit-testimony" onclick="openTestimonyModal()" aria-label="Submit Your Testimony">
+                    <i class="fa-solid fa-feather-pointed"></i> Submit Your Testimony
+                </button>
+            </div>
+        </div>
+    </section>
 
-<section class="welcome">
+    <!-- PRAYER REQUEST & VOICE PRAYER RECORDER SECTION -->
+    <section id="prayer" class="section-container bg-darker">
+        <div class="prayer-box">
+            <span class="section-tag">Intercession & Agreement</span>
+            <h2 class="section-title text-gold">Submit Your Prayer Request</h2>
+            <p class="section-desc">Type your prayer request or record a voice prayer message. Our dedicated ministry intercessors will stand in fervent agreement with you.</p>
 
-<h2>WELCOME</h2>
+            <!-- Mode Selector: Type vs Voice Recording -->
+            <div class="prayer-tab-switch">
+                <button class="prayer-tab-btn active" id="prayerTextTab" onclick="switchPrayerMode('text')">
+                    <i class="fa-solid fa-pen-to-square"></i> Written Request
+                </button>
+                <button class="prayer-tab-btn" id="prayerVoiceTab" onclick="switchPrayerMode('voice')">
+                    <i class="fa-solid fa-microphone"></i> Record Voice Prayer
+                </button>
+            </div>
 
-<p>
+            <!-- Prayer Draft Restoration Notice -->
+            <div id="prayerDraftAlert" class="prayer-draft-alert" style="display:none;">
+                <div class="draft-alert-content">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Unsaved draft restored from your browser. Your typed prayer is protected.</span>
+                </div>
+                <button type="button" class="btn-clear-draft" onclick="discardPrayerDraft()" title="Discard draft">
+                    <i class="fa-solid fa-trash-can"></i> Discard Draft
+                </button>
+            </div>
 
-Welcome to the official website of
-<strong>Ali Welekhasia</strong>.
+            <!-- Written Prayer Form -->
+            <form id="prayerForm" class="prayer-form" onsubmit="handlePrayerSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prayerName" class="form-label">Your Full Name</label>
+                        <input type="text" id="prayerName" placeholder="Your Full Name" required aria-label="Your Full Name" aria-describedby="prayerNameHint">
+                        <small id="prayerNameHint" class="form-hint">Your name will be read aloud during morning pastoral intercessions.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="prayerEmail" class="form-label">Email Address</label>
+                        <input type="email" id="prayerEmail" placeholder="Your Email Address" required aria-label="Your Email Address" aria-describedby="prayerEmailHint">
+                        <small id="prayerEmailHint" class="form-hint">To receive pastoral reply and scriptural encouragement.</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="prayerCategory" class="form-label">Prayer Need Category</label>
+                    <select id="prayerCategory" required aria-label="Prayer Request Category" aria-describedby="prayerCategoryHint">
+                        <option value="Healing & Health">Healing & Health</option>
+                        <option value="Family & Peace">Family & Relationships</option>
+                        <option value="Financial Breakthrough">Financial & Career Provision</option>
+                        <option value="Spiritual Growth & Deliverance">Spiritual Growth & Deliverance</option>
+                        <option value="Thanksgiving">Thanksgiving & Praise Report</option>
+                    </select>
+                    <small id="prayerCategoryHint" class="form-hint">Select the focus area where you desire God's supernatural breakthrough.</small>
+                </div>
+                <div class="form-group">
+                    <label for="prayerMessage" class="form-label">Prayer Points / Message</label>
+                    <textarea rows="4" id="prayerMessage" placeholder="Type your prayer points here in detail..." required aria-label="Prayer Request Message" aria-describedby="prayerMessageHint"></textarea>
+                    <small id="prayerMessageHint" class="form-hint">Share specific burdens, health needs, or gratitude items for prayer agreement.</small>
+                </div>
+                <div class="form-actions-row">
+                    <button type="submit" class="btn btn-gold btn-block" aria-label="Send Prayer Request">
+                        <i class="fa-solid fa-paper-plane"></i> Send Prayer Request
+                    </button>
+                </div>
+            </form>
 
-This platform is dedicated to spreading the Gospel through
-powerful worship music, inspiring teachings,
-community outreach and Christian media.
+            <!-- Voice Prayer Recorder Panel -->
+            <div id="voicePrayerPanel" class="voice-prayer-panel" style="display: none;">
+                <div class="voice-record-box">
+                    <div class="record-mic-visualizer" id="micVisualizer">
+                        <div class="mic-circle" id="micCircle">
+                            <i class="fa-solid fa-microphone"></i>
+                        </div>
+                    </div>
 
-We pray every visitor encounters God's love
-and is transformed by His presence.
+                    <!-- Real-Time Web Audio API Waveform Visualizer -->
+                    <div class="voice-wave-container" id="voiceWaveContainer">
+                        <canvas id="voiceWaveCanvas" class="voice-wave-canvas" width="420" height="74" aria-label="Live Voice Frequency Waveform"></canvas>
+                        <div class="wave-overlay-label" id="waveOverlayLabel">Live Frequency Visualizer</div>
+                    </div>
+                    
+                    <div class="record-status" id="recordStatus">Click record to speak your prayer request</div>
+                    <div class="record-timer" id="recordTimer">00:00</div>
 
-</p>
+                    <div class="record-buttons">
+                        <button type="button" class="btn btn-record" id="startRecordBtn" onclick="startVoiceRecording()" aria-label="Start Voice Recording">
+                            <i class="fa-solid fa-circle-dot"></i> Start Recording
+                        </button>
+                        <button type="button" class="btn btn-stop" id="stopRecordBtn" onclick="stopVoiceRecording()" style="display:none;" aria-label="Stop Voice Recording">
+                            <i class="fa-solid fa-stop"></i> Stop Recording
+                        </button>
+                        <button type="button" class="btn btn-outline" id="resetRecordBtn" onclick="resetVoiceRecording()" style="display:none;" aria-label="Re-record Audio">
+                            <i class="fa-solid fa-rotate-left"></i> Re-record
+                        </button>
+                    </div>
 
-</section>
+                    <!-- Voice Audio Playback Container -->
+                    <div id="voicePlaybackContainer" class="voice-playback-container" style="display:none;">
+                        <audio id="audioPlayback" controls class="custom-audio-player" aria-label="Voice prayer recorded audio preview"></audio>
+                        <div class="voice-sender-info">
+                            <div class="form-group">
+                                <label for="voiceSenderName" class="form-label">Your Name</label>
+                                <input type="text" id="voiceSenderName" placeholder="Your Name" required aria-label="Your Full Name for Voice Prayer" aria-describedby="voiceSenderNameHint">
+                                <small id="voiceSenderNameHint" class="form-hint">Name associated with this voice prayer.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="voiceSenderEmail" class="form-label">Your Email</label>
+                                <input type="email" id="voiceSenderEmail" placeholder="Your Email" required aria-label="Your Email Address for Voice Prayer" aria-describedby="voiceSenderEmailHint">
+                                <small id="voiceSenderEmailHint" class="form-hint">To receive confirmation and prayer updates.</small>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-gold btn-block" onclick="submitVoicePrayer()" aria-label="Submit Voice Prayer">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Submit Voice Prayer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<section class="ministry">
+    <!-- FREQUENTLY ASKED QUESTIONS (FAQ) SECTION -->
+    <section id="faq" class="section-container">
+        <div class="section-header">
+            <span class="section-tag">Got Questions?</span>
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-desc">Find quick answers regarding booking Evangelist Ali Welekhasia, music licensing, crusades, and ministry involvement.</p>
+        </div>
 
-<h2>OUR MINISTRY</h2>
+        <div class="faq-accordion-container" id="faqAccordion">
+            <!-- FAQ 1 -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>How can I book Ali Welekhasia for church services or conferences?</span>
+                    <i class="fa-solid fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>You can invite Evangelist Ali Welekhasia by submitting a booking inquiry through our official contact channels (Email: <strong>ali.werekhasia01@gmail.com</strong> or Phone: <strong>+254 736 024 024</strong>) or through the Ministry Booking form. Please include event dates, venue location, and event theme.</p>
+                </div>
+            </div>
 
-<p>
+            <!-- FAQ 2 -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>Can our church choir sing and minister with Ali Welekhasia's songs?</span>
+                    <i class="fa-solid fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Yes, absolutely! All church praise and worship teams are warmly encouraged to use the songs for congregational worship to glorify Jesus Christ. You can download official PDF lyrics and chord sheets directly from our Music section.</p>
+                </div>
+            </div>
 
-Our mission is to glorify Jesus Christ by reaching people
-through Gospel music, evangelism, discipleship,
-community outreach and digital ministry.
+            <!-- FAQ 3 -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>How are prayer requests handled by the ministry team?</span>
+                    <i class="fa-solid fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Every written and voice prayer request received is forwarded to our dedicated intercessory prayer circle. Requests are prayed over during morning intercessions, and our team stands in spiritual agreement for your deliverance and breakthrough.</p>
+                </div>
+            </div>
 
-Every song, testimony and message is created
-to encourage faith, inspire hope and transform lives.
+            <!-- FAQ 4 -->
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span>How can I support upcoming evangelistic crusades financially?</span>
+                    <i class="fa-solid fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>You can partner with us via M-PESA Paybill (<strong>247247</strong>, Account: <strong>ALI WELEKHASIA</strong>) or via our verified Equity Bank details shown in the Partner With Us section. All partner funds directly finance open-air sound logistics, bibles, and village crusades.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-</p>
+    <!-- GOOGLE ADSENSE AD UNIT SECTION -->
+    <section class="adsense-section">
+        <div class="adsense-container">
+            <span class="ad-label">SPONSORED ADVERTISEMENT</span>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3137123958548928"
+                 data-ad-slot="auto"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </section>
 
-</section>
+    <!-- FOOTER WITH NEWSLETTER & SOCIAL CHANNELS -->
+    <footer id="newsletter" class="main-footer">
+        <div class="newsletter-card">
+            <span class="newsletter-tag">Stay Informed</span>
+            <h2>Subscribe to Ministry Updates & Devotionals</h2>
+            <p>Receive upcoming crusade dates, new Swahili gospel releases, and spiritual reflections straight to your inbox.</p>
+            
+            <form id="newsletterForm" class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
+                <input type="email" id="newsletterEmail" placeholder="Enter your email address..." required>
+                <button type="submit" class="btn btn-gold">
+                    <i class="fa-solid fa-paper-plane"></i> Subscribe
+                </button>
+            </form>
+        </div>
 
-<footer>
+        <div class="footer-columns">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <span class="logo-badge">AW</span>
+                    <span>ALI WELEKHASIA</span>
+                </div>
+                <p class="footer-about">Proclaiming Jesus Christ through anointed worship music, open-air crusade evangelism, and spirit-filled scriptures across Kenya and worldwide.</p>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Quick Navigation</h4>
+                <ul class="footer-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#music">Music & Lyrics</a></li>
+                    <li><a href="#videos">Videos & Sermons</a></li>
+                    <li><a href="#gallery">Crusade Gallery</a></li>
+                    <li><a href="#blog">Devotionals & Blog</a></li>
+                    <li><a href="#partner">Partner With Us</a></li>
+                    <li><a href="sitemap.xml" target="_blank"><i class="fa-solid fa-sitemap"></i> Sitemap (XML)</a></li>
+                    <li><a href="rss.xml" target="_blank"><i class="fa-solid fa-rss"></i> RSS Feed</a></li>
+                    <li><a href="javascript:void(0)" onclick="openAdminPortal()"><i class="fa-solid fa-user-shield"></i> Admin Portal</a></li>
+                </ul>
+            </div>
 
-<p>
+            <div class="footer-col">
+                <h4>Direct Contacts</h4>
+                <p><i class="fa-solid fa-envelope"></i> ali.werekhasia01@gmail.com</p>
+                <p><i class="fa-solid fa-phone"></i> +254 736 024 024</p>
+                <p><i class="fa-solid fa-location-dot"></i> Nairobi & Mombasa, Kenya</p>
+                <div class="seo-hub-trigger-wrap" style="margin-top: 14px;">
+                    <button type="button" class="btn-seo-hub-pill" onclick="openSeoFeedModal()" title="Dynamic Sitemap & RSS Feed Generator">
+                        <i class="fa-solid fa-square-rss"></i> SEO & RSS Hub
+                    </button>
+                </div>
+            </div>
 
-© 2026 Ali Welekhasia Music.
-All Rights Reserved.
+            <div class="footer-col">
+                <h4>Follow Our Ministry</h4>
+                <div class="footer-social-icons">
+                    <a href="https://youtube.com/@aliwelekhasia" target="_blank" title="YouTube Channel" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://www.facebook.com/aliwelekhasiaofficial" target="_blank" title="Facebook Page" rel="noopener noreferrer"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/ali_welekhasia" target="_blank" title="Instagram Profile" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@aliwelekhasia" target="_blank" title="TikTok Profile" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://twitter.com/aliwelekhasia" target="_blank" title="Twitter / X" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="https://www.linkedin.com/in/ali-welekhasia" target="_blank" title="LinkedIn Profile" rel="noopener noreferrer"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="https://open.spotify.com/artist/7MPLduzN6gHJRufAH8x8TJ?si=dbTN2u5qRoan-D2I2cpdOw&nd=1&dlsi=824e67e0cf8d4008" target="_blank" title="Spotify Artist Profile" rel="noopener noreferrer"><i class="fa-brands fa-spotify"></i></a>
+                    <a href="https://music.apple.com/ke/artist/ali-welekhasia/6792720164" target="_blank" title="Apple Music" rel="noopener noreferrer"><i class="fa-brands fa-apple"></i></a>
+                </div>
+            </div>
+        </div>
 
-</p>
+        <div class="footer-bottom">
+            <p>© 2026 Ali Welekhasia Gospel Music & Ministry. All Rights Reserved. • Designed for Kingdom Impact.</p>
+        </div>
+    </footer>
 
-</footer>
+    <!-- FLOATING SOCIAL MEDIA SHARE DRAWER (PINNED TO SIDE) -->
+    <aside id="floatingShareDrawer" class="floating-share-drawer" aria-label="Quick Social Share Menu">
+        <button type="button" class="share-drawer-toggle" id="shareDrawerToggle" onclick="toggleShareDrawer()" aria-label="Toggle Share Menu" title="Share Ministry Page">
+            <i class="fa-solid fa-share-nodes"></i>
+            <span class="share-toggle-text">Share</span>
+            <span class="share-toggle-badge"><i class="fa-solid fa-fire"></i></span>
+        </button>
+        <div class="share-drawer-panel" id="shareDrawerPanel">
+            <div class="share-drawer-header">
+                <span class="share-drawer-title"><i class="fa-solid fa-hands-holding-child"></i> Spread The Gospel</span>
+                <button type="button" class="share-drawer-close" onclick="toggleShareDrawer(false)" aria-label="Close Share Menu">&times;</button>
+            </div>
+            <p class="share-drawer-desc">Invite friends and family to experience anointed worship & upcoming crusade blessings.</p>
+            <div class="share-buttons-list">
+                <button type="button" class="share-btn share-btn-whatsapp" onclick="shareToPlatform('whatsapp')" title="Share on WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span>WhatsApp</span>
+                </button>
+                <button type="button" class="share-btn share-btn-facebook" onclick="shareToPlatform('facebook')" title="Share on Facebook">
+                    <i class="fa-brands fa-facebook-f"></i>
+                    <span>Facebook</span>
+                </button>
+                <button type="button" class="share-btn share-btn-twitter" onclick="shareToPlatform('twitter')" title="Share on X (Twitter)">
+                    <i class="fa-brands fa-x-twitter"></i>
+                    <span>X (Twitter)</span>
+                </button>
+                <button type="button" class="share-btn share-btn-telegram" onclick="shareToPlatform('telegram')" title="Share on Telegram">
+                    <i class="fa-brands fa-telegram"></i>
+                    <span>Telegram</span>
+                </button>
+                <button type="button" class="share-btn share-btn-copy" onclick="copyMinistryPageLink()" title="Copy Page Link">
+                    <i class="fa-solid fa-link"></i>
+                    <span id="copyLinkBtnText">Copy Link</span>
+                </button>
+            </div>
+        </div>
+    </aside>
 
+    <!-- FLOATING BACK TO TOP BUTTON -->
+    <button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()" title="Back to Top" aria-label="Back to Top">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <!-- EXIT-INTENT NEWSLETTER SUBSCRIPTION MODAL -->
+    <div id="exitIntentModal" class="modal-overlay exit-intent-modal-overlay" onclick="handleModalBackdropClick(event, 'exitIntentModal')" role="dialog" aria-modal="true" aria-labelledby="exitIntentTitle">
+        <div class="exit-intent-card" onclick="event.stopPropagation()">
+            <button class="modal-close-icon exit-close-btn" onclick="closeExitIntentModal()" aria-label="Close modal">&times;</button>
+            
+            <div class="exit-intent-header">
+                <div class="exit-intent-icon-badge">
+                    <i class="fa-solid fa-dove"></i>
+                </div>
+                <span class="exit-intent-tag"><i class="fa-solid fa-sparkles"></i> Exclusive Ministry Blessing</span>
+                <h3 id="exitIntentTitle" class="exit-intent-title">Before You Go, Stay Connected!</h3>
+                <p class="exit-intent-desc">Join over <strong>10,000+</strong> believers receiving weekly prophetic devotionals, live crusade broadcast links, and free worship lyrics chord sheets directly in their inbox.</p>
+            </div>
+
+            <form id="exitIntentForm" class="exit-intent-form" onsubmit="handleExitIntentSubscribe(event)">
+                <div class="exit-form-group">
+                    <i class="fa-solid fa-envelope exit-input-icon"></i>
+                    <input type="email" id="exitIntentEmail" placeholder="Enter your email for spiritual updates..." required autocomplete="email">
+                </div>
+                <button type="submit" class="btn btn-gold btn-block exit-submit-btn">
+                    <i class="fa-solid fa-paper-plane"></i> Subscribe & Receive Ministry Blessings
+                </button>
+            </form>
+
+            <div class="exit-intent-footer">
+                <div class="exit-perks-row">
+                    <span><i class="fa-solid fa-check-double text-gold"></i> Weekly Word</span>
+                    <span><i class="fa-solid fa-check-double text-gold"></i> Live Alerts</span>
+                    <span><i class="fa-solid fa-check-double text-gold"></i> Free Chords</span>
+                </div>
+                <button type="button" class="exit-dismiss-link" onclick="closeExitIntentModal()">
+                    No thanks, I'll continue browsing the website
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO PLAYER OVERLAY MODAL -->
+    <div id="videoModal" class="modal-overlay" onclick="handleModalBackdropClick(event, 'videoModal')">
+        <div class="video-modal-card">
+            <button class="modal-close-icon" onclick="closeVideoPlayer()">&times;</button>
+            <span id="modalVideoBadge" class="modal-badge">Category</span>
+            <h3 id="modalVideoTitle" class="modal-title">Video Title</h3>
+            
+            <div class="modal-video-wrapper">
+                <iframe id="modalVideoIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <div class="modal-footer-actions">
+                <a id="modalYoutubeLink" href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank" class="btn btn-gold" rel="noopener noreferrer">
+                    <i class="fa-brands fa-youtube"></i> Open on YouTube
+                </a>
+                <button onclick="closeVideoPlayer()" class="btn btn-outline">Close Player</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LYRICS & PDF DOWNLOAD MODAL -->
+    <div id="lyricsModal" class="modal-overlay" onclick="handleModalBackdropClick(event, 'lyricsModal')">
+        <div class="lyrics-modal-card">
+            <div class="lyrics-modal-header">
+                <div>
+                    <span id="lyricsModalKey" class="meta-tag">Key: D Major</span>
+                    <h2 id="lyricsModalTitle">NI WEWE</h2>
+                    <span id="lyricsModalArtist" class="lyrics-artist">Ali Welekhasia</span>
+                </div>
+                <button class="modal-close-icon" onclick="closeLyricsModal()">&times;</button>
+            </div>
+
+            <div class="lyrics-modal-tabs">
+                <button class="lyrics-tab-btn active" id="tabSwahiliLyrics" onclick="switchLyricsTab('swahili')">Swahili Lyrics</button>
+                <button class="lyrics-tab-btn" id="tabChordsLyrics" onclick="switchLyricsTab('chords')">Chords & Progression</button>
+                <button class="lyrics-tab-btn" id="tabEnglishLyrics" onclick="switchLyricsTab('english')">English Translation</button>
+            </div>
+
+            <div class="lyrics-modal-body" id="lyricsModalContent">
+                <!-- Injected via script.js -->
+            </div>
+
+            <div class="lyrics-modal-footer">
+                <button class="btn btn-gold" onclick="downloadLyricsAsPdf()">
+                    <i class="fa-solid fa-file-pdf"></i> Download PDF Lyrics Sheet
+                </button>
+                <button class="btn btn-outline" onclick="copyLyricsText()">
+                    <i class="fa-regular fa-copy"></i> Copy Lyrics
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEVOTIONAL & BLOG POST MODAL -->
+    <div id="blogModal" class="modal-overlay" onclick="handleModalBackdropClick(event, 'blogModal')">
+        <div class="blog-modal-card">
+            <button class="modal-close-icon" onclick="closeBlogModal()" aria-label="Close modal">&times;</button>
+            <span id="blogModalTag" class="modal-badge">Devotional</span>
+            <h2 id="blogModalTitle">Devotional Title</h2>
+            <div class="blog-modal-meta" id="blogModalMeta">August 22, 2026 • Evangelist Ali Welekhasia</div>
+            
+            <div class="blog-modal-body" id="blogModalBody">
+                <!-- Injected via script.js -->
+            </div>
+
+            <!-- Social Share Button Group inside Devotional Modal -->
+            <div class="blog-share-container">
+                <div class="blog-share-header">
+                    <i class="fa-solid fa-share-nodes"></i>
+                    <span>Share this scripture message:</span>
+                </div>
+                <div class="devotional-social-share-group" role="group" aria-label="Share devotional to social media">
+                    <button type="button" class="devotional-share-btn share-whatsapp" onclick="shareDevotional('whatsapp')" aria-label="Share this devotional on WhatsApp">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                    </button>
+                    <button type="button" class="devotional-share-btn share-facebook" onclick="shareDevotional('facebook')" aria-label="Share this devotional on Facebook">
+                        <i class="fa-brands fa-facebook-f"></i> Facebook
+                    </button>
+                    <button type="button" class="devotional-share-btn share-twitter" onclick="shareDevotional('twitter')" aria-label="Share this devotional on Twitter / X">
+                        <i class="fa-brands fa-x-twitter"></i> Twitter
+                    </button>
+                    <button type="button" class="devotional-share-btn share-copy-link" onclick="shareDevotional('copy')" aria-label="Copy devotional text and link">
+                        <i class="fa-regular fa-copy"></i> Copy Link
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-footer-actions">
+                <button onclick="closeBlogModal()" class="btn btn-outline" aria-label="Close devotional modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBMIT YOUR TESTIMONY MODAL -->
+    <div id="testimonyModal" class="modal-overlay" onclick="handleModalBackdropClick(event, 'testimonyModal')" role="dialog" aria-modal="true" aria-labelledby="testimonyModalTitle">
+        <div class="modal-container testimony-modal-card">
+            <div class="modal-header">
+                <div class="modal-header-info">
+                    <span class="modal-badge"><i class="fa-solid fa-feather-pointed"></i> Praise Report</span>
+                    <h2 id="testimonyModalTitle">Share Your Testimony</h2>
+                    <span class="lyrics-artist">Give glory to God for what He has done through this ministry</span>
+                </div>
+                <button class="modal-close-icon" onclick="closeTestimonyModal()" aria-label="Close testimony modal">&times;</button>
+            </div>
+
+            <form id="testimonyForm" class="testimony-form" onsubmit="handleTestimonySubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="testimonyAuthor" class="form-label">Your Full Name</label>
+                        <input type="text" id="testimonyAuthor" placeholder="e.g. Sister Grace Wanjiku" required aria-label="Your Full Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="testimonyCity" class="form-label">City, Town or Church</label>
+                        <input type="text" id="testimonyCity" placeholder="e.g. Mombasa, Kenya" required aria-label="City or Church">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="testimonyCategory" class="form-label">Testimony Focus</label>
+                        <select id="testimonyCategory" required aria-label="Testimony Category">
+                            <option value="music">Music Ministry (Worship Song, Album)</option>
+                            <option value="crusade">Crusade Impact (Revival & Gospel Crusade)</option>
+                            <option value="prayer">Healing & Miracles (Intercession)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="testimonyEmail" class="form-label">Email Address (Optional)</label>
+                        <input type="email" id="testimonyEmail" placeholder="your.email@example.com" aria-label="Email Address">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="testimonyStory" class="form-label">Your Praise Report / Testimony</label>
+                    <textarea id="testimonyStory" rows="4" placeholder="Describe how God touched, saved, delivered, or healed you through the worship music, sermon message, or crusade..." required aria-label="Testimony Description"></textarea>
+                    <small class="form-hint">Your praise report will encourage thousands of believers across the nations.</small>
+                </div>
+
+                <div class="modal-footer-actions">
+                    <button type="submit" class="btn btn-gold btn-block">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Praise Report
+                    </button>
+                    <button type="button" class="btn btn-outline" onclick="closeTestimonyModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SEO, DYNAMIC SITEMAP & RSS FEED GENERATOR MODAL -->
+    <div id="seoFeedModal" class="modal-overlay" onclick="handleModalBackdropClick(event, 'seoFeedModal')" role="dialog" aria-modal="true" aria-labelledby="seoModalTitle">
+        <div class="modal-container seo-modal-card">
+            <div class="modal-header">
+                <div class="modal-header-info">
+                    <span class="modal-badge"><i class="fa-solid fa-square-rss"></i> SEO & Syndication Center</span>
+                    <h2 id="seoModalTitle">Dynamic Sitemap & RSS Feed</h2>
+                    <span class="lyrics-artist">Live XML feeds for search engines, web crawlers & feed readers</span>
+                </div>
+                <button class="modal-close-icon" onclick="closeSeoFeedModal()" aria-label="Close SEO modal">&times;</button>
+            </div>
+
+            <!-- Tabs: Sitemap vs RSS Feed -->
+            <div class="lyrics-modal-tabs">
+                <button class="lyrics-tab-btn active" id="tabSeoSitemap" onclick="switchSeoTab('sitemap')">
+                    <i class="fa-solid fa-sitemap"></i> Sitemap (sitemap.xml)
+                </button>
+                <button class="lyrics-tab-btn" id="tabSeoRss" onclick="switchSeoTab('rss')">
+                    <i class="fa-solid fa-rss"></i> RSS Feed (rss.xml)
+                </button>
+            </div>
+
+            <div class="seo-modal-body">
+                <div class="seo-feed-stats" id="seoFeedStats">
+                    <span><i class="fa-solid fa-globe"></i> Domain: <strong>aliwelekhasia.com</strong></span>
+                    <span><i class="fa-solid fa-rotate"></i> Last Updated: <strong>Live Real-Time</strong></span>
+                </div>
+
+                <div class="seo-code-container">
+                    <div class="seo-code-header">
+                        <span id="seoFeedFilename"><i class="fa-solid fa-file-code"></i> sitemap.xml</span>
+                        <div class="seo-code-actions">
+                            <button type="button" class="btn-seo-action" onclick="copyCurrentSeoXml()" title="Copy XML to clipboard">
+                                <i class="fa-regular fa-copy"></i> Copy XML
+                            </button>
+                            <button type="button" class="btn-seo-action" onclick="downloadCurrentSeoXml()" title="Download XML file">
+                                <i class="fa-solid fa-download"></i> Download .xml
+                            </button>
+                            <a id="seoDirectLink" href="sitemap.xml" target="_blank" class="btn-seo-action" title="Open static XML in new tab">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open URL
+                            </a>
+                        </div>
+                    </div>
+                    <pre class="seo-code-pre"><code id="seoXmlCodeDisplay">Generating dynamic XML feed...</code></pre>
+                </div>
+
+                <div class="seo-indexing-info">
+                    <h4><i class="fa-solid fa-circle-info"></i> Search Engine Indexing Guidelines</h4>
+                    <p>Submit <code>https://aliwelekhasia.com/sitemap.xml</code> to <strong>Google Search Console</strong> & <strong>Bing Webmaster Tools</strong> to accelerate crawler indexing for new devotionals, songs, and crusade updates.</p>
+                </div>
+            </div>
+
+            <div class="modal-footer-actions">
+                <button type="button" class="btn btn-gold" onclick="downloadCurrentSeoXml()">
+                    <i class="fa-solid fa-file-arrow-down"></i> Download Feed XML
+                </button>
+                <button type="button" class="btn btn-outline" onclick="closeSeoFeedModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FULLSCREEN CRUSADE PHOTO LIGHTBOX MODAL -->
+    <div id="crusadeLightbox" class="lightbox-overlay" onclick="handleLightboxOverlayClick(event)" role="dialog" aria-modal="true" aria-labelledby="lightboxPhotoTitle">
+        <div class="lightbox-wrapper">
+            <!-- Top Controls Bar -->
+            <div class="lightbox-top-bar">
+                <div class="lightbox-counter-badge">
+                    <i class="fa-solid fa-image"></i> Photo <span id="lightboxCurrentNum">1</span> of <span id="lightboxTotalNum">8</span>
+                </div>
+                <div class="lightbox-top-actions">
+                    <button type="button" class="lightbox-icon-btn" onclick="toggleLightboxZoom()" title="Zoom In/Out (Toggle)" aria-label="Zoom Photo">
+                        <i class="fa-solid fa-magnifying-glass-plus" id="lightboxZoomIcon"></i>
+                    </button>
+                    <button type="button" class="lightbox-icon-btn" onclick="toggleLightboxFullscreen()" title="Toggle Fullscreen" aria-label="Fullscreen">
+                        <i class="fa-solid fa-expand" id="lightboxFullscreenIcon"></i>
+                    </button>
+                    <button type="button" class="lightbox-icon-btn lightbox-close-btn" onclick="closeCrusadeLightbox()" title="Close Lightbox (Esc)" aria-label="Close Lightbox">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Stage / Image Container -->
+            <div class="lightbox-stage">
+                <!-- Navigation Arrows -->
+                <button type="button" class="lightbox-nav-btn lightbox-prev-btn" onclick="prevLightboxPhoto()" title="Previous Photo (Left Arrow)" aria-label="Previous Photo">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                
+                <div class="lightbox-image-container" id="lightboxImageContainer">
+                    <div id="lightboxMediaContent" class="lightbox-media-wrapper">
+                        <!-- Dynamic rendered image / canvas visual -->
+                    </div>
+                </div>
+
+                <button type="button" class="lightbox-nav-btn lightbox-next-btn" onclick="nextLightboxPhoto()" title="Next Photo (Right Arrow)" aria-label="Next Photo">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- Bottom Caption Card -->
+            <div class="lightbox-caption-card">
+                <div class="lightbox-caption-header">
+                    <div class="lightbox-caption-titles">
+                        <span class="lightbox-cat-badge" id="lightboxCategoryBadge">Open-Air Crusade</span>
+                        <h3 id="lightboxPhotoTitle">Mombasa Mega Revival & Worship Night</h3>
+                    </div>
+                    <div class="lightbox-meta-pills">
+                        <span class="lightbox-meta-pill" id="lightboxLocationBadge"><i class="fa-solid fa-location-dot"></i> Treasury Square, Mombasa</span>
+                        <span class="lightbox-meta-pill" id="lightboxDateBadge"><i class="fa-regular fa-calendar"></i> September 2026</span>
+                        <span class="lightbox-meta-pill highlight" id="lightboxAttendeesBadge"><i class="fa-solid fa-users"></i> 18,000+ Attended</span>
+                    </div>
+                </div>
+                <p id="lightboxDescription" class="lightbox-desc-text">Massive outpouring of praise, revival preaching, and miraculous healings under open skies.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FULL TESTIMONY READER MODAL -->
+    <div id="fullTestimonyModal" class="modal-overlay" onclick="handleModalBackdropClick(event, 'fullTestimonyModal')" role="dialog" aria-modal="true" aria-labelledby="modalTestimonyAuthor">
+        <div class="modal-container testimony-reader-card">
+            <div class="modal-header">
+                <div class="modal-header-info">
+                    <span class="testimony-badge" id="modalTestimonyBadge"><i class="fa-solid fa-music"></i> Music Ministry</span>
+                    <h2 id="modalTestimonyAuthor">Pastor David Ochieng</h2>
+                    <span class="testimony-city" id="modalTestimonyCity"><i class="fa-solid fa-location-dot"></i> Victory Ministries, Nairobi</span>
+                </div>
+                <button class="modal-close-icon" onclick="closeFullTestimonyModal()" aria-label="Close testimony modal">&times;</button>
+            </div>
+
+            <div class="testimony-reader-body">
+                <div class="testimony-quote-decorative"><i class="fa-solid fa-quote-left"></i></div>
+                <div class="testimony-full-content" id="modalTestimonyContent">
+                    <!-- Full testimony text loaded dynamically -->
+                </div>
+                <div class="testimony-reader-meta">
+                    <span id="modalTestimonyDate"><i class="fa-regular fa-calendar-check"></i> August 2026</span>
+                    <span class="testimony-verified-tag"><i class="fa-solid fa-circle-check"></i> Verified Praise Report</span>
+                </div>
+            </div>
+
+            <div class="testimony-reader-footer">
+                <div class="testimony-footer-like">
+                    <button type="button" class="btn-like-testimony" id="modalTestimonyLikeBtn" onclick="handleModalLikeTestimony(event)">
+                        <i class="fa-regular fa-heart"></i> <span class="like-label">Amen</span> (<span class="like-count" id="modalTestimonyLikeCount">0</span>)
+                    </button>
+                </div>
+                <div class="testimony-share-actions">
+                    <button type="button" class="btn-share-pill" onclick="shareCurrentTestimony('whatsapp')" title="Share via WhatsApp">
+                        <i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> WhatsApp
+                    </button>
+                    <button type="button" class="btn-share-pill" onclick="shareCurrentTestimony('facebook')" title="Share via Facebook">
+                        <i class="fa-brands fa-facebook-f" style="color: #1877f2;"></i> Facebook
+                    </button>
+                    <button type="button" class="btn-share-pill" onclick="shareCurrentTestimony('copy')" title="Copy Testimony">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="adminLoginModal" class="modal-overlay" onclick="handleModalBackdropClick(event, 'adminLoginModal')" role="dialog" aria-modal="true" aria-labelledby="adminLoginTitle">
+        <div class="modal-container admin-login-card">
+            <div class="modal-header">
+                <div class="modal-header-info">
+                    <span class="modal-badge badge-gold"><i class="fa-solid fa-user-shield"></i> Ministry Administration</span>
+                    <h2 id="adminLoginTitle">Admin Portal Access</h2>
+                    <span class="lyrics-artist">Sign in to manage crusades, devotionals, songs, videos, gallery, logos, and testimonials without code changes</span>
+                </div>
+                <button class="modal-close-icon" onclick="closeAdminLoginModal()" aria-label="Close admin login modal">&times;</button>
+            </div>
+
+            <form id="adminLoginForm" class="admin-form" onsubmit="handleAdminLogin(event)">
+                <div class="admin-auth-notice">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <div>
+                        <strong>Authorized Ministry Login</strong>
+                        <p>Demo Admin Credentials: Username <code>admin</code> or <code>ali.werekhasia01@gmail.com</code> | Password: <code>minister2026</code></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminUsername" class="form-label">Admin Username / Email</label>
+                    <div class="admin-input-wrap">
+                        <i class="fa-solid fa-envelope input-icon"></i>
+                        <input type="text" id="adminUsername" placeholder="e.g. admin or ali.werekhasia01@gmail.com" required autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminPassword" class="form-label">Password</label>
+                    <div class="admin-input-wrap">
+                        <i class="fa-solid fa-key input-icon"></i>
+                        <input type="password" id="adminPassword" placeholder="Enter admin password..." required autocomplete="current-password">
+                        <button type="button" class="btn-toggle-pwd" onclick="toggleAdminPasswordVisibility()" title="Show/Hide Password" aria-label="Toggle Password Visibility">
+                            <i class="fa-solid fa-eye" id="pwdEyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-form-options">
+                    <label class="remember-label">
+                        <input type="checkbox" id="adminRememberMe" checked>
+                        <span>Keep admin session active</span>
+                    </label>
+                </div>
+
+                <div class="modal-footer-actions">
+                    <button type="submit" class="btn btn-gold btn-block" id="adminLoginSubmitBtn">
+                        <i class="fa-solid fa-right-to-bracket"></i> Sign In to Dashboard
+                    </button>
+                    <button type="button" class="btn btn-outline" onclick="closeAdminLoginModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN MANAGEMENT DASHBOARD MODAL -->
+    <div id="adminDashboardModal" class="modal-overlay" onclick="handleModalBackdropClick(event, 'adminDashboardModal')" role="dialog" aria-modal="true" aria-labelledby="adminDashboardTitle">
+        <div class="modal-container admin-dashboard-card">
+            <!-- Dashboard Header -->
+            <div class="admin-dash-header">
+                <div class="admin-dash-user-info">
+                    <div class="admin-avatar-badge">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <div>
+                        <div class="admin-badge-pill"><i class="fa-solid fa-circle-check"></i> Authenticated Admin</div>
+                        <h2 id="adminDashboardTitle">Ministry Content Management Portal</h2>
+                        <span class="admin-user-subtitle">Evangelist Ali Welekhasia Official Website Control Center</span>
+                    </div>
+                </div>
+                <div class="admin-header-actions">
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="logoutAdmin()" title="Log out from admin session">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                    </button>
+                    <button class="modal-close-icon" onclick="closeAdminDashboardModal()" aria-label="Close dashboard">&times;</button>
+                </div>
+            </div>
+
+            <!-- Dashboard Navigation Tabs -->
+            <div class="admin-dash-tabs" role="tablist">
+                <button type="button" class="admin-tab-btn active" id="tabCrusadeAdmin" onclick="switchAdminTab('crusades')" role="tab" aria-selected="true">
+                    <i class="fa-solid fa-fire"></i> 1. Crusades
+                </button>
+                <button type="button" class="admin-tab-btn" id="tabBlogAdmin" onclick="switchAdminTab('blog')" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-pen-to-square"></i> 2. Devotionals
+                </button>
+                <button type="button" class="admin-tab-btn" id="tabSongsAdmin" onclick="switchAdminTab('songs')" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-music"></i> 3. Songs & Lyrics
+                </button>
+                <button type="button" class="admin-tab-btn" id="tabVideosAdmin" onclick="switchAdminTab('videos')" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-video"></i> 4. Videos & Sermons
+                </button>
+                <button type="button" class="admin-tab-btn" id="tabGalleryAdmin" onclick="switchAdminTab('gallery')" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-images"></i> 5. Crusade Photos
+                </button>
+                <button type="button" class="admin-tab-btn" id="tabBrandingAdmin" onclick="switchAdminTab('branding')" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> 6. Logo & Hero
+                </button>
+                <button type="button" class="admin-tab-btn" id="tabTestimoniesAdmin" onclick="switchAdminTab('testimonies')" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-comments"></i> 7. Testimonials (<span id="adminTestimonyCountBadge">5</span>)
+                </button>
+                <button type="button" class="admin-tab-btn" id="tabSettingsAdmin" onclick="switchAdminTab('settings')" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-sliders"></i> 8. SEO & Feeds
+                </button>
+            </div>
+
+            <!-- Tab 1: Crusade & Events Manager -->
+            <div class="admin-tab-content active" id="adminContentCrusades">
+                <div class="admin-section-intro">
+                    <h3><i class="fa-solid fa-calendar-check"></i> Live Crusade Event & Countdown Manager</h3>
+                    <p>Update upcoming crusade details shown in the live countdown banner, Google Calendar invites, iCal files, and SEO feeds.</p>
+                </div>
+
+                <form id="adminCrusadeForm" class="admin-content-form" onsubmit="handleAdminCrusadeSave(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminCrusadeTitle" class="form-label">Crusade / Event Title</label>
+                            <input type="text" id="adminCrusadeTitle" required placeholder="e.g. Mombasa Mega Revival Crusade & Worship Night">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminCrusadeBadge" class="form-label">Event Tag / Badge</label>
+                            <input type="text" id="adminCrusadeBadge" required placeholder="e.g. NEXT MAJOR CRUSADE">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminCrusadeVenue" class="form-label">Venue / Grounds</label>
+                            <input type="text" id="adminCrusadeVenue" required placeholder="e.g. Treasury Square Grounds">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminCrusadeCity" class="form-label">City, Town & Country</label>
+                            <input type="text" id="adminCrusadeCity" required placeholder="e.g. Mombasa, Kenya">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminCrusadeStartDate" class="form-label">Start Date & Time</label>
+                            <input type="datetime-local" id="adminCrusadeStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminCrusadeEndDate" class="form-label">End Date & Time</label>
+                            <input type="datetime-local" id="adminCrusadeEndDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adminCrusadeDesc" class="form-label">Event Description & Ministry Highlights</label>
+                        <textarea id="adminCrusadeDesc" rows="3" required placeholder="Describe the revival program, worship sessions, guest ministers, transport arrangements, and prayer themes..."></textarea>
+                    </div>
+
+                    <div class="admin-form-actions">
+                        <button type="submit" class="btn btn-gold">
+                            <i class="fa-solid fa-floppy-disk"></i> Update Live Event & Countdown
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="resetCrusadeToDefault()">
+                            <i class="fa-solid fa-rotate-left"></i> Reset to Default Event
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tab 2: Blog & Devotionals Publisher -->
+            <div class="admin-tab-content" id="adminContentBlog" style="display: none;">
+                <div class="admin-section-intro">
+                    <h3><i class="fa-solid fa-feather"></i> Publish New Spiritual Devotional / Article</h3>
+                    <p>New articles will appear immediately on the website blog grid, devotional reading modal, and dynamic RSS/Sitemap feeds.</p>
+                </div>
+
+                <form id="adminBlogForm" class="admin-content-form" onsubmit="handleAdminBlogPublish(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminBlogTitle" class="form-label">Devotional Title</label>
+                            <input type="text" id="adminBlogTitle" required placeholder="e.g. Walking in Supernatural Overflow">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminBlogCategory" class="form-label">Category / Tag</label>
+                            <select id="adminBlogCategory" required>
+                                <option value="DEVOTIONAL">DEVOTIONAL</option>
+                                <option value="WORSHIP INSIGHT">WORSHIP INSIGHT</option>
+                                <option value="EVANGELISM">EVANGELISM</option>
+                                <option value="PROPHETIC WORD">PROPHETIC WORD</option>
+                                <option value="TESTIMONY">TESTIMONY</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminBlogScripture" class="form-label">Scripture Reference</label>
+                            <input type="text" id="adminBlogScripture" required placeholder="e.g. Ephesians 3:20-21">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminBlogAuthor" class="form-label">Author Name</label>
+                            <input type="text" id="adminBlogAuthor" value="Evangelist Ali Welekhasia" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adminBlogExcerpt" class="form-label">Short Summary / Excerpt</label>
+                        <input type="text" id="adminBlogExcerpt" required placeholder="Brief 1-2 sentence preview for cards and social shares...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adminBlogContent" class="form-label">Full Devotional Message Content</label>
+                        <textarea id="adminBlogContent" rows="5" required placeholder="Write the full spiritual reflection, scriptural breakdown, and closing prayer..."></textarea>
+                    </div>
+
+                    <div class="admin-form-actions">
+                        <button type="submit" class="btn btn-gold">
+                            <i class="fa-solid fa-paper-plane"></i> Publish Live Devotional
+                        </button>
+                    </div>
+                </form>
+
+                <!-- List of Published Devotionals -->
+                <div class="admin-sub-list-card">
+                    <h4><i class="fa-solid fa-list-check"></i> Published Devotionals Archive (<span id="adminBlogCount">4</span>)</h4>
+                    <div class="admin-articles-table-wrap" id="adminArticlesList">
+                        <!-- Dynamic rendered list of articles -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Music & Songs Manager -->
+            <div class="admin-tab-content" id="adminContentSongs" style="display: none;">
+                <div class="admin-section-intro">
+                    <h3><i class="fa-solid fa-music"></i> Gospel Music Releases & Lyrics Manager</h3>
+                    <p>Add new song tracks to the Music section, lyrics database, chord charts, and PDF generator without touching code.</p>
+                </div>
+
+                <form id="adminSongForm" class="admin-content-form" onsubmit="handleAdminSongPublish(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminSongTitle" class="form-label">Song Title</label>
+                            <input type="text" id="adminSongTitle" required placeholder="e.g. UTUKUFU NI WAKO">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminSongAlbum" class="form-label">Album / Theme Subtitle</label>
+                            <input type="text" id="adminSongAlbum" placeholder="e.g. Swahili Worship & Thanksgiving" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminSongKey" class="form-label">Musical Key</label>
+                            <input type="text" id="adminSongKey" placeholder="e.g. Key: D Major" value="Key: D Major" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminSongBpm" class="form-label">Tempo / BPM</label>
+                            <input type="text" id="adminSongBpm" placeholder="e.g. BPM: 72" value="BPM: 72" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminSongYoutube" class="form-label">YouTube Video / Audio ID</label>
+                            <input type="text" id="adminSongYoutube" placeholder="e.g. dQw4w9WgXcQ (optional)">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adminSongSnippet" class="form-label">Short Song Lyrics Snippet</label>
+                        <input type="text" id="adminSongSnippet" required placeholder="e.g. Utukufu na heshima ni vyako Bwana, hakuna mwingine kama Wewe...">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminSongLyricsSwahili" class="form-label">Swahili Lyrics</label>
+                            <textarea id="adminSongLyricsSwahili" rows="4" required placeholder="Full Swahili verses and chorus..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminSongLyricsEnglish" class="form-label">English Meaning / Chords</label>
+                            <textarea id="adminSongLyricsEnglish" rows="4" placeholder="English translation or Chord progression (e.g. [Intro] D - G - A - D)..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-actions">
+                        <button type="submit" class="btn btn-gold">
+                            <i class="fa-solid fa-plus-circle"></i> Add Song to Music Catalog
+                        </button>
+                    </div>
+                </form>
+
+                <!-- List of Songs in Catalog -->
+                <div class="admin-sub-list-card">
+                    <h4><i class="fa-solid fa-compact-disc"></i> Current Music Catalog (<span id="adminSongCount">8</span> Tracks)</h4>
+                    <div class="admin-articles-table-wrap" id="adminSongsList">
+                        <!-- Dynamic rendered list of songs -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Videos & Sermons Manager -->
+            <div class="admin-tab-content" id="adminContentVideos" style="display: none;">
+                <div class="admin-section-intro">
+                    <h3><i class="fa-solid fa-video"></i> Video Highlights & Sermon Broadcasts</h3>
+                    <p>Add new ministry YouTube videos, crusade broadcasts, and sermon clips directly to the video gallery.</p>
+                </div>
+
+                <form id="adminVideoForm" class="admin-content-form" onsubmit="handleAdminVideoPublish(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminVideoTitle" class="form-label">Video Title</label>
+                            <input type="text" id="adminVideoTitle" required placeholder="e.g. Deliverance & Prophetic Healing at Nakuru Revival">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminVideoCategory" class="form-label">Category</label>
+                            <select id="adminVideoCategory" required>
+                                <option value="crusade">Live Crusade</option>
+                                <option value="sermons">Sermon & Word</option>
+                                <option value="music-video">Music Video</option>
+                                <option value="live">Live Stream</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminVideoId" class="form-label">YouTube Video ID or Full Link</label>
+                            <input type="text" id="adminVideoId" required placeholder="e.g. dQw4w9WgXcQ or https://youtu.be/...">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminVideoDuration" class="form-label">Duration</label>
+                            <input type="text" id="adminVideoDuration" value="28:45" required placeholder="e.g. 28:45 or 1:12:00">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminVideoViews" class="form-label">Views / Badge Text</label>
+                            <input type="text" id="adminVideoViews" value="12K Views" placeholder="e.g. 15K Views">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adminVideoDesc" class="form-label">Brief Description</label>
+                        <input type="text" id="adminVideoDesc" required placeholder="Key sermon message, scripture focus, or live worship highlight...">
+                    </div>
+
+                    <div class="admin-form-actions">
+                        <button type="submit" class="btn btn-gold">
+                            <i class="fa-solid fa-film"></i> Add Video to Gallery
+                        </button>
+                    </div>
+                </form>
+
+                <!-- List of Custom Videos -->
+                <div class="admin-sub-list-card">
+                    <h4><i class="fa-solid fa-list-ul"></i> Video Catalog (<span id="adminVideoCount">6</span> Videos)</h4>
+                    <div class="admin-articles-table-wrap" id="adminVideosList">
+                        <!-- Dynamic rendered list of videos -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 5: Crusade Gallery Photos Manager -->
+            <div class="admin-tab-content" id="adminContentGallery" style="display: none;">
+                <div class="admin-section-intro">
+                    <h3><i class="fa-solid fa-images"></i> Crusade Photo Gallery & Moments</h3>
+                    <p>Add new open-air crusade photos and testimonies to the gallery grid and fullscreen lightbox.</p>
+                </div>
+
+                <form id="adminGalleryForm" class="admin-content-form" onsubmit="handleAdminGalleryPublish(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminGalleryTitle" class="form-label">Moment / Photo Title</label>
+                            <input type="text" id="adminGalleryTitle" required placeholder="e.g. Eldoret Mass Anointing & Deliverance Service">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminGalleryCategory" class="form-label">Category</label>
+                            <select id="adminGalleryCategory" required>
+                                <option value="crusade">Open-Air Crusade</option>
+                                <option value="worship">Worship & Praise</option>
+                                <option value="altar">Altar Call & Miracles</option>
+                                <option value="outreach">Community Outreach</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminGalleryLocation" class="form-label">Location / Grounds</label>
+                            <input type="text" id="adminGalleryLocation" required placeholder="e.g. 64 Stadium, Eldoret">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminGalleryDate" class="form-label">Date (Month/Year)</label>
+                            <input type="text" id="adminGalleryDate" required placeholder="e.g. August 2026">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminGalleryAttendees" class="form-label">Attendance / Souls Count</label>
+                            <input type="text" id="adminGalleryAttendees" required placeholder="e.g. 15,000+ Attended">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminGalleryThemeColor" class="form-label">Visual Accent Color</label>
+                            <select id="adminGalleryThemeColor">
+                                <option value="#38bdf8">Sky Blue (#38bdf8)</option>
+                                <option value="#f59e0b">Golden Amber (#f59e0b)</option>
+                                <option value="#e11d48">Rose Crimson (#e11d48)</option>
+                                <option value="#10b981">Emerald Green (#10b981)</option>
+                                <option value="#8b5cf6">Royal Purple (#8b5cf6)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminGalleryImageUrl" class="form-label">Custom Image URL (Optional)</label>
+                            <input type="url" id="adminGalleryImageUrl" placeholder="https://example.com/crusade-photo.jpg (or leave blank for high-res visual art)">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adminGalleryDesc" class="form-label">Photo Caption & Revival Narrative</label>
+                        <textarea id="adminGalleryDesc" rows="3" required placeholder="Describe the atmosphere, miracles, healings, and the moving of the Holy Spirit..."></textarea>
+                    </div>
+
+                    <div class="admin-form-actions">
+                        <button type="submit" class="btn btn-gold">
+                            <i class="fa-solid fa-camera"></i> Publish to Photo Gallery
+                        </button>
+                    </div>
+                </form>
+
+                <!-- List of Gallery Items -->
+                <div class="admin-sub-list-card">
+                    <h4><i class="fa-solid fa-photo-film"></i> Gallery Photos (<span id="adminGalleryCount">8</span> Photos)</h4>
+                    <div class="admin-articles-table-wrap" id="adminGalleryList">
+                        <!-- Dynamic rendered list of photos -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 6: Logo, Hero & Branding Customizer -->
+            <div class="admin-tab-content" id="adminContentBranding" style="display: none;">
+                <div class="admin-section-intro">
+                    <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Live Ministry Logo, Hero & Branding Customizer</h3>
+                    <p>Customize the ministry logo badge, brand text, hero headline, subtitle, hero background art, and broadcast notices in real time.</p>
+                </div>
+
+                <form id="adminBrandingForm" class="admin-content-form" onsubmit="handleAdminBrandingSave(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminBrandLogoText" class="form-label">Header Logo Brand Text</label>
+                            <input type="text" id="adminBrandLogoText" required placeholder="e.g. ALI WELEKHASIA">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminBrandLogoBadge" class="form-label">Logo Initials / Badge</label>
+                            <input type="text" id="adminBrandLogoBadge" maxlength="4" required placeholder="e.g. AW">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminBrandHeroTag" class="form-label">Hero Tagline / Top Pill</label>
+                            <input type="text" id="adminBrandHeroTag" required placeholder="e.g. Official Ministry Platform">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminBrandHeroTitle" class="form-label">Hero Main Title / Headline</label>
+                            <input type="text" id="adminBrandHeroTitle" required placeholder="e.g. ALI WELEKHASIA MUSIC">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adminBrandHeroSubtitle" class="form-label">Hero Mission Subtitle</label>
+                        <textarea id="adminBrandHeroSubtitle" rows="3" required placeholder="e.g. Proclaiming the Gospel of Jesus Christ across Kenya and the nations through anointed worship music, live revival crusades, and life-transforming scriptures."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adminBrandHeroBgTheme" class="form-label">Hero Background Visual Theme</label>
+                            <select id="adminBrandHeroBgTheme">
+                                <option value="golden-anointed">Golden Anointed Glow (Default)</option>
+                                <option value="midnight-revival">Midnight Deep Revival</option>
+                                <option value="sunset-crusade">Sunset Open-Air Crusade</option>
+                                <option value="royal-worship">Royal Violet Worship</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminBrandHeroCustomImg" class="form-label">Custom Hero Banner Image URL (Optional)</label>
+                            <input type="url" id="adminBrandHeroCustomImg" placeholder="https://example.com/hero-banner.jpg (optional)">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adminLiveBannerText" class="form-label">Live Broadcast Banner Announcement</label>
+                        <input type="text" id="adminLiveBannerText" placeholder="e.g. Evangelist Ali Welekhasia is currently streaming Live: Sunday Revival Service & Praise Worship">
+                    </div>
+
+                    <div class="admin-form-actions">
+                        <button type="submit" class="btn btn-gold">
+                            <i class="fa-solid fa-floppy-disk"></i> Apply & Save Branding Live
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="resetBrandingToDefault()">
+                            <i class="fa-solid fa-rotate-left"></i> Reset Branding to Default
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tab 7: Testimonials & Praise Reports Manager -->
+            <div class="admin-tab-content" id="adminContentTestimonies" style="display: none;">
+                <div class="admin-section-intro">
+                    <h3><i class="fa-solid fa-heart"></i> Manage Testimonials & Praise Reports</h3>
+                    <p>Review, approve, add official testimonies, or remove entries from the live website carousel and like counter database.</p>
+                </div>
+
+                <!-- Add Official Testimony Form -->
+                <div class="admin-sub-form-card">
+                    <h4><i class="fa-solid fa-plus-circle"></i> Add New Ministry Testimony</h4>
+                    <form id="adminNewTestimonyForm" onsubmit="handleAdminAddTestimony(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" id="adminTestimonyAuthor" placeholder="Believer Name (e.g. Bishop Samuel Wanjala)" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="adminTestimonyCity" placeholder="City / Church (e.g. Kakamega, Kenya)" required>
+                            </div>
+                            <div class="form-group">
+                                <select id="adminTestimonyCat" required>
+                                    <option value="music">Music Ministry</option>
+                                    <option value="crusade">Crusade Impact</option>
+                                    <option value="prayer">Healing & Miracles</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="adminTestimonyStory" rows="2" placeholder="Testimony text describing the miracle, salvation, or song blessing..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-gold">
+                            <i class="fa-solid fa-check"></i> Add to Praise Wall
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Active Testimonies List -->
+                <div class="admin-testimonials-list-wrap">
+                    <h4>Active Carousel Testimonies</h4>
+                    <div id="adminTestimonialsContainer" class="admin-testimonials-grid">
+                        <!-- Dynamic rendered cards of testimonies -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 8: SEO, Feeds & Settings -->
+            <div class="admin-tab-content" id="adminContentSettings" style="display: none;">
+                <div class="admin-section-intro">
+                    <h3><i class="fa-solid fa-network-wired"></i> SEO Indexing & System Tools</h3>
+                    <p>Live syndication feeds and website configuration control.</p>
+                </div>
+
+                <div class="admin-settings-grid">
+                    <div class="admin-setting-card">
+                        <h4><i class="fa-solid fa-sitemap"></i> Sitemap & RSS Feeds</h4>
+                        <p>Generate fresh XML feeds containing all live blog posts, custom songs, and crusade dates.</p>
+                        <div class="admin-setting-actions">
+                            <button type="button" class="btn btn-sm btn-gold" onclick="openSeoFeedModal()">
+                                <i class="fa-solid fa-square-rss"></i> Open SEO Feeds Hub
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline" onclick="downloadCurrentSeoXml()">
+                                <i class="fa-solid fa-download"></i> Download Sitemap
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="admin-setting-card">
+                        <h4><i class="fa-solid fa-database"></i> Local Storage & Content Cache</h4>
+                        <p>Custom songs, videos, gallery items, branding, articles, updated crusade dates, and testimonies are preserved in the browser's persistent storage.</p>
+                        <div class="admin-setting-actions">
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearAdminContentCache()">
+                                <i class="fa-solid fa-trash-can"></i> Reset All Custom Content to Defaults
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="script.js"></script>
 </body>
 </html>
-<!-- ================= MUSIC SECTION ================= -->
-
-<section id="music" class="music-section">
-
-<div class="section-title">
-<h2>Latest Music</h2>
-<p>Listen to inspiring Gospel music by Ali Welekhasia.</p>
-</div>
-
-<div class="music-grid">
-
-<div class="music-card">
-
-<img src="images/niwewe.jpg" alt="NI WEWE">
-
-<h3>NI WEWE</h3>
-
-<p>Official Audio</p>
-
-<div class="music-buttons">
-
-<a href="#">▶ Listen</a>
-
-<a href="#">Lyrics</a>
-
-</div>
-
-</div>
-
-<div class="music-card">
-
-<img src="images/vumilia.jpg" alt="VUMILIA MOYO">
-
-<h3>VUMILIA MOYO</h3>
-
-<p>ft. Mercy Lukio</p>
-
-<div class="music-buttons">
-
-<a href="#">▶ Listen</a>
-
-<a href="#">Lyrics</a>
-
-</div>
-
-</div>
-
-<div class="music-card">
-
-<img src="images/umetenda.jpg" alt="UMETENDA HAYA">
-
-<h3>UMETENDA HAYA</h3>
-
-<p>Official Audio</p>
-
-<div class="music-buttons">
-
-<a href="#">▶ Listen</a>
-
-<a href="#">Lyrics</a>
-
-</div>
-
-</div>
-
-<div class="music-card">
-
-<img src="images/njooni.jpg" alt="NJOONI TUMWIMBIE">
-
-<h3>NJOONI TUMWIMBIE</h3>
-
-<p>Official Audio</p>
-
-<div class="music-buttons">
-
-<a href="#">▶ Listen</a>
-
-<a href="#">Lyrics</a>
-
-</div>
-
-</div>
-
-<div class="music-card">
-
-<img src="images/lamweli.jpg" alt="LAMWELI">
-
-<h3>LAMWELI</h3>
-
-<p>Official Audio</p>
-
-<div class="music-buttons">
-
-<a href="#">▶ Listen</a>
-
-<a href="#">Lyrics</a>
-
-</div>
-
-</div>
-
-</div>
-
-</section>-->
-<!-- ================= FEATURED VIDEO ================= -->
-
-<section id="videos" class="video-section">
-
-<div class="section-title">
-
-<h2>Featured Video</h2>
-
-<p>Watch the latest music and ministry videos.</p>
-
-</div>
-
-<div class="video-container">
-
-<div class="video-player">
-
-<iframe
-width="100%"
-height="500"
-src="https://www.youtube.com/embed/"
-title="Ali Welekhasia Latest Release"
-frameborder="0"
-allowfullscreen>
-</iframe>
-
-</div>
-
-<div class="video-info">
-
-<h3>Latest Release</h3>
-
-<p>
-
-Subscribe to the official YouTube channel
-for new worship songs, ministry updates,
-live sessions and official music videos.
-
-</p>
-
-<a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank">
-
-Subscribe on YouTube
-
-</a>
-
-</div>
-
-</div>
-
-</section>-->
-<!-- ================= GALLERY ================= -->
-
-<section id="gallery" class="gallery-section">
-
-<div class="section-title">
-
-<h2>Gallery</h2>
-
-<p>Moments from worship, studio sessions and ministry.</p>
-
-</div>
-
-<div class="gallery-grid">
-
-<img src="images/hero.jpg" alt="Ali Welekhasia">
-
-<img src="images/profile.jpg" alt="Profile">
-
-<img src="images/studio1.jpg" alt="Studio Session">
-
-<img src="images/studio2.jpg" alt="Recording Studio">
-
-<img src="images/ministry1.jpg" alt="Ministry">
-
-<img src="images/ministry2.jpg" alt="Worship">
-
-</div>
-
-</section>-->
-<!-- ================= EVENTS ================= -->
-
-<section id="events" class="events-section">
-
-<div class="section-title">
-<h2>Upcoming Ministry Events</h2>
-<p>Join us in worship, revival meetings and Gospel outreach.</p>
-</div>
-
-<div class="events-grid">
-
-<div class="event-card">
-<h3>Church Services</h3>
-<p>Worship services and Sunday ministry.</p>
-<a href="#">Book Ministry</a>
-</div>
-
-<div class="event-card">
-<h3>Crusades</h3>
-<p>Open-air evangelistic meetings across Kenya.</p>
-<a href="#">Invite Ali</a>
-</div>
-
-<div class="event-card">
-<h3>Conferences</h3>
-<p>Youth conferences, worship nights and seminars.</p>
-<a href="#">View Calendar</a>
-</div>
-
-</div>
-
-</section>-->
-<!-- ================= TESTIMONIES ================= -->
-
-<section id="testimonies" class="testimony-section">
-
-<div class="section-title">
-<h2>Life-Changing Testimonies</h2>
-<p>See how God is touching lives through this ministry.</p>
-</div>
-
-<div class="testimony-grid">
-
-<div class="testimony-card">
-<p>
-"Listening to Ali Welekhasia's music strengthened my faith during one of the hardest seasons of my life."
-</p>
-<h4>— Ministry Supporter</h4>
-</div>
-
-<div class="testimony-card">
-<p>
-"The worship songs reminded me that God never abandons His people. I found hope again."
-</p>
-<h4>— Worshipper</h4>
-</div>
-
-<div class="testimony-card">
-<p>
-"Our church was blessed through the worship ministry. Many people dedicated their lives to Christ."
-</p>
-<h4>— Church Leader</h4>
-</div>
-
-</div>
-
-</section>-->
-<!-- ================= PRAYER REQUEST ================= -->
-
-<section id="prayer" class="prayer-section">
-
-<div class="section-title">
-
-<h2>Prayer Requests</h2>
-
-<p>
-We believe in the power of prayer. Share your prayer request and we'll stand with you in faith.
-</p>
-
-</div>
-
-<form>
-
-<input type="text" placeholder="Your Name" required>
-
-<input type="email" placeholder="Your Email" required>
-
-<textarea placeholder="Type your prayer request here..." rows="6" required></textarea>
-
-<button type="submit">
-
-Send Prayer Request
-
-</button>
-
-</form>
-
-</section>-->
-<!-- ================= BLOG ================= -->
-
-<section id="blog" class="blog-section">
-
-<div class="section-title">
-
-<h2>Latest Blog & Devotions</h2>
-
-<p>
-Read ministry updates, devotionals, testimonies and behind-the-scenes stories.
-</p>
-
-</div>
-
-<div class="blog-grid">
-
-<div class="blog-card">
-
-<h3>Walking by Faith</h3>
-
-<p>
-A devotional encouraging believers to trust God in every season.
-</p>
-
-<a href="#">Read More</a>
-
-</div>
-
-<div class="blog-card">
-
-<h3>Behind the Song</h3>
-
-<p>
-Discover the inspiration behind Ali Welekhasia's latest worship songs.
-</p>
-
-<a href="#">Read More</a>
-
-</div>
-
-<div class="blog-card">
-
-<h3>Ministry Update</h3>
-
-<p>
-Stay informed about outreach programs, concerts and church events.
-</p>
-
-<a href="#">Read More</a>
-
-</div>
-
-</div>
-
-</section>-->
-<!-- ================= SHOP ================= -->
-
-<section id="shop" class="shop-section">
-
-<div class="section-title">
-
-<h2>Official Store</h2>
-
-<p>
-Support the ministry by purchasing official merchandise and digital music.
-</p>
-
-</div>
-
-<div class="shop-grid">
-
-<div class="product-card">
-
-<img src="images/niwewe.jpg" alt="Digital Album">
-
-<h3>Digital Music</h3>
-
-<p>Download official songs.</p>
-
-<a href="#">Coming Soon</a>
-
-</div>
-
-<div class="product-card">
-
-<img src="images/logo.png" alt="T-Shirt">
-
-<h3>Official T-Shirts</h3>
-
-<p>Premium ministry merchandise.</p>
-
-<a href="#">Coming Soon</a>
-
-</div>
-
-<div class="product-card">
-
-<img src="images/logo.png" alt="Cap">
-
-<h3>Caps & Accessories</h3>
-
-<p>Represent the ministry everywhere.</p>
-
-<a href="#">Coming Soon</a>
-
-</div>
-
-</div>
-
-</section>-->
-<!-- ================= DONATIONS ================= -->
-
-<section id="donate" class="donation-section">
-
-<div class="section-title">
-
-<h2>Support the Ministry</h2>
-
-<p>
-Your generosity helps us spread the Gospel through music, evangelism and community outreach.
-</p>
-
-</div>
-
-<div class="donation-buttons">
-
-<a href="#">M-Pesa</a>
-
-<a href="#">PayPal</a>
-
-<a href="#">Bank Transfer</a>
-
-</div>
-
-</section>-->
-<!-- ================= CONTACT ================= -->
-
-<section id="contact" class="contact-section">
-
-<div class="section-title">
-
-<h2>Contact Us</h2>
-
-<p>
-We'd love to hear from you. Book Ali Welekhasia or send us a message.
-</p>
-
-</div>
-
-<form>
-
-<input type="text" placeholder="Full Name" required>
-
-<input type="email" placeholder="Email Address" required>
-
-<input type="tel" placeholder="Phone Number">
-
-<textarea rows="6" placeholder="Write your message..." required></textarea>
-
-<button type="submit">
-
-Send Message
-
-</button>
-
-</form>
-
-</section>-->
-<!-- ================= FOOTER ================= -->
-
-<footer>
-
-<div class="footer-logo">
-
-<img src="images/logo.png" alt="Ali Welekhasia Logo">
-
-</div>
-
-<h3>Ali Welekhasia Music</h3>
-
-<p>
-
-Proclaiming Christ Through Music
-
-</p>
-
-<p>
-
-"That all may know Him who saves."
-
-</p>
-
-<div class="social-links">
-
-<a href="https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo" target="_blank">YouTube</a>
-
-<a href="https://www.facebook.com/aliwelekhasia" target="_blank">Facebook</a>
-
-<a href="#">Instagram</a>
-
-<a href="#">TikTok</a>
-
-</div>
-
-<p>
-
-Email: ali.werekhasia01@gmail.com
-
-</p>
-
-<p>
-
-Phone: +254 736 024 024
-
-</p>
-
-<p>
-
-© 2026 Ali Welekhasia Music. All Rights Reserved.
-
-</p>
-
-</footer>-->
