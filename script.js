@@ -471,6 +471,9 @@ I will stand proclaiming: Thank You Jesus!`
         artist: "Ali Welekhasia",
         key: "Key of D Major (BPM: 72)",
         snippet: "Ni Wewe, Ni Wewe Bwana, Hakuna mwingine wa kulinganishwa nawe...",
+        youtubeUrl: "https://youtu.be/BLkpibP7XAU?si=P_PKI-vuYpnsQBN9",
+        youtubeId: "BLkpibP7XAU",
+        thumbnail: "https://img.youtube.com/vi/BLkpibP7XAU/hqdefault.jpg",
         lyrics: `[Verse 1]
 Ni nani kama Wewe Bwana ulimwenguni kote?
 Mungu wa miungu, Mfalme wa wafalme
@@ -545,6 +548,9 @@ My victory rests in Your hands.`
         artist: "Ali Welekhasia",
         key: "Key of G Major (BPM: 80)",
         snippet: "Bado Mungu yuko kazini, bado hajafunga mlango wa neema...",
+        youtubeUrl: "https://youtu.be/TQxObs0FZ3w?si=HMx0wkuNj2K8j4oM",
+        youtubeId: "TQxObs0FZ3w",
+        thumbnail: "https://img.youtube.com/vi/TQxObs0FZ3w/hqdefault.jpg",
         lyrics: `[Verse 1]
 Usikate tamaa unapopita kwenye bonde
 Mungu uliyemlilia hajasahau ahadi zake
@@ -726,6 +732,9 @@ In Your mighty power I am eternally safe!`
         artist: "Ali Welekhasia",
         key: "Key of F Major (BPM: 105)",
         snippet: "Njooni tumwimbie Bwana, tumfanyie shangwe, Mwamba wa wokovu wetu...",
+        youtubeUrl: "https://youtu.be/Rwsr-3vtouM?si=p7Gl6rWjZ-BG9sH-",
+        youtubeId: "Rwsr-3vtouM",
+        thumbnail: "https://img.youtube.com/vi/Rwsr-3vtouM/hqdefault.jpg",
         lyrics: `[Verse 1]
 Njooni tumwimbie Bwana wetu
 Tumfanyie shangwe Mwamba wa wokovu
@@ -780,6 +789,9 @@ Jesus reigns forever and ever!`
         artist: "Ali Welekhasia",
         key: "Key of C Major (BPM: 74)",
         snippet: "Lamweli, Umependwa na Mungu Mkuu, hauko peke yako katika safari hii...",
+        youtubeUrl: "https://youtu.be/ZyM4Iqpv5jo?si=sJyB8-IgWBRN0vr2",
+        youtubeId: "ZyM4Iqpv5jo",
+        thumbnail: "https://img.youtube.com/vi/ZyM4Iqpv5jo/hqdefault.jpg",
         lyrics: `[Verse 1]
 Machozi yako yaliyoanguka gizani
 Mungu aliyekuumba ameyaona yote
@@ -4176,24 +4188,64 @@ function deleteCustomSong(title) {
 // 4. VIDEOS & SERMONS MANAGER
 let activeVideosData = [
     {
-        id: "surrender",
-        title: "The Power of Total Surrender - Eldoret 2024",
-        category: "Crusade Sermon",
-        duration: "52:14",
-        views: "48K Views",
+        id: "ni-wewe",
+        title: "NI WEWE - Official Gospel Music Video",
+        category: "Music Video",
+        duration: "4:35",
+        views: "Official Video",
         date: "2024",
         speaker: "Ali Welekhasia",
-        url: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+        url: "https://www.youtube.com/embed/BLkpibP7XAU"
+    },
+    {
+        id: "bado",
+        title: "BADO - Faith & Prophetic Worship Video",
+        category: "Music Video",
+        duration: "4:15",
+        views: "Official Video",
+        date: "2024",
+        speaker: "Ali Welekhasia",
+        url: "https://www.youtube.com/embed/TQxObs0FZ3w"
+    },
+    {
+        id: "njooni-tumwimbie",
+        title: "NJOONI TUMWIMBIE - Joyful Praise & Worship",
+        category: "Music Video",
+        duration: "3:35",
+        views: "Official Video",
+        date: "2024",
+        speaker: "Ali Welekhasia",
+        url: "https://www.youtube.com/embed/Rwsr-3vtouM"
+    },
+    {
+        id: "lamweli-umependwa",
+        title: "LAMWELI_UMEPENDWA (Umependwa Sana) - Healing & Comfort Ballad",
+        category: "Music Video",
+        duration: "4:40",
+        views: "Official Video",
+        date: "2024",
+        speaker: "Ali Welekhasia",
+        url: "https://www.youtube.com/embed/ZyM4Iqpv5jo"
+    },
+    {
+        id: "surrender",
+        title: "Walking by Faith in Dark Valleys",
+        category: "Crusade Sermon",
+        duration: "12:40",
+        views: "Sermon Highlight",
+        date: "2024",
+        speaker: "Ali Welekhasia",
+        url: "https://www.youtube.com/embed/BLkpibP7XAU"
     },
     {
         id: "faith",
-        title: "Walking in Faith and Prophetic Favor",
+        title: "The Power of Praise & Divine Thanksgiving",
         category: "Sunday Sermon",
-        duration: "44:30",
-        views: "32K Views",
+        duration: "18:15",
+        views: "Sermon Highlight",
         date: "2024",
         speaker: "Ali Welekhasia",
-        url: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+        url: "https://www.youtube.com/embed/TQxObs0FZ3w"
     }
 ];
 

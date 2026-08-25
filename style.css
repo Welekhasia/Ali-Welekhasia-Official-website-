@@ -736,16 +736,91 @@ body {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: 24px;
+    padding: 20px;
     transition: var(--transition);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    overflow: hidden;
 }
 .music-card:hover {
     border-color: var(--border-highlight);
     transform: translateY(-4px);
     box-shadow: var(--shadow);
+}
+
+.music-card-thumb {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: 14px;
+    cursor: pointer;
+    background: #0f172a;
+}
+
+.music-card-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.music-card:hover .music-card-thumb img {
+    transform: scale(1.06);
+}
+
+.music-thumb-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(220, 38, 38, 0.9);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.5px;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.music-thumb-play {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.music-thumb-play i {
+    width: 44px;
+    height: 44px;
+    background: var(--gold);
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    padding-left: 3px;
+    box-shadow: 0 4px 15px var(--gold-glow);
+    transition: transform 0.3s ease;
+}
+
+.music-card-thumb:hover .music-thumb-play {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.music-card-thumb:hover .music-thumb-play i {
+    transform: scale(1.15);
 }
 
 .music-card-header {
@@ -3153,6 +3228,10 @@ body {
 }
 
 .video-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
     transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
