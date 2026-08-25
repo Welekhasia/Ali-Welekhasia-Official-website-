@@ -160,7 +160,7 @@ class MainViewModel : ViewModel() {
         Video(
             id = "vid2",
             title = "Walking by Faith in Seasons of Trial",
-            description = "Sermon Highlight by Evangelist Ali Welekhasia. Encouraging message on trusting God's unwavering promises during dark valleys.",
+            description = "Sermon Highlight by Ali Welekhasia. Encouraging message on trusting God's unwavering promises during dark valleys.",
             youtubeUrl = "https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo",
             embedId = "dQw4w9WgXcQ",
             category = "Sermon Highlight",
@@ -376,7 +376,7 @@ class MainViewModel : ViewModel() {
             email = "ebaraza@glorycathedral.org",
             phone = "+254 722 112 233",
             subject = "Crusade Guest Minister Invitation",
-            message = "Calvary greetings Evangelist Ali. We would love to officially invite you to lead worship and minister at our 3-day Coastal Gospel Explosion in Mombasa from Oct 16th-18th.",
+            message = "Calvary greetings Ali. We would love to officially invite you to lead worship and minister at our 3-day Coastal Gospel Explosion in Mombasa from Oct 16th-18th.",
             date = "Aug 22, 2026",
             isReplied = true
         ),

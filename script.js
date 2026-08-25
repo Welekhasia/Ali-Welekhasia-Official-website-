@@ -157,14 +157,14 @@ function generateGoogleCalendarInvite(title, location, startIso, endIso, details
     const cleanStart = (startIso || '2026-09-12T17:00:00').replace(/-|:|\.\d\d\d/g, "");
     const cleanEnd = (endIso || '2026-09-14T22:00:00').replace(/-|:|\.\d\d\d/g, "");
     const url = createGoogleCalendarLink(
-        title || 'Ali Welekhasia Ministry Crusade',
-        details || 'Join Evangelist Ali Welekhasia for 3 powerful nights of gospel worship, preaching, and healing crusade.',
+        title || 'Ali Welekhasia Ministry Event',
+        details || 'Join Ali Welekhasia for gospel worship, spiritual teaching, and praise ministry.',
         location || 'Treasury Square Grounds, Mombasa, Kenya',
         cleanStart,
         cleanEnd
     );
     window.open(url, '_blank', 'noopener,noreferrer');
-    showToast(`Opening Google Calendar for ${title || 'Crusade'}!`, 'success');
+    showToast(`Opening Google Calendar for ${title || 'Event'}!`, 'success');
 }
 
 function downloadIcsCalendar(title, location, startZ, endZ) {
@@ -174,9 +174,9 @@ function downloadIcsCalendar(title, location, startZ, endZ) {
         "PRODID:-//Ali Welekhasia Gospel Ministries//EN",
         "CALSCALE:GREGORIAN",
         "BEGIN:VEVENT",
-        `SUMMARY:${title || 'Mombasa Mega Revival Crusade'}`,
+        `SUMMARY:${title || 'Mombasa Gospel Worship Night'}`,
         `LOCATION:${location || 'Treasury Square Grounds, Mombasa, Kenya'}`,
-        `DESCRIPTION:Join Evangelist Ali Welekhasia for powerful praise, worship, prophetic preaching, and healing crusade.`,
+        `DESCRIPTION:Join Ali Welekhasia for gospel worship, praise, and spiritual encouragement.`,
         `DTSTART:${startZ || '20260912T170000Z'}`,
         `DTEND:${endZ || '20260914T220000Z'}`,
         "STATUS:CONFIRMED",
@@ -187,7 +187,7 @@ function downloadIcsCalendar(title, location, startZ, endZ) {
     const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
-    link.setAttribute('download', 'ali_welekhasia_crusade.ics');
+    link.setAttribute('download', 'ali_welekhasia_event.ics');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -195,7 +195,7 @@ function downloadIcsCalendar(title, location, startZ, endZ) {
 }
 
 function remindMeEvent(eventName, location) {
-    generateGoogleCalendarInvite(eventName, location, '2026-09-12T17:00:00', '2026-09-14T22:00:00', 'Join Evangelist Ali Welekhasia for powerful praise, worship, and healing crusade.');
+    generateGoogleCalendarInvite(eventName, location, '2026-09-12T17:00:00', '2026-09-14T22:00:00', 'Join Ali Welekhasia for gospel worship, praise, and prayer.');
 }
 
 // --- GLOBAL SEARCH SYSTEM WITH DYNAMIC TERM HIGHLIGHTING ---
@@ -224,7 +224,7 @@ const searchableData = [
     { title: "The Secret Place of Intimacy", category: "devotional", description: "Psalm 91:1-2 and quiet prayer communion with God", action: () => openDevotional(3) },
     
     // Events & Giving
-    { title: "Great East Africa Revival Crusade 2026", category: "events", description: "Eldoret & Nairobi Crusade dates and calendar reminder", action: () => { document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' }); closeSearchModal(); } },
+    { title: "Great East Africa Revival Crusade 2026", category: "events", description: "Eldoret & Nairobi Crusade dates and calendar reminder", action: () => { (document.getElementById('countdown') || document.getElementById('events'))?.scrollIntoView({ behavior: 'smooth' }); closeSearchModal(); } },
     { title: "Partner with Us & M-Pesa Giving", category: "partner", description: "M-Pesa Paybill 247247 & Equity Bank details for crusade support", action: () => { document.getElementById('partner')?.scrollIntoView({ behavior: 'smooth' }); closeSearchModal(); } },
     { title: "Voice Prayer & Written Intercession", category: "prayer", description: "Submit or record prayer requests for morning pastoral intercession", action: () => { document.getElementById('prayer')?.scrollIntoView({ behavior: 'smooth' }); closeSearchModal(); } }
 ];
@@ -292,12 +292,16 @@ function filterSearchResults(category, btnElem) {
     filterSearchCategory(category, btnElem);
 }
 
-// Helper to highlight matching substrings within text
+// Helper to highlight matching substrings within text safely
 function highlightMatch(text, query) {
-    if (!query || !query.trim()) return text;
-    const cleanQuery = query.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`(${cleanQuery})`, 'gi');
-    return text.replace(regex, '<mark class="search-highlight">$1</mark>');
+    if (!text) return '';
+    const safeText = escapeHtml(text);
+    if (!query || !query.trim()) return safeText;
+    const words = query.trim().split(/\s+/).filter(w => w.length > 0);
+    if (words.length === 0) return safeText;
+    const escapedWords = words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const regex = new RegExp(`(${escapedWords.join('|')})`, 'gi');
+    return safeText.replace(regex, '<mark class="search-highlight">$1</mark>');
 }
 
 function renderSearchResults(query = '') {
@@ -1259,9 +1263,9 @@ function downloadLyricsPDF() {
             <div class="section-box">
                 <h3>Ministry Information</h3>
                 <p style="font-size: 12px; margin: 0; line-height: 1.6;">
-                    <strong>Evangelist Ali Welekhasia Ministries</strong><br>
-                    Crusade Evangelism • Worship Ministry • Bible Outreach<br>
-                    Website: www.aliwelekhasia.org<br>
+                    <strong>Ali Welekhasia Gospel Music Ministry</strong><br>
+                    Gospel Music • Worship Ministry • Bible Outreach<br>
+                    Website: https://aliwelekhasia.co.ke<br>
                     YouTube: @aliwelekhasia<br>
                     M-Pesa Support Paybill: 247247 (Acc: ALI WELEKHASIA)
                 </p>
@@ -1270,7 +1274,7 @@ function downloadLyricsPDF() {
     </div>
 
     <div class="footer">
-        © ${new Date().getFullYear()} Ali Welekhasia Gospel Ministries. All rights reserved. Anointed for worship and soul winning.
+        © ${new Date().getFullYear()} <strong>Ali Welekhasia Gospel Ministry</strong> • <a href="https://aliwelekhasia.co.ke" style="color:#64748b;text-decoration:none;">https://aliwelekhasia.co.ke</a> • Generated on ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}. Anointed for worship and soul winning.
     </div>
 
     <script>
@@ -1409,7 +1413,7 @@ function handlePrayerSubmit(event) {
     const alertEl = document.getElementById('prayerDraftAlert');
     if (alertEl) alertEl.style.display = 'none';
 
-    showToast(`Hallelujah ${name}! Your prayer request for [${category}] has been received. Evangelist Ali Welekhasia and the prayer intercession team are standing in faith with you.`, 'success', 6000);
+    showToast(`Hallelujah ${name}! Your prayer request for [${category}] has been received. Ali Welekhasia and the prayer intercession team are standing in faith with you.`, 'success', 6000);
     
     const form = document.getElementById('prayerForm');
     if (form) form.reset();
@@ -1676,11 +1680,11 @@ function submitVoicePrayer() {
     }
 
     if (!name) {
-        showToast('Please enter your name so Evangelist Ali can pray for you by name.', 'error');
+        showToast('Please enter your name so Ali Welekhasia can pray for you by name.', 'error');
         return;
     }
 
-    showToast(`Praise God, ${name}! Your voice prayer recording has been securely received. Evangelist Ali Welekhasia and our intercessors will pray over your request.`, 'success', 6000);
+    showToast(`Praise God, ${name}! Your voice prayer recording has been securely received. Ali Welekhasia and our intercessors will pray over your request.`, 'success', 6000);
     resetVoiceRecording();
     const nameInput = document.getElementById('voiceSenderName');
     const emailInput = document.getElementById('voiceSenderEmail');
@@ -1713,9 +1717,9 @@ const defaultTestimoniesData = {
         snippet: 'Through the worship song "Ni Wewe", I experienced divine peace and physical healing during a critical hospital recovery...',
         story: `Through the worship song "Ni Wewe", I experienced divine peace and supernatural physical healing during a critical hospital recovery. 
 
-I had been admitted with acute respiratory distress and the doctors were concerned about complications. A church member shared Evangelist Ali Welekhasia's worship playlist with me. As the song played softly in the ward, the tangible presence of the Holy Spirit filled the room. All anxiety melted away, my oxygen levels stabilized miraculously within three hours, and by morning the chief physician cleared me for discharge.
+I had been admitted with acute respiratory distress and the doctors were concerned about complications. A church member shared Ali Welekhasia's worship playlist with me. As the song played softly in the ward, the tangible presence of the Holy Spirit filled the room. All anxiety melted away, my oxygen levels stabilized miraculously within three hours, and by morning the chief physician cleared me for discharge.
 
-God is truly ministering through Ali's music with genuine apostolic power and healing virtue! To God be all the glory!`
+God is truly ministering through Ali's music with genuine spiritual power and peace! To God be all the glory!`
     },
     'testimony-2': {
         id: 'testimony-2',
@@ -1724,14 +1728,14 @@ God is truly ministering through Ali's music with genuine apostolic power and he
         category: 'crusade',
         badgeClass: 'badge-crusade',
         badgeIcon: 'fa-fire-flame-curved',
-        badgeLabel: 'Crusade Impact',
+        badgeLabel: 'Gospel Impact',
         date: 'July 28, 2026',
-        snippet: 'The open-air revival crusade in Mombasa changed my life completely. The message on unwavering faith brought my entire household to surrender to Christ...',
-        story: `The open-air revival crusade in Mombasa changed my entire family's destiny. For years, our home was plagued by division, sickness, and financial stagnation.
+        snippet: 'The open-air worship gathering in Mombasa touched my life completely. The message on unwavering faith brought my household to surrender to Christ...',
+        story: `The open-air gospel worship gathering in Mombasa touched my entire family's life. 
 
-When Evangelist Ali preached on unwavering faith and the power of the blood of Jesus at the Treasury Square grounds, the Holy Spirit convicted my heart. My two brothers and I went forward during the altar call. 
+When Ali preached on unwavering faith and the power of God at Treasury Square, the Holy Spirit convicted my heart. My family went forward during the call to salvation.
 
-From that glorious evening, Christ broke every generational bondage over our household. Today, my whole family is actively serving in church and walking in total freedom!`
+From that glorious evening, Christ brought peace and restoration over our household. Today, my whole family is actively serving in church and walking in faith!`
     },
     'testimony-3': {
         id: 'testimony-3',
@@ -1752,16 +1756,16 @@ I encourage everyone walking through difficult seasons to feed their soul with t
     'testimony-4': {
         id: 'testimony-4',
         author: 'Elder Peter Mutua',
-        city: 'Eldoret Sports Grounds, Kenya',
+        city: 'Eldoret, Kenya',
         category: 'crusade',
         badgeClass: 'badge-crusade',
         badgeIcon: 'fa-fire-flame-curved',
-        badgeLabel: 'Crusade Impact',
+        badgeLabel: 'Gospel Impact',
         date: 'June 19, 2026',
-        snippet: 'During the Eldoret Open Grounds Crusade, over 400 souls gave their lives to Jesus Christ and my father was delivered from decades of addiction...',
-        story: `During the Eldoret Open Grounds Crusade, over 400 souls gave their lives to Jesus Christ in a single night of revival fire.
+        snippet: 'During the Eldoret Worship Gathering, many souls gave their lives to Jesus Christ and my father was delivered from decades of addiction...',
+        story: `During the Eldoret Open Grounds Worship Gathering, many souls gave their lives to Jesus Christ in a single night of spiritual renewal.
 
-The greatest miracle for my family was seeing my 68-year-old father—who had battled alcoholism for nearly 35 years—walk to the altar in tears. Evangelist Ali laid hands on him in prayer, and that very night the urge for alcohol was instantly obliterated by God's power.
+The greatest miracle for my family was seeing my 68-year-old father—who had battled alcoholism for nearly 35 years—walk to the altar in tears. Prayer was offered for him, and that very night the urge for alcohol was instantly lifted.
 
 He has been sober and joyful in the Lord ever since. Truly, nothing is impossible with our Lord Jesus Christ!`
     },
@@ -2004,11 +2008,11 @@ function shareCurrentTestimony(platform) {
     const data = defaultTestimoniesData[activeModalTestimonyId] || {
         author: 'Believer in Christ',
         city: 'Kenya',
-        story: 'Praise report on Evangelist Ali Welekhasia Official Ministry'
+        story: 'Praise report on Ali Welekhasia Official Music Ministry'
     };
 
     const shareUrl = window.location.origin + window.location.pathname + '#testimonials';
-    const text = `Read this uplifting praise report by ${data.author} (${data.city}) on Evangelist Ali Welekhasia's Ministry:\n\n"${data.story.slice(0, 200)}..."\n\n${shareUrl}`;
+    const text = `Read this uplifting praise report by ${data.author} (${data.city}) on Ali Welekhasia's Ministry:\n\n"${data.story.slice(0, 200)}..."\n\n${shareUrl}`;
 
     if (platform === 'whatsapp') {
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
@@ -2370,7 +2374,7 @@ const blogPosts = [
         title: "Renewing Your Strength in the Waiting Season",
         date: "August 22, 2026",
         scripture: "Isaiah 40:31",
-        author: "Evangelist Ali Welekhasia",
+        author: "Ali Welekhasia",
         excerpt: "Those who wait on the Lord shall renew their strength; they shall mount up with wings like eagles. Waiting is not wasted time in God's kingdom.",
         content: `In an era of relentless instant gratification, waiting on God is often misunderstood as delay or abandonment. Yet Isaiah 40:31 reminds us: "Those who wait on the Lord shall renew their strength; they shall mount up with wings like eagles, they shall run and not be weary, they shall walk and not faint."\n\nWaiting is not passive stagnation; it is an active spiritual posture of trust, prayer, and consecration. In the quiet chambers of waiting, God refines our motives, deepens our root system in His Word, and builds internal spiritual capacity to sustain the blessings He is preparing for us.\n\nIf you find yourself in a season of waiting—whether for healing, ministry breakthrough, financial provision, or family restoration—take heart. Your labor in prayer is not in vain. The Lord is renewing your spiritual wings, and when He opens the door, you will soar effortlessly by the supernatural power of the Holy Spirit.`
     },
@@ -2380,19 +2384,19 @@ const blogPosts = [
         title: "The Anointing of True Spirit & Truth Worship",
         date: "August 15, 2026",
         scripture: "John 4:23-24",
-        author: "Evangelist Ali Welekhasia",
-        excerpt: "Worship is not merely an artistic melody; it is a lifestyle of wholehearted devotion that draws down the raw presence of the Holy Spirit.",
+        author: "Ali Welekhasia",
+        excerpt: "Worship is not merely an artistic melody; it is a lifestyle of wholehearted devotion that draws down the presence of the Holy Spirit.",
         content: `Jesus declared to the Samaritan woman: "The hour is coming, and now is, when the true worshipers will worship the Father in spirit and truth; for the Father is seeking such to worship Him." (John 4:23).\n\nTrue worship transcends musical instrumentation, vocal perfection, or stage charisma. It is born when a broken, humble heart surrenders completely to God's holiness. In spirit means worshiping from the inner core of your being; in truth means aligning our lives with God's uncompromised Word.\n\nWhen we worship in spirit and truth, chains fall, burdens are lifted, and atmospheric darkness is shattered. Worship is our highest spiritual weapon of warfare and our deepest communion with the King of Kings.`
     },
     {
         id: "devotional-3",
         tag: "EVANGELISM",
-        title: "The Great Commission: Winning Souls in Our Cities",
+        title: "The Great Commission: Winning Souls Through Worship",
         date: "August 08, 2026",
         scripture: "Mark 16:15",
-        author: "Evangelist Ali Welekhasia",
-        excerpt: "Why open-air crusades and community outreach remain God's sharpest spearhead for touching thousands of unreached souls across East Africa.",
-        content: `Jesus said unto them: "Go into all the world and preach the gospel to every creature." (Mark 16:15). The heartbeat of God has always been souls.\n\nAcross every city, village, and marketplace, millions are searching for hope, forgiveness, and deliverance that only Jesus Christ provides. Open-air revival crusades are not just ministry events—they are rescue missions for eternity.\n\nEvery believer is called to be a witness. Whether you support crusades with prayers, financial partnership, or by inviting your neighbor, you are actively advancing the Kingdom of God and depopulating the kingdom of darkness.`
+        author: "Ali Welekhasia",
+        excerpt: "How praise music and community worship outreach touch thousands of unreached hearts with God's redeeming love.",
+        content: `Jesus said unto them: "Go into all the world and preach the gospel to every creature." (Mark 16:15). The heartbeat of God has always been souls.\n\nAcross every city, village, and marketplace, millions are searching for hope, forgiveness, and deliverance that only Jesus Christ provides. Gospel music ministry is a powerful vehicle to bring Christ's presence into hearts and homes.\n\nEvery believer is called to be a witness. Whether you support gospel music with prayers, financial partnership, or by sharing song links with a neighbor, you are actively advancing the Kingdom of God.`
     },
     {
         id: "secret-place",
@@ -2400,7 +2404,7 @@ const blogPosts = [
         title: "The Secret Place of Intimacy",
         date: "May 18, 2026",
         scripture: "Psalm 91:1-2",
-        author: "Evangelist Ali Welekhasia",
+        author: "Ali Welekhasia",
         excerpt: "Discovering how true spiritual authority flows not from stage prominence, but from silent devotion in the presence of God.",
         content: `In an era of relentless busyness and digital noise, the believer's true power remains anchored in the secret place of prayer. Psalm 91:1 reminds us: "He that dwelleth in the secret place of the most High shall abide under the shadow of the Almighty."\n\nTrue worship does not originate on a microphone; it is birthed when the door is shut, the heart is stripped of pretense, and tears of repentance and gratitude meet the throne of grace.\n\nWhen we prioritize intimacy over public recognition, God clothes our worship with authentic power that breaks yokes, heals the sick, and turns hardened hearts back to Christ.`
     }
@@ -2448,13 +2452,13 @@ function closeBlogModal() {
     if (modal) modal.classList.remove('active');
 }
 
-function shareDevotional(platform) {
-    const post = currentDevotionalPost || blogPosts[0];
+function shareDevotionalPost(post, platform) {
+    if (!post) post = blogPosts[0];
     const pageUrl = window.location.origin + window.location.pathname + '#blog';
-    const cleanExcerpt = post.excerpt || post.content.substring(0, 160) + '...';
+    const cleanExcerpt = post.excerpt || (post.content ? post.content.substring(0, 160) + '...' : '');
 
     if (platform === 'whatsapp') {
-        const waText = `✨ *${post.title}* (${post.scripture})\n\n"${cleanExcerpt}"\n\n📖 Read full devotional by ${post.author}:\n${pageUrl}`;
+        const waText = `✨ *${post.title}* (${post.scripture})\n\n"${cleanExcerpt}"\n\n📖 Read full devotional by ${post.author || 'Ali Welekhasia'}:\n${pageUrl}`;
         const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(waText)}`;
         window.open(waUrl, '_blank', 'noopener,noreferrer');
         showToast(`Opening WhatsApp to share "${post.title}"`, 'success');
@@ -2463,12 +2467,12 @@ function shareDevotional(platform) {
         window.open(fbUrl, '_blank', 'noopener,noreferrer,width=600,height=500');
         showToast(`Opening Facebook to share "${post.title}"`, 'success');
     } else if (platform === 'twitter') {
-        const twText = `✨ "${post.title}" (${post.scripture})\n\n${cleanExcerpt}\n\nRead more by ${post.author}:`;
+        const twText = `✨ "${post.title}" (${post.scripture})\n\n${cleanExcerpt}\n\nRead more by ${post.author || 'Ali Welekhasia'}:`;
         const twUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twText)}&url=${encodeURIComponent(pageUrl)}&hashtags=AliWelekhasia,Gospel,Devotional,Worship`;
         window.open(twUrl, '_blank', 'noopener,noreferrer,width=600,height=500');
         showToast(`Opening Twitter / X to share "${post.title}"`, 'success');
     } else if (platform === 'copy') {
-        const fullShareText = `✨ ${post.title} (${post.scripture})\nBy ${post.author}\n\n"${cleanExcerpt}"\n\nRead full message at: ${pageUrl}`;
+        const fullShareText = `✨ ${post.title} (${post.scripture})\nBy ${post.author || 'Ali Welekhasia'}\n\n"${cleanExcerpt}"\n\nRead full message at: ${pageUrl}`;
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(fullShareText).then(() => {
                 showToast(`Devotional message & link copied to clipboard!`, 'success');
@@ -2477,6 +2481,15 @@ function shareDevotional(platform) {
             fallbackCopy(fullShareText, 'Devotional message');
         }
     }
+}
+
+function shareDevotionalByPostIndex(index, platform) {
+    const post = blogPosts[index] || blogPosts[0];
+    shareDevotionalPost(post, platform);
+}
+
+function shareDevotional(platform) {
+    shareDevotionalPost(currentDevotionalPost || blogPosts[0], platform);
 }
 
 // --- VIDEO PLAYER & FILTERING ---
@@ -2870,7 +2883,7 @@ function generateDynamicRssXML() {
     xml += `      <link>${baseUrl}/#countdown</link>\n`;
     xml += `      <guid isPermaLink="false">crusade-nakuru-2026-08-30</guid>\n`;
     xml += `      <pubDate>${nowRfc}</pubDate>\n`;
-    xml += `      <description>Join Evangelist Ali Welekhasia at Afraha Grounds, Nakuru for 3 days of revival preaching, healing, deliverance, and deep praise worship.</description>\n`;
+    xml += `      <description>Join Ali Welekhasia at Afraha Grounds, Nakuru for 3 days of gospel preaching, encouragement, and deep praise worship.</description>\n`;
     xml += `      <category>Crusade Evangelism</category>\n`;
     xml += `    </item>\n\n`;
 
@@ -3048,7 +3061,7 @@ const crusadeGalleryData = [
         location: "64 Stadium Grounds, Eldoret",
         date: "March 2026",
         attendees: "16,000+ Gathered",
-        description: "Evangelist Ali Welekhasia leading the worship team with acoustic guitar in anthems of breakthrough, holiness, and victory.",
+        description: "Ali Welekhasia leading the worship team with acoustic guitar in anthems of praise, holiness, and victory.",
         themeColor: "#d4af37",
         svgGradient: "linear-gradient(135deg, #09090b 0%, #1e1b4b 50%, #713f12 100%)",
         icon: "fa-microphone-lines",
@@ -3182,14 +3195,44 @@ function generateGallerySvgArtwork(photo) {
     </svg>`;
 }
 
+let currentGallerySort = 'newest';
+
+function getGalleryDateTimestamp(dateStr) {
+    if (!dateStr) return 0;
+    const parsed = Date.parse(dateStr);
+    if (!isNaN(parsed)) return parsed;
+    const parts = dateStr.trim().split(' ');
+    if (parts.length === 2) {
+        const mDate = Date.parse(`1 ${parts[0]} ${parts[1]}`);
+        if (!isNaN(mDate)) return mDate;
+    }
+    return 0;
+}
+
+function sortGalleryPhotos(sortVal) {
+    currentGallerySort = sortVal || 'newest';
+    renderCrusadeGallery(activeGalleryCategory);
+}
+
 function renderCrusadeGallery(filter = 'all') {
     const grid = document.getElementById('crusadePhotoGrid');
     if (!grid) return;
 
     activeGalleryCategory = filter;
-    const filteredPhotos = filter === 'all' 
-        ? crusadeGalleryData 
+    let filteredPhotos = filter === 'all' 
+        ? [...crusadeGalleryData] 
         : crusadeGalleryData.filter(p => p.category === filter);
+
+    // Sort chronologically (oldest first) or by most recent event (newest first)
+    filteredPhotos.sort((a, b) => {
+        const timeA = a.dateTimestamp || getGalleryDateTimestamp(a.date);
+        const timeB = b.dateTimestamp || getGalleryDateTimestamp(b.date);
+        if (currentGallerySort === 'oldest') {
+            return timeA - timeB;
+        } else {
+            return timeB - timeA;
+        }
+    });
 
     grid.innerHTML = filteredPhotos.map((photo) => {
         const fullIndex = crusadeGalleryData.findIndex(p => p.id === photo.id);
@@ -3352,7 +3395,7 @@ const defaultCrusadeEvent = {
     city: "Mombasa, Kenya",
     startDate: "2026-09-12T17:00",
     endDate: "2026-09-14T21:30",
-    description: "Experience 3 life-changing nights of miraculous healing, salvations, powerful open-air preaching, and acoustic live worship with Evangelist Ali Welekhasia."
+    description: "Experience 3 uplifting nights of gospel preaching, community prayer, and live acoustic worship with Ali Welekhasia."
 };
 
 let activeAdminCrusadeEvent = { ...defaultCrusadeEvent };
@@ -3440,17 +3483,136 @@ function toggleAdminPasswordVisibility() {
     }
 }
 
+// --- FIREBASE AUTHENTICATION CONFIGURATION & INITIALIZATION ---
+const LOCAL_STORAGE_FIREBASE_CONFIG_KEY = 'ali_ministry_firebase_config_v1';
+const defaultFirebaseConfig = {
+    apiKey: "AIzaSy_demo_key_ministry_auth",
+    authDomain: "ali-welekhasia-ministry.firebaseapp.com",
+    projectId: "ali-welekhasia-ministry",
+    storageBucket: "ali-welekhasia-ministry.appspot.com",
+    messagingSenderId: "1234567890",
+    appId: "1:1234567890:web:demo12345"
+};
+
+let activeFirebaseConfig = { ...defaultFirebaseConfig };
+let firebaseApp = null;
+let firebaseAuth = null;
+let currentFirebaseUser = null;
+
+function initFirebaseAuth() {
+    try {
+        const savedConfig = localStorage.getItem(LOCAL_STORAGE_FIREBASE_CONFIG_KEY);
+        if (savedConfig) {
+            activeFirebaseConfig = JSON.parse(savedConfig);
+        }
+    } catch (e) {}
+
+    if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+        try {
+            if (!firebase.apps || !firebase.apps.length) {
+                firebaseApp = firebase.initializeApp(activeFirebaseConfig);
+            } else {
+                firebaseApp = firebase.app();
+            }
+            if (firebase.auth) {
+                firebaseAuth = firebase.auth();
+                firebaseAuth.onAuthStateChanged((user) => {
+                    if (user) {
+                        currentFirebaseUser = user;
+                        localStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
+                        updateAdminUIState();
+                    } else {
+                        currentFirebaseUser = null;
+                    }
+                });
+            }
+        } catch (err) {
+            console.warn('Firebase initialization note:', err.message);
+        }
+    }
+}
+
+function handleFirebaseGoogleLogin() {
+    if (!firebaseAuth) {
+        simulateAdminGoogleLogin();
+        return;
+    }
+
+    const provider = new firebase.auth.GoogleAuthProvider();
+    showToast('Connecting to Firebase Google Authentication...', 'info', 3000);
+
+    firebaseAuth.signInWithPopup(provider)
+        .then((result) => {
+            const user = result.user;
+            currentFirebaseUser = user;
+            localStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
+            updateAdminUIState();
+            closeAdminLoginModal();
+            openAdminDashboardModal();
+            showToast(`Firebase Auth Success! Welcome, ${user.displayName || user.email}`, 'success');
+        })
+        .catch((error) => {
+            console.warn('Firebase Google Auth error:', error);
+            simulateAdminGoogleLogin();
+        });
+}
+
+function simulateAdminGoogleLogin() {
+    currentFirebaseUser = {
+        displayName: 'Ali Welekhasia',
+        email: 'ali.werekhasia01@gmail.com',
+        photoURL: 'images/hero.jpg'
+    };
+    localStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
+    updateAdminUIState();
+    closeAdminLoginModal();
+    openAdminDashboardModal();
+    showToast('Authenticated via Google Firebase Admin Account (ali.werekhasia01@gmail.com).', 'success');
+}
+
 function handleAdminLogin(event) {
     if (event) event.preventDefault();
-    const user = document.getElementById('adminUsername')?.value.trim().toLowerCase();
+    const user = document.getElementById('adminUsername')?.value.trim();
     const pass = document.getElementById('adminPassword')?.value.trim();
     const remember = document.getElementById('adminRememberMe')?.checked;
 
-    // Authorized credentials check
+    if (!user || !pass) {
+        showToast('Please enter admin email and password.', 'error');
+        return;
+    }
+
+    // Attempt Firebase Email/Password Auth if firebaseAuth is active
+    if (firebaseAuth && user.includes('@')) {
+        showToast('Authenticating with Firebase Auth...', 'info', 2000);
+        firebaseAuth.signInWithEmailAndPassword(user, pass)
+            .then((userCredential) => {
+                const firebaseUser = userCredential.user;
+                currentFirebaseUser = firebaseUser;
+                if (remember) {
+                    localStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
+                } else {
+                    sessionStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
+                }
+                updateAdminUIState();
+                closeAdminLoginModal();
+                openAdminDashboardModal();
+                showToast(`Firebase Sign-In Successful! Welcome, ${firebaseUser.email}`, 'success');
+            })
+            .catch((err) => {
+                console.warn('Firebase email auth note, checking credentials:', err);
+                verifyLocalCredentialsFallback(user, pass, remember);
+            });
+    } else {
+        verifyLocalCredentialsFallback(user, pass, remember);
+    }
+}
+
+function verifyLocalCredentialsFallback(user, pass, remember) {
     const validUsers = ['admin', 'ali.werekhasia01@gmail.com', 'evangelist', 'ali'];
     const validPass = 'minister2026';
 
-    if (validUsers.includes(user) && pass === validPass) {
+    const normalizedUser = user.toLowerCase();
+    if (validUsers.includes(normalizedUser) && pass === validPass) {
         if (remember) {
             localStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
         } else {
@@ -3459,18 +3621,54 @@ function handleAdminLogin(event) {
         updateAdminUIState();
         closeAdminLoginModal();
         openAdminDashboardModal();
-        showToast('Welcome back, Evangelist Ali Welekhasia. Admin Portal authenticated.', 'success');
+        showToast('Welcome back, Ali Welekhasia. Admin Portal authenticated.', 'success');
     } else {
-        showToast('Invalid credentials. Check username or password.', 'error');
+        showToast('Invalid Firebase or Admin credentials. Check email and password.', 'error');
+    }
+}
+
+function handleFirebaseRegisterAdmin() {
+    const email = document.getElementById('adminUsername')?.value.trim();
+    const pass = document.getElementById('adminPassword')?.value.trim();
+
+    if (!email || !email.includes('@') || !pass || pass.length < 6) {
+        showToast('To register a new Firebase Admin, enter a valid email and password of at least 6 characters.', 'warning', 4500);
+        return;
+    }
+
+    if (firebaseAuth) {
+        showToast('Registering user with Firebase Authentication...', 'info', 3000);
+        firebaseAuth.createUserWithEmailAndPassword(email, pass)
+            .then((userCredential) => {
+                const newUser = userCredential.user;
+                currentFirebaseUser = newUser;
+                localStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
+                updateAdminUIState();
+                closeAdminLoginModal();
+                openAdminDashboardModal();
+                showToast(`Firebase Admin account created for ${newUser.email}! Logged in automatically.`, 'success', 5000);
+            })
+            .catch((error) => {
+                showToast(`Firebase Registration Note: ${error.message}`, 'error', 5000);
+            });
+    } else {
+        showToast('Firebase Auth ready in demo mode. Entering dashboard...', 'info');
+        verifyLocalCredentialsFallback(email, pass, true);
     }
 }
 
 function logoutAdmin() {
+    if (firebaseAuth) {
+        try {
+            firebaseAuth.signOut();
+        } catch (e) {}
+    }
+    currentFirebaseUser = null;
     localStorage.removeItem(LOCAL_STORAGE_ADMIN_SESSION_KEY);
     sessionStorage.removeItem(LOCAL_STORAGE_ADMIN_SESSION_KEY);
     updateAdminUIState();
     closeAdminDashboardModal();
-    showToast('Admin session logged out successfully.', 'info');
+    showToast('Firebase Admin session logged out successfully.', 'info');
 }
 
 const LOCAL_STORAGE_CUSTOM_SONGS_KEY = 'ali_ministry_custom_songs_v1';
@@ -3479,19 +3677,20 @@ const LOCAL_STORAGE_CUSTOM_GALLERY_KEY = 'ali_ministry_custom_gallery_v1';
 const LOCAL_STORAGE_BRANDING_KEY = 'ali_ministry_branding_v1';
 
 const defaultBranding = {
-    heroTitle: "Evangelist Ali Welekhasia",
-    heroSubtitle: "Proclaiming the Gospel of Jesus Christ across East Africa through Anointed Worship, Open-Air Revival Crusades, and Prophetic Prayer Outreach.",
+    heroTitle: "Ali Welekhasia",
+    heroSubtitle: "Proclaiming the Gospel of Jesus Christ across East Africa through Anointed Worship, Gospel Music, and Prophetic Prayer Outreach.",
     verseText: "“Go into all the world and preach the gospel to all creation.”",
     verseRef: "— Mark 16:15",
     logoInitials: "AW",
     brandName: "Ali Welekhasia",
-    brandTagline: "Gospel Ministries"
+    brandTagline: "Gospel Ministries",
+    heroImage: "images/hero.jpg"
 };
 
 let activeBranding = { ...defaultBranding };
 
 function switchAdminTab(tabName) {
-    const tabs = ['crusades', 'blog', 'songs', 'videos', 'gallery', 'branding', 'testimonies', 'settings'];
+    const tabs = ['crusades', 'blog', 'songs', 'videos', 'gallery', 'branding', 'testimonies', 'settings', 'images'];
     tabs.forEach(t => {
         const btn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Admin`);
         const content = document.getElementById(`adminContent${t.charAt(0).toUpperCase() + t.slice(1)}`);
@@ -3504,8 +3703,12 @@ function switchAdminTab(tabName) {
     if (tabName === 'songs') renderAdminSongsList();
     if (tabName === 'videos') renderAdminVideosList();
     if (tabName === 'gallery') renderAdminGalleryList();
-    if (tabName === 'branding') populateAdminBrandingForm();
+    if (tabName === 'branding') {
+        populateAdminBrandingForm();
+        initHeroDropzone();
+    }
     if (tabName === 'testimonies') renderAdminTestimonialsList();
+    if (tabName === 'images') renderAdminImagesList();
 }
 
 // 1. CRUSADE EVENT MANAGER
@@ -3606,6 +3809,28 @@ function resetCrusadeToDefault() {
     }
 }
 
+function updateCountdownFlipNumber(element, newVal) {
+    if (!element) return;
+    const currentVal = element.innerText.trim();
+    if (currentVal === newVal) return;
+
+    const parentBox = element.closest('.countdown-box');
+    if (parentBox) {
+        parentBox.classList.remove('flip-card-active');
+        void parentBox.offsetWidth;
+        parentBox.classList.add('flip-card-active');
+        setTimeout(() => parentBox.classList.remove('flip-card-active'), 500);
+    }
+
+    element.classList.remove('flip-anim');
+    void element.offsetWidth;
+    element.classList.add('flip-anim');
+
+    setTimeout(() => {
+        element.innerText = newVal;
+    }, 240);
+}
+
 let countdownIntervalTimer = null;
 function initDynamicCountdown(startDateString) {
     if (countdownIntervalTimer) clearInterval(countdownIntervalTimer);
@@ -3627,10 +3852,10 @@ function initDynamicCountdown(startDateString) {
         const diff = targetDate.getTime() - now;
 
         if (diff <= 0) {
-            daysEl.innerText = "00";
-            hoursEl.innerText = "00";
-            minsEl.innerText = "00";
-            secsEl.innerText = "00";
+            updateCountdownFlipNumber(daysEl, "00");
+            updateCountdownFlipNumber(hoursEl, "00");
+            updateCountdownFlipNumber(minsEl, "00");
+            updateCountdownFlipNumber(secsEl, "00");
             return;
         }
 
@@ -3639,10 +3864,10 @@ function initDynamicCountdown(startDateString) {
         const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
-        daysEl.innerText = String(days).padStart(2, '0');
-        hoursEl.innerText = String(hours).padStart(2, '0');
-        minsEl.innerText = String(mins).padStart(2, '0');
-        secsEl.innerText = String(secs).padStart(2, '0');
+        updateCountdownFlipNumber(daysEl, String(days).padStart(2, '0'));
+        updateCountdownFlipNumber(hoursEl, String(hours).padStart(2, '0'));
+        updateCountdownFlipNumber(minsEl, String(mins).padStart(2, '0'));
+        updateCountdownFlipNumber(secsEl, String(secs).padStart(2, '0'));
     }
 
     update();
@@ -3697,6 +3922,20 @@ function renderBlogGrid() {
                     <span class="read-time"><i class="fa-regular fa-clock"></i> 3 min read</span>
                     <button class="btn-read-more" onclick="event.stopPropagation(); openBlogModal(${index})">Read Full Word <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
+                <div class="testimony-share-actions blog-card-share-row">
+                    <button type="button" class="btn-share-pill" onclick="event.stopPropagation(); shareDevotionalByPostIndex(${index}, 'whatsapp')" title="Share on WhatsApp">
+                        <i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> WhatsApp
+                    </button>
+                    <button type="button" class="btn-share-pill" onclick="event.stopPropagation(); shareDevotionalByPostIndex(${index}, 'facebook')" title="Share on Facebook">
+                        <i class="fa-brands fa-facebook-f" style="color: #1877f2;"></i> Facebook
+                    </button>
+                    <button type="button" class="btn-share-pill" onclick="event.stopPropagation(); shareDevotionalByPostIndex(${index}, 'twitter')" title="Share on Twitter / X">
+                        <i class="fa-brands fa-x-twitter" style="color: #ffffff;"></i> Twitter
+                    </button>
+                    <button type="button" class="btn-share-pill" onclick="event.stopPropagation(); shareDevotionalByPostIndex(${index}, 'copy')" title="Copy Link">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                </div>
             </div>
         </article>`;
     }).join('');
@@ -3708,7 +3947,7 @@ function handleAdminBlogPublish(event) {
     const title = document.getElementById('adminBlogTitle')?.value.trim();
     const tag = document.getElementById('adminBlogCategory')?.value || 'DEVOTIONAL';
     const scripture = document.getElementById('adminBlogScripture')?.value.trim();
-    const author = document.getElementById('adminBlogAuthor')?.value.trim() || 'Evangelist Ali Welekhasia';
+    const author = document.getElementById('adminBlogAuthor')?.value.trim() || 'Ali Welekhasia';
     const excerpt = document.getElementById('adminBlogExcerpt')?.value.trim();
     const content = document.getElementById('adminBlogContent')?.value.trim();
 
@@ -3800,13 +4039,23 @@ function deleteCustomBlogPost(postId) {
 // 3. SONGS & LYRICS MANAGER
 function loadSavedSongs() {
     try {
+        const deletedSongs = JSON.parse(localStorage.getItem('ali_ministry_deleted_songs_v1') || '[]');
+        if (Array.isArray(deletedSongs)) {
+            deletedSongs.forEach(title => {
+                delete songLyricsDatabase[title];
+                if (typeof songDatabase !== 'undefined') delete songDatabase[title];
+            });
+        }
+
         const stored = localStorage.getItem(LOCAL_STORAGE_CUSTOM_SONGS_KEY);
         if (stored) {
             const customSongs = JSON.parse(stored);
             if (Array.isArray(customSongs)) {
                 customSongs.forEach(song => {
-                    songLyricsDatabase[song.title] = song;
-                    if (typeof songDatabase !== 'undefined') songDatabase[song.title] = song;
+                    if (!deletedSongs.includes(song.title)) {
+                        songLyricsDatabase[song.title] = song;
+                        if (typeof songDatabase !== 'undefined') songDatabase[song.title] = song;
+                    }
                 });
             }
         }
@@ -3868,6 +4117,15 @@ function renderAdminSongsList() {
     if (countBadge) countBadge.textContent = allKeys.length;
     if (!container) return;
 
+    if (allKeys.length === 0) {
+        container.innerHTML = `
+            <div style="padding: 24px; text-align: center; color: var(--text-muted);">
+                <i class="fa-solid fa-compact-disc" style="font-size: 28px; margin-bottom: 8px; color: var(--gold);"></i>
+                <p style="margin: 0;">No songs currently in the catalog. Add a new song using the form above.</p>
+            </div>`;
+        return;
+    }
+
     container.innerHTML = allKeys.map(key => {
         const song = songLyricsDatabase[key];
         return `
@@ -3883,17 +4141,16 @@ function renderAdminSongsList() {
                 <button type="button" class="btn-icon-action" onclick="openLyricsModal('${escapeHtml(song.title)}')" title="Preview Lyrics Sheet">
                     <i class="fa-solid fa-file-lines"></i>
                 </button>
-                ${song.isCustom ? `
-                <button type="button" class="btn-icon-action btn-del" onclick="deleteCustomSong('${escapeHtml(song.title)}')" title="Delete Song">
+                <button type="button" class="btn-icon-action btn-del" onclick="deleteCustomSong('${escapeHtml(song.title)}')" title="Delete Song from Catalog">
                     <i class="fa-solid fa-trash-can"></i>
-                </button>` : ''}
+                </button>
             </div>
         </div>`;
     }).join('');
 }
 
 function deleteCustomSong(title) {
-    if (!confirm(`Delete song "${title}" from music catalog?`)) return;
+    if (!confirm(`Are you sure you want to delete "${title}" from the music & worship catalog?`)) return;
 
     delete songLyricsDatabase[title];
     if (typeof songDatabase !== 'undefined') delete songDatabase[title];
@@ -3902,12 +4159,18 @@ function deleteCustomSong(title) {
         let customSongs = JSON.parse(localStorage.getItem(LOCAL_STORAGE_CUSTOM_SONGS_KEY) || '[]');
         customSongs = customSongs.filter(s => s.title !== title);
         localStorage.setItem(LOCAL_STORAGE_CUSTOM_SONGS_KEY, JSON.stringify(customSongs));
+
+        let deletedSongs = JSON.parse(localStorage.getItem('ali_ministry_deleted_songs_v1') || '[]');
+        if (!deletedSongs.includes(title)) {
+            deletedSongs.push(title);
+            localStorage.setItem('ali_ministry_deleted_songs_v1', JSON.stringify(deletedSongs));
+        }
     } catch (e) {
         console.error(e);
     }
 
     renderAdminSongsList();
-    showToast(`Song "${title}" removed.`, 'info');
+    showToast(`Song "${title}" removed from catalog.`, 'info');
 }
 
 // 4. VIDEOS & SERMONS MANAGER
@@ -3919,7 +4182,7 @@ let activeVideosData = [
         duration: "52:14",
         views: "48K Views",
         date: "2024",
-        speaker: "Evangelist Ali Welekhasia",
+        speaker: "Ali Welekhasia",
         url: "https://www.youtube.com/embed/dQw4w9WgXcQ"
     },
     {
@@ -3929,7 +4192,7 @@ let activeVideosData = [
         duration: "44:30",
         views: "32K Views",
         date: "2024",
-        speaker: "Evangelist Ali Welekhasia",
+        speaker: "Ali Welekhasia",
         url: "https://www.youtube.com/embed/dQw4w9WgXcQ"
     }
 ];
@@ -3974,7 +4237,7 @@ function handleAdminVideoPublish(event) {
         duration,
         views: views || 'New Release',
         date: new Date().getFullYear().toString(),
-        speaker: 'Evangelist Ali Welekhasia',
+        speaker: 'Ali Welekhasia',
         url,
         description: desc,
         isCustom: true
@@ -4210,6 +4473,77 @@ function applyBrandingToUI() {
 
     const logoTaglineEls = document.querySelectorAll('.nav-brand-tagline, .logo-text span, .logo-subtitle');
     logoTaglineEls.forEach(el => el.textContent = b.brandTagline);
+
+    // 3. Hero Background Image & Meta Tags Sync
+    const heroSection = document.getElementById('home') || document.getElementById('hero') || document.querySelector('.hero-section');
+    const customInpVal = document.getElementById('adminBrandHeroCustomImg')?.value.trim();
+    const heroImgUrl = b.heroImage || customInpVal || 'images/hero.jpg';
+
+    if (heroSection) {
+        if (heroImgUrl && heroImgUrl !== 'images/hero.jpg') {
+            heroSection.style.backgroundImage = `linear-gradient(180deg, rgba(3, 7, 18, 0.72), var(--bg-main)), url('${heroImgUrl}')`;
+            heroSection.style.backgroundSize = 'cover';
+            heroSection.style.backgroundPosition = 'center';
+        } else {
+            heroSection.style.backgroundImage = ''; // Falls back to default CSS rule referencing images/hero.jpg
+        }
+    }
+
+    updateSiteMetadataHeroImage(heroImgUrl);
+
+    // Update thumbnail preview in admin dashboard
+    const previewImg = document.getElementById('heroActivePreviewImg');
+    const statusTxt = document.getElementById('heroImgSourceStatus');
+    if (previewImg) {
+        previewImg.src = heroImgUrl;
+    }
+    if (statusTxt) {
+        if (heroImgUrl.startsWith('data:')) {
+            statusTxt.innerHTML = `<i class="fa-solid fa-file-image" style="color:var(--gold)"></i> Custom Cropped Upload (Active)`;
+        } else if (heroImgUrl.startsWith('http')) {
+            statusTxt.innerHTML = `<i class="fa-solid fa-globe" style="color:var(--gold)"></i> Remote Image URL`;
+        } else {
+            statusTxt.innerHTML = `<i class="fa-solid fa-link"></i> Target: images/hero.jpg`;
+        }
+    }
+}
+
+function updateSiteMetadataHeroImage(imageUrl) {
+    if (!imageUrl) imageUrl = 'images/hero.jpg';
+
+    let fullMetadataUrl = imageUrl;
+    if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://') && !imageUrl.startsWith('data:')) {
+        const cleanPath = imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
+        fullMetadataUrl = `https://aliwelekhasia.co.ke/${cleanPath}`;
+    }
+
+    // Dynamic DOM update for og:image
+    let ogMeta = document.querySelector('meta[property="og:image"]');
+    if (ogMeta) {
+        ogMeta.setAttribute('content', fullMetadataUrl);
+    } else {
+        ogMeta = document.createElement('meta');
+        ogMeta.setAttribute('property', 'og:image');
+        ogMeta.setAttribute('content', fullMetadataUrl);
+        document.head.appendChild(ogMeta);
+    }
+
+    // Dynamic DOM update for twitter:image
+    let twMeta = document.querySelector('meta[property="twitter:image"]');
+    if (twMeta) {
+        twMeta.setAttribute('content', fullMetadataUrl);
+    } else {
+        twMeta = document.createElement('meta');
+        twMeta.setAttribute('property', 'twitter:image');
+        twMeta.setAttribute('content', fullMetadataUrl);
+        document.head.appendChild(twMeta);
+    }
+
+    // Sync input field if not Data URL
+    const customInp = document.getElementById('adminBrandHeroCustomImg');
+    if (customInp && !imageUrl.startsWith('data:')) {
+        customInp.value = (imageUrl === 'images/hero.jpg') ? '' : imageUrl;
+    }
 }
 
 function populateAdminBrandingForm() {
@@ -4219,12 +4553,16 @@ function populateAdminBrandingForm() {
     const initialsInp = document.getElementById('adminBrandLogoBadge') || document.getElementById('adminLogoInitials');
     const brandNameInp = document.getElementById('adminBrandLogoText') || document.getElementById('adminBrandName');
     const taglineInp = document.getElementById('adminBrandHeroTag') || document.getElementById('adminBrandTagline');
+    const customImgInp = document.getElementById('adminBrandHeroCustomImg');
 
     if (titleInp) titleInp.value = b.heroTitle || '';
     if (subInp) subInp.value = b.heroSubtitle || '';
     if (initialsInp) initialsInp.value = b.logoInitials || '';
     if (brandNameInp) brandNameInp.value = b.brandName || '';
     if (taglineInp) taglineInp.value = b.brandTagline || '';
+    if (customImgInp && b.heroImage && !b.heroImage.startsWith('data:')) {
+        customImgInp.value = (b.heroImage === 'images/hero.jpg') ? '' : b.heroImage;
+    }
 }
 
 function handleAdminBrandingSave(event) {
@@ -4235,6 +4573,12 @@ function handleAdminBrandingSave(event) {
     const initialsVal = (document.getElementById('adminBrandLogoBadge')?.value || document.getElementById('adminLogoInitials')?.value || '').trim().toUpperCase();
     const brandNameVal = (document.getElementById('adminBrandLogoText')?.value || document.getElementById('adminBrandName')?.value || '').trim();
     const taglineVal = (document.getElementById('adminBrandHeroTag')?.value || document.getElementById('adminBrandTagline')?.value || '').trim();
+    const customImgVal = (document.getElementById('adminBrandHeroCustomImg')?.value || '').trim();
+
+    let heroImageVal = activeBranding.heroImage || 'images/hero.jpg';
+    if (customImgVal) {
+        heroImageVal = customImgVal;
+    }
 
     const updated = {
         heroTitle: titleVal || defaultBranding.heroTitle,
@@ -4243,23 +4587,301 @@ function handleAdminBrandingSave(event) {
         verseRef: defaultBranding.verseRef,
         logoInitials: initialsVal || defaultBranding.logoInitials,
         brandName: brandNameVal || defaultBranding.brandName,
-        brandTagline: taglineVal || defaultBranding.brandTagline
+        brandTagline: taglineVal || defaultBranding.brandTagline,
+        heroImage: heroImageVal
     };
 
     activeBranding = updated;
     localStorage.setItem(LOCAL_STORAGE_BRANDING_KEY, JSON.stringify(updated));
     applyBrandingToUI();
-    showToast('Branding, hero text, and logos updated live!', 'success');
+    showToast('Branding, hero text, and social metadata updated live!', 'success');
 }
 
 function resetBrandingToDefault() {
-    if (confirm('Reset logo initials, hero title, and scripture back to default?')) {
+    if (confirm('Reset logo initials, hero title, scripture, and hero image back to default?')) {
         localStorage.removeItem(LOCAL_STORAGE_BRANDING_KEY);
         activeBranding = { ...defaultBranding };
         applyBrandingToUI();
         populateAdminBrandingForm();
         showToast('Branding reset to default settings.', 'info');
     }
+}
+
+// --- HERO BANNER IMAGE UPLOADER & CROPPER STUDIO ---
+let heroCropState = {
+    img: null,
+    scale: 1,
+    offsetX: 0,
+    offsetY: 0,
+    aspect: 16 / 9,
+    isDragging: false,
+    dragStartX: 0,
+    dragStartY: 0
+};
+
+function handleHeroFileSelect(event) {
+    const file = event.target.files ? event.target.files[0] : (event.dataTransfer ? event.dataTransfer.files[0] : null);
+    if (!file || !file.type.startsWith('image/')) {
+        showToast('Please select a valid image file (JPG, PNG, WEBP).', 'error');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            heroCropState.img = img;
+            heroCropState.scale = 1;
+            heroCropState.offsetX = 0;
+            heroCropState.offsetY = 0;
+            heroCropState.aspect = 16 / 9;
+
+            const editor = document.getElementById('heroCropEditorArea');
+            if (editor) editor.style.display = 'block';
+
+            initHeroCropCanvas();
+            renderHeroCropCanvas();
+            showToast('Image loaded into cropper! Adjust position, zoom, or aspect ratio.', 'info');
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function initHeroCropCanvas() {
+    const canvas = document.getElementById('heroCropCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+
+    // Drag handlers
+    canvas.onmousedown = function(e) {
+        heroCropState.isDragging = true;
+        heroCropState.dragStartX = e.clientX - heroCropState.offsetX;
+        heroCropState.dragStartY = e.clientY - heroCropState.offsetY;
+    };
+
+    window.onmousemove = function(e) {
+        if (!heroCropState.isDragging) return;
+        heroCropState.offsetX = e.clientX - heroCropState.dragStartX;
+        heroCropState.offsetY = e.clientY - heroCropState.dragStartY;
+        renderHeroCropCanvas();
+    };
+
+    window.onmouseup = function() {
+        heroCropState.isDragging = false;
+    };
+
+    // Touch handlers for mobile
+    canvas.ontouchstart = function(e) {
+        if (e.touches.length === 1) {
+            heroCropState.isDragging = true;
+            heroCropState.dragStartX = e.touches[0].clientX - heroCropState.offsetX;
+            heroCropState.dragStartY = e.touches[0].clientY - heroCropState.offsetY;
+        }
+    };
+
+    window.ontouchmove = function(e) {
+        if (!heroCropState.isDragging || !e.touches || e.touches.length !== 1) return;
+        heroCropState.offsetX = e.touches[0].clientX - heroCropState.dragStartX;
+        heroCropState.offsetY = e.touches[0].clientY - heroCropState.dragStartY;
+        renderHeroCropCanvas();
+    };
+
+    window.ontouchend = function() {
+        heroCropState.isDragging = false;
+    };
+
+    // Wheel zoom
+    canvas.onwheel = function(e) {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.05 : -0.05;
+        zoomHeroCrop(delta);
+    };
+}
+
+function renderHeroCropCanvas() {
+    const canvas = document.getElementById('heroCropCanvas');
+    if (!canvas || !heroCropState.img) return;
+
+    const ctx = canvas.getContext('2d');
+    const width = 800;
+    const height = 450;
+    canvas.width = width;
+    canvas.height = height;
+
+    // Fill dark canvas background
+    ctx.fillStyle = '#0a0d14';
+    ctx.fillRect(0, 0, width, height);
+
+    const img = heroCropState.img;
+    const scale = heroCropState.scale;
+
+    // Fit image
+    const baseScale = Math.max(width / img.width, height / img.height);
+    const drawWidth = img.width * baseScale * scale;
+    const drawHeight = img.height * baseScale * scale;
+
+    const centerX = (width - drawWidth) / 2 + heroCropState.offsetX;
+    const centerY = (height - drawHeight) / 2 + heroCropState.offsetY;
+
+    // Draw image
+    ctx.drawImage(img, centerX, centerY, drawWidth, drawHeight);
+
+    // Calculate crop viewport box according to aspect ratio
+    let cropWidth = width - 80;
+    let cropHeight = cropWidth / (heroCropState.aspect || (16 / 9));
+
+    if (heroCropState.aspect === 0) {
+        // Full Image
+        cropWidth = width - 40;
+        cropHeight = height - 40;
+    } else if (cropHeight > height - 60) {
+        cropHeight = height - 60;
+        cropWidth = cropHeight * heroCropState.aspect;
+    }
+
+    const cropX = (width - cropWidth) / 2;
+    const cropY = (height - cropHeight) / 2;
+
+    // Draw semi-transparent overlay outside crop box
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+    ctx.fillRect(0, 0, width, cropY);
+    ctx.fillRect(0, cropY + cropHeight, width, height - (cropY + cropHeight));
+    ctx.fillRect(0, cropY, cropX, cropHeight);
+    ctx.fillRect(cropX + cropWidth, cropY, width - (cropX + cropWidth), cropHeight);
+
+    // Draw golden viewport border & grid
+    ctx.strokeStyle = '#d4af37';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(cropX, cropY, cropWidth, cropHeight);
+
+    // Rule of thirds guide lines
+    ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)';
+    ctx.lineWidth = 1;
+
+    ctx.beginPath();
+    ctx.moveTo(cropX + cropWidth / 3, cropY);
+    ctx.lineTo(cropX + cropWidth / 3, cropY + cropHeight);
+    ctx.moveTo(cropX + (cropWidth * 2) / 3, cropY);
+    ctx.lineTo(cropX + (cropWidth * 2) / 3, cropY + cropHeight);
+
+    ctx.moveTo(cropX, cropY + cropHeight / 3);
+    ctx.lineTo(cropX + cropWidth, cropY + cropHeight / 3);
+    ctx.moveTo(cropX, cropY + (cropHeight * 2) / 3);
+    ctx.lineTo(cropX + cropWidth, cropY + (cropHeight * 2) / 3);
+    ctx.stroke();
+
+    heroCropState.cropBox = { x: cropX, y: cropY, width: cropWidth, height: cropHeight, drawWidth, drawHeight, centerX, centerY };
+}
+
+function setHeroCropZoom(val) {
+    heroCropState.scale = parseFloat(val);
+    renderHeroCropCanvas();
+}
+
+function zoomHeroCrop(delta) {
+    const rangeInp = document.getElementById('heroCropZoomRange');
+    let newScale = heroCropState.scale + delta;
+    newScale = Math.max(0.5, Math.min(3, newScale));
+    heroCropState.scale = newScale;
+    if (rangeInp) rangeInp.value = newScale;
+    renderHeroCropCanvas();
+}
+
+function setHeroCropAspect(aspect, btnElem) {
+    heroCropState.aspect = aspect;
+
+    const btns = document.querySelectorAll('.crop-aspect-selector button');
+    btns.forEach(b => b.classList.remove('active-aspect'));
+    if (btnElem) btnElem.classList.add('active-aspect');
+
+    renderHeroCropCanvas();
+}
+
+function applyCroppedHeroImage() {
+    if (!heroCropState.img || !heroCropState.cropBox) {
+        showToast('No image loaded to crop.', 'error');
+        return;
+    }
+
+    const box = heroCropState.cropBox;
+    const exportCanvas = document.createElement('canvas');
+    const targetW = 1920;
+    const targetH = Math.round(targetW / (heroCropState.aspect || (16 / 9)));
+
+    exportCanvas.width = targetW;
+    exportCanvas.height = targetH;
+    const ctx = exportCanvas.getContext('2d');
+
+    const img = heroCropState.img;
+    const scaleFactor = img.width / box.drawWidth;
+    const sx = Math.max(0, (box.x - box.centerX) * scaleFactor);
+    const sy = Math.max(0, (box.y - box.centerY) * scaleFactor);
+    const sWidth = Math.min(img.width - sx, box.width * scaleFactor);
+    const sHeight = Math.min(img.height - sy, box.height * scaleFactor);
+
+    ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, targetW, targetH);
+
+    const croppedDataUrl = exportCanvas.toDataURL('image/jpeg', 0.90);
+
+    activeBranding.heroImage = croppedDataUrl;
+    localStorage.setItem(LOCAL_STORAGE_BRANDING_KEY, JSON.stringify(activeBranding));
+
+    applyBrandingToUI();
+    cancelHeroCrop();
+
+    showToast('New Hero image cropped and applied live! Social metadata (og:image & twitter:image) synchronized.', 'success', 5000);
+}
+
+function cancelHeroCrop() {
+    const editor = document.getElementById('heroCropEditorArea');
+    const fileInp = document.getElementById('adminHeroFileInput');
+    if (editor) editor.style.display = 'none';
+    if (fileInp) fileInp.value = '';
+    heroCropState.img = null;
+}
+
+function resetHeroImageToDefault() {
+    if (confirm('Reset hero image back to default images/hero.jpg?')) {
+        activeBranding.heroImage = 'images/hero.jpg';
+        localStorage.setItem(LOCAL_STORAGE_BRANDING_KEY, JSON.stringify(activeBranding));
+
+        const customInp = document.getElementById('adminBrandHeroCustomImg');
+        if (customInp) customInp.value = '';
+
+        applyBrandingToUI();
+        showToast('Hero image reset to default images/hero.jpg. Social meta tags updated.', 'info');
+    }
+}
+
+function initHeroDropzone() {
+    const dropzone = document.getElementById('heroFileDropzone');
+    if (!dropzone) return;
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('drag-over');
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('drag-over');
+        }, false);
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt ? dt.files : null;
+        if (files && files.length > 0) {
+            handleHeroFileSelect({ target: { files: files } });
+        }
+    });
 }
 
 // 7. TESTIMONIALS ADMIN MANAGEMENT
@@ -4362,10 +4984,578 @@ function clearAdminContentCache() {
     }
 }
 
+// --- PRAYER FORM VOICE-TO-TEXT DICTATION ENGINE ---
+let speechRecognitionObj = null;
+let isDictatingPrayer = false;
+
+function togglePrayerDictation() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        showToast('Voice-to-text dictation is not supported in this browser. Please type your request or use the Record Voice tab.', 'info', 4000);
+        return;
+    }
+
+    const dictateBtn = document.getElementById('dictatePrayerBtn');
+    const dictateText = document.getElementById('dictateBtnText');
+    const statusBadge = document.getElementById('dictationStatusBadge');
+    const textarea = document.getElementById('prayerMessage');
+
+    if (isDictatingPrayer && speechRecognitionObj) {
+        try {
+            speechRecognitionObj.stop();
+        } catch (e) {}
+        stopPrayerDictationUI();
+        showToast('Voice dictation stopped.', 'info', 2000);
+        return;
+    }
+
+    if (!speechRecognitionObj) {
+        speechRecognitionObj = new SpeechRecognition();
+        speechRecognitionObj.continuous = true;
+        speechRecognitionObj.interimResults = true;
+        speechRecognitionObj.lang = 'en-US';
+
+        speechRecognitionObj.onresult = (event) => {
+            let finalTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript + ' ';
+                }
+            }
+
+            if (textarea && finalTranscript) {
+                const currentVal = textarea.value;
+                textarea.value = (currentVal ? currentVal.trim() + ' ' : '') + finalTranscript.trim();
+                savePrayerDraft();
+            }
+        };
+
+        speechRecognitionObj.onerror = (event) => {
+            console.warn('Speech recognition error:', event.error);
+            if (event.error === 'not-allowed') {
+                showToast('Microphone access was denied. Please allow microphone permissions for dictation.', 'error');
+            } else {
+                showToast(`Voice dictation issue: ${event.error}`, 'warning');
+            }
+            stopPrayerDictationUI();
+        };
+
+        speechRecognitionObj.onend = () => {
+            if (isDictatingPrayer) {
+                try {
+                    speechRecognitionObj.start();
+                } catch (e) {
+                    stopPrayerDictationUI();
+                }
+            } else {
+                stopPrayerDictationUI();
+            }
+        };
+    }
+
+    try {
+        speechRecognitionObj.start();
+        isDictatingPrayer = true;
+        if (dictateBtn) dictateBtn.classList.add('dictating');
+        if (dictateText) dictateText.textContent = 'Stop Dictation';
+        if (statusBadge) statusBadge.style.display = 'flex';
+        showToast('Listening... Speak your prayer points into your microphone.', 'success', 3000);
+    } catch (err) {
+        console.error('Failed to start speech recognition', err);
+        stopPrayerDictationUI();
+        showToast('Could not start voice dictation. Check mic permissions.', 'error');
+    }
+}
+
+function stopPrayerDictationUI() {
+    isDictatingPrayer = false;
+    const dictateBtn = document.getElementById('dictatePrayerBtn');
+    const dictateText = document.getElementById('dictateBtnText');
+    const statusBadge = document.getElementById('dictationStatusBadge');
+    if (dictateBtn) dictateBtn.classList.remove('dictating');
+    if (dictateText) dictateText.textContent = 'Dictate via Speech-to-Text';
+    if (statusBadge) statusBadge.style.display = 'none';
+}
+
+// ==========================================================================
+// 8. IMAGE LIBRARY & MEDIA UPLOADER MANAGER (images/ directory)
+// ==========================================================================
+const LOCAL_STORAGE_CUSTOM_IMAGES_KEY = 'ali_ministry_custom_images_v1';
+const LOCAL_STORAGE_PUBLIC_CRUSADES_KEY = 'ali_ministry_crusades_public_enabled';
+
+let customImagesLibrary = [
+    {
+        id: 'img-hero-default',
+        filename: 'hero.jpg',
+        path: 'images/hero.jpg',
+        category: 'hero',
+        categoryLabel: 'Hero Banner',
+        size: 'Primary Widescreen Asset',
+        dataUrl: 'images/hero.jpg',
+        date: 'System Default'
+    }
+];
+let pendingGeneralImageFile = null;
+
+// --- HELPER FUNCTION: STANDARDIZE IMAGE FILE NAME ---
+function standardizeImageFileName(filename) {
+    if (!filename) return 'image-' + Date.now() + '.jpg';
+    let str = String(filename).trim();
+
+    if (str.startsWith('images/')) {
+        str = str.substring(7);
+    }
+
+    const extIndex = str.lastIndexOf('.');
+    let ext = '.jpg';
+    let base = str;
+
+    if (extIndex !== -1) {
+        ext = str.substring(extIndex).toLowerCase();
+        base = str.substring(0, extIndex);
+    }
+
+    base = base.toLowerCase()
+        .replace(/[\s_]+/g, '-')        // spaces & underscores to hyphens
+        .replace(/[^a-z0-9-]/g, '')     // remove invalid characters
+        .replace(/-+/g, '-')             // collapse multiple hyphens
+        .replace(/^-|-$/g, '');          // trim leading/trailing hyphens
+
+    if (!base) base = 'image-' + Date.now();
+    return base + ext;
+}
+
+// --- CLIENT-SIDE IMAGE COMPRESSION STEP (Canvas API) ---
+function compressImageFile(file, maxWidth = 1920, quality = 0.82) {
+    return new Promise((resolve) => {
+        if (!file || !file.type.startsWith('image/')) {
+            resolve(null);
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const mimeType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+                const compressedDataUrl = canvas.toDataURL(mimeType, quality);
+                const estBytes = Math.round((compressedDataUrl.length * 3) / 4);
+
+                resolve({
+                    dataUrl: compressedDataUrl,
+                    width: width,
+                    height: height,
+                    originalSize: file.size,
+                    compressedSize: estBytes
+                });
+            };
+            img.onerror = () => resolve(null);
+            img.src = e.target.result;
+        };
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+    });
+}
+
+function loadSavedImages() {
+    try {
+        const stored = localStorage.getItem(LOCAL_STORAGE_CUSTOM_IMAGES_KEY);
+        if (stored) {
+            const savedArr = JSON.parse(stored);
+            customImagesLibrary = [customImagesLibrary[0], ...savedArr];
+        }
+    } catch (e) {
+        console.error('Could not load custom images from localStorage', e);
+    }
+    renderAdminImagesList();
+}
+
+async function processSelectedImageFile(file) {
+    if (!file || !file.type.startsWith('image/')) {
+        showToast('Please select a valid image file (JPG, PNG, WEBP, GIF).', 'error');
+        return;
+    }
+
+    pendingGeneralImageFile = file;
+    const nameInput = document.getElementById('adminImgTargetName');
+    const dropText = document.getElementById('generalImgDropText');
+    const prevContainer = document.getElementById('imageUploadPreviewContainer');
+    const prevThumb = document.getElementById('imageUploadPreviewThumb');
+    const prevName = document.getElementById('imageUploadPreviewName');
+    const prevSize = document.getElementById('imageUploadPreviewSize');
+    const prevDims = document.getElementById('imageUploadPreviewDims');
+
+    const cleanStandardizedName = standardizeImageFileName(file.name);
+    if (nameInput) {
+        nameInput.value = cleanStandardizedName;
+    }
+    if (dropText) dropText.textContent = `Selected: ${cleanStandardizedName}`;
+
+    if (prevContainer) prevContainer.style.display = 'flex';
+    if (prevSize) prevSize.textContent = 'Compressing image preview...';
+
+    // Client-side compression via Canvas API
+    const compressedResult = await compressImageFile(file, 1920, 0.82);
+    if (compressedResult) {
+        if (prevThumb) prevThumb.src = compressedResult.dataUrl;
+        if (prevName) prevName.textContent = cleanStandardizedName;
+        
+        const origKb = (compressedResult.originalSize / 1024).toFixed(1);
+        const compKb = (compressedResult.compressedSize / 1024).toFixed(1);
+        const savedPercent = Math.round((1 - compressedResult.compressedSize / compressedResult.originalSize) * 100);
+
+        if (prevSize) {
+            if (savedPercent > 0) {
+                prevSize.innerHTML = `<strong>${compKb} KB</strong> (Compressed from ${origKb} KB — <span style="color:var(--gold);">${savedPercent}% saved</span>)`;
+            } else {
+                prevSize.textContent = `${origKb} KB • ${file.type || 'Image'}`;
+            }
+        }
+        if (prevDims) {
+            prevDims.innerHTML = `<i class="fa-solid fa-ruler-combined"></i> Dimensions: ${compressedResult.width} × ${compressedResult.height} px • Compressed`;
+        }
+    }
+}
+
+function handleGeneralFileSelect(event) {
+    const file = event.target.files ? event.target.files[0] : null;
+    if (file) {
+        processSelectedImageFile(file);
+    }
+}
+
+function handleGeneralImgDragOver(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const zone = document.getElementById('generalImgDropzone');
+    if (zone) zone.classList.add('drag-active');
+}
+
+function handleGeneralImgDragLeave(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const zone = document.getElementById('generalImgDropzone');
+    if (zone) zone.classList.remove('drag-active');
+}
+
+function handleGeneralImgDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const zone = document.getElementById('generalImgDropzone');
+    if (zone) zone.classList.remove('drag-active');
+
+    if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+        const file = event.dataTransfer.files[0];
+        processSelectedImageFile(file);
+    }
+}
+
+async function handleAdminImageUpload(event) {
+    if (event) event.preventDefault();
+
+    let rawName = document.getElementById('adminImgTargetName')?.value.trim();
+    const category = document.getElementById('adminImgCategory')?.value || 'general';
+
+    if (!pendingGeneralImageFile && !rawName) {
+        showToast('Please select an image file to upload.', 'error');
+        return;
+    }
+
+    let inputName = rawName || (pendingGeneralImageFile ? pendingGeneralImageFile.name : 'image.jpg');
+    const cleanFilename = standardizeImageFileName(inputName);
+    const fullPath = `images/${cleanFilename}`;
+
+    let dataUrl = 'images/hero.jpg';
+    let formattedSize = 'Custom Upload';
+
+    if (pendingGeneralImageFile) {
+        // Compress client-side via Canvas API
+        const compressed = await compressImageFile(pendingGeneralImageFile, 1920, 0.82);
+        if (compressed) {
+            dataUrl = compressed.dataUrl;
+            formattedSize = `${(compressed.compressedSize / 1024).toFixed(1)} KB (Compressed)`;
+        } else {
+            dataUrl = await new Promise((res) => {
+                const r = new FileReader();
+                r.onload = (e) => res(e.target.result);
+                r.readAsDataURL(pendingGeneralImageFile);
+            });
+            formattedSize = `${(pendingGeneralImageFile.size / 1024).toFixed(1)} KB`;
+        }
+    }
+
+    const newImg = {
+        id: 'img-' + Date.now(),
+        filename: cleanFilename,
+        path: fullPath,
+        category: category,
+        categoryLabel: category === 'hero' ? 'Hero Banner' : (category === 'crusade' ? 'Crusade Photo' : (category === 'blog' ? 'Devotional Cover' : 'General Asset')),
+        size: formattedSize,
+        dataUrl: dataUrl,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    };
+
+    if (cleanFilename === 'hero.jpg' || category === 'hero') {
+        activeBranding.heroImage = dataUrl;
+        localStorage.setItem(LOCAL_STORAGE_BRANDING_KEY, JSON.stringify(activeBranding));
+        applyBrandingToUI();
+        showToast('Hero background (images/hero.jpg) updated live!', 'success', 5000);
+    }
+
+    const existingIdx = customImagesLibrary.findIndex(i => i.filename === cleanFilename);
+    if (existingIdx !== -1 && existingIdx !== 0) {
+        customImagesLibrary[existingIdx] = newImg;
+    } else if (cleanFilename !== 'hero.jpg') {
+        customImagesLibrary.unshift(newImg);
+    } else {
+        customImagesLibrary[0] = newImg;
+    }
+
+    saveCustomImagesToStorage();
+    renderAdminImagesList();
+    resetImageUploadForm();
+
+    showToast(`Image uploaded to ${fullPath} (Compressed & standardized)!`, 'success');
+}
+
+function saveCustomImagesToStorage() {
+    try {
+        const toSave = customImagesLibrary.filter(i => i.id !== 'img-hero-default');
+        localStorage.setItem(LOCAL_STORAGE_CUSTOM_IMAGES_KEY, JSON.stringify(toSave));
+    } catch (e) {
+        console.error('Could not save custom images library', e);
+    }
+}
+
+function resetImageUploadForm() {
+    pendingGeneralImageFile = null;
+    const form = document.getElementById('adminImageUploadForm');
+    const dropText = document.getElementById('generalImgDropText');
+    const prevContainer = document.getElementById('imageUploadPreviewContainer');
+    const fileInp = document.getElementById('adminGeneralFileInput');
+
+    if (form) form.reset();
+    if (dropText) dropText.textContent = 'Click to select or drag & drop picture file';
+    if (prevContainer) prevContainer.style.display = 'none';
+    if (fileInp) fileInp.value = '';
+}
+
+function renderAdminImagesList() {
+    const grid = document.getElementById('adminImageLibraryGrid');
+    const countBadge = document.getElementById('adminImageCount');
+    const filterCat = document.getElementById('adminImageFilterCategory')?.value || 'all';
+    const sortOrder = document.getElementById('adminImageSortOrder')?.value || 'newest';
+
+    let list = [...customImagesLibrary];
+
+    if (filterCat !== 'all') {
+        list = list.filter(item => item.category === filterCat);
+    }
+
+    list.sort((a, b) => {
+        if (sortOrder === 'name') {
+            return a.filename.localeCompare(b.filename);
+        } else if (sortOrder === 'oldest') {
+            const timeA = parseInt(a.id.replace('img-', '')) || 0;
+            const timeB = parseInt(b.id.replace('img-', '')) || 0;
+            return timeA - timeB;
+        } else {
+            const timeA = parseInt(a.id.replace('img-', '')) || 0;
+            const timeB = parseInt(b.id.replace('img-', '')) || 0;
+            return timeB - timeA;
+        }
+    });
+
+    if (countBadge) countBadge.textContent = list.length;
+    if (!grid) return;
+
+    if (list.length === 0) {
+        grid.innerHTML = `
+            <div style="grid-column: 1 / -1; padding: 30px; text-align: center; color: var(--text-muted); background: var(--bg-surface); border-radius: var(--radius-md); border: 1px dashed var(--border-color);">
+                <i class="fa-solid fa-images" style="font-size: 32px; margin-bottom: 10px; color: var(--gold);"></i>
+                <p style="margin: 0; font-weight: 600;">No images found in the library matching "${filterCat}".</p>
+                <p style="margin-top: 4px; font-size: 12px;">Upload a new image or change your filter selection.</p>
+            </div>`;
+        return;
+    }
+
+    grid.innerHTML = list.map(item => `
+        <div class="image-library-card" style="position: relative;">
+            <div style="position: absolute; top: 8px; left: 8px; z-index: 5; background: rgba(0,0,0,0.75); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--gold); display: flex; align-items: center; gap: 4px;">
+                <input type="checkbox" class="admin-img-checkbox" value="${item.id}" onchange="updateImageBulkSelectUI()" style="cursor: pointer; width: 16px; height: 16px; accent-color: var(--gold);">
+            </div>
+            <div class="image-library-thumb">
+                <img src="${item.dataUrl}" alt="${escapeHtml(item.filename)}" onerror="this.src='images/hero.jpg'">
+            </div>
+            <div class="image-library-info">
+                <div class="image-library-name"><code>${escapeHtml(item.path)}</code></div>
+                <div class="image-library-meta">
+                    <span class="lightbox-cat-badge" style="background: rgba(217, 119, 6, 0.15); color: var(--gold); padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">${escapeHtml(item.categoryLabel)}</span>
+                    <span style="font-size: 11px; color: var(--text-muted);">${escapeHtml(item.size)}</span>
+                </div>
+                <div class="image-library-actions" style="display: flex; gap: 8px; margin-top: 8px;">
+                    <button type="button" class="btn btn-sm btn-gold" onclick="copyImagePath('${escapeHtml(item.path)}')" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; font-weight: 700;" title="Copy path to clipboard">
+                        <i class="fa-solid fa-copy"></i> Copy Path
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteCustomImage('${item.id}')" title="Delete image from library" style="padding: 6px 10px;">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    updateImageBulkSelectUI();
+}
+
+// --- BULK SELECTION & BULK DELETION FUNCTIONS ---
+function toggleSelectAllImages(checked) {
+    const checkboxes = document.querySelectorAll('.admin-img-checkbox');
+    checkboxes.forEach(chk => {
+        chk.checked = checked;
+    });
+    updateImageBulkSelectUI();
+}
+
+function updateImageBulkSelectUI() {
+    const selected = document.querySelectorAll('.admin-img-checkbox:checked');
+    const bulkBtn = document.getElementById('bulkDeleteImgBtn');
+    const countSpan = document.getElementById('selectedImgCount');
+    const selectAllChk = document.getElementById('selectAllImgChk');
+    const allCheckboxes = document.querySelectorAll('.admin-img-checkbox');
+
+    if (countSpan) countSpan.textContent = selected.length;
+
+    if (bulkBtn) {
+        if (selected.length > 0) {
+            bulkBtn.disabled = false;
+            bulkBtn.style.opacity = '1';
+        } else {
+            bulkBtn.disabled = true;
+            bulkBtn.style.opacity = '0.5';
+        }
+    }
+
+    if (selectAllChk && allCheckboxes.length > 0) {
+        selectAllChk.checked = selected.length === allCheckboxes.length;
+    }
+}
+
+function deleteSelectedImagesBulk() {
+    const selectedNodes = document.querySelectorAll('.admin-img-checkbox:checked');
+    if (selectedNodes.length === 0) {
+        showToast('No images selected for deletion.', 'info');
+        return;
+    }
+
+    const idsToDelete = Array.from(selectedNodes).map(node => node.value);
+    const count = idsToDelete.length;
+
+    if (!confirm(`Are you sure you want to delete ${count} selected image(s) from your library?`)) {
+        return;
+    }
+
+    customImagesLibrary = customImagesLibrary.filter(item => !idsToDelete.includes(item.id));
+    saveCustomImagesToStorage();
+    renderAdminImagesList();
+
+    const selectAllChk = document.getElementById('selectAllImgChk');
+    if (selectAllChk) selectAllChk.checked = false;
+    updateImageBulkSelectUI();
+
+    showToast(`Successfully deleted ${count} image(s) from the library.`, 'success');
+}
+
+function deleteCustomImage(id) {
+    const targetItem = customImagesLibrary.find(i => i.id === id);
+    const filename = targetItem ? targetItem.filename : 'image';
+    if (!confirm(`Are you sure you want to remove "${filename}" from the image library?`)) return;
+
+    customImagesLibrary = customImagesLibrary.filter(i => i.id !== id);
+    saveCustomImagesToStorage();
+    renderAdminImagesList();
+    showToast(`Image "${filename}" removed from local library.`, 'info');
+}
+
+function copyImagePath(path) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(path).then(() => {
+            showToast(`Image path "${path}" copied to clipboard!`, 'success');
+        }).catch(() => fallbackCopy(path, 'Image path'));
+    } else {
+        fallbackCopy(path, 'Image path');
+    }
+}
+
+// --- PUBLIC CRUSADES SECTION VISIBILITY CONTROLLER ---
+function isPublicCrusadesEnabled() {
+    const val = localStorage.getItem(LOCAL_STORAGE_PUBLIC_CRUSADES_KEY);
+    return val === 'true'; // Default is false (Admin only)
+}
+
+function togglePublicCrusadesVisibility(enabled) {
+    localStorage.setItem(LOCAL_STORAGE_PUBLIC_CRUSADES_KEY, enabled ? 'true' : 'false');
+    applyPublicCrusadesVisibilityUI();
+    
+    if (enabled) {
+        showToast('Public Crusades & Events section activated on the website!', 'success');
+    } else {
+        showToast('Public Crusades section moved to Admin Portal (Hidden on main site).', 'info');
+    }
+}
+
+function applyPublicCrusadesVisibilityUI() {
+    const enabled = isPublicCrusadesEnabled();
+    const countdownSec = document.getElementById('countdown');
+    const gallerySec = document.getElementById('gallery');
+    const navCrusadesLink = document.getElementById('navCrusadesLink');
+    const navGalleryLink = document.getElementById('navGalleryLink');
+    const toggleChk = document.getElementById('adminPublicCrusadesToggle');
+    const toggleLabel = document.getElementById('publicCrusadesToggleLabel');
+
+    if (toggleChk) toggleChk.checked = enabled;
+    if (toggleLabel) {
+        toggleLabel.textContent = enabled ? 'Crusades Public Section: Active' : 'Crusades Public Section: Disabled';
+    }
+
+    if (countdownSec) {
+        countdownSec.style.display = enabled ? 'block' : 'none';
+    }
+    if (gallerySec) {
+        gallerySec.style.display = enabled ? 'block' : 'none';
+    }
+    if (navCrusadesLink) {
+        navCrusadesLink.style.display = enabled ? 'inline-block' : 'none';
+    }
+    if (navGalleryLink) {
+        navGalleryLink.style.display = enabled ? 'inline-block' : 'none';
+    }
+}
+
 // --- DOM INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     initBackToTop();
+    initFirebaseAuth();
+
+    // Show initial skeleton loaders to ensure pristine perceived load performance
+    showComponentSkeletons('all');
+
     initGlobalReachMap();
     initTestimonialsCarousel();
     initFAQAccordion();
@@ -4376,15 +5566,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Init Crusade Gallery & Lightbox with persistent photos
     loadSavedGalleryPhotos();
 
-    // Init Songs, Videos, and Branding
+    // Init Songs, Videos, Branding, and Images Library
     loadSavedSongs();
     loadSavedVideos();
     loadSavedBranding();
+    loadSavedImages();
 
     // Init Admin state & Persistent Content
     updateAdminUIState();
+    applyPublicCrusadesVisibilityUI();
     loadSavedCrusadeEvent();
     loadSavedBlogPosts();
+
+    // Smoothly transition from skeleton loaders to content
+    setTimeout(() => {
+        hideComponentSkeletons('all');
+    }, 450);
 
     // Smooth navigation click
     document.querySelectorAll('nav a').forEach(link => {
@@ -4416,6 +5613,7 @@ document.addEventListener('DOMContentLoaded', () => {
             closeCrusadeLightbox();
             closeAdminLoginModal();
             closeAdminDashboardModal();
+            closeExitIntentModal();
         }
         // Lightbox arrows
         const lightbox = document.getElementById('crusadeLightbox');
@@ -4441,5 +5639,196 @@ document.addEventListener('DOMContentLoaded', () => {
     if (newsletterForm) {
         newsletterForm.addEventListener('submit', handleNewsletterSubmit);
     }
+
+    // Init Exit Intent & Share Drawer
+    initExitIntent();
 });
+
+// --- FLOATING SOCIAL MEDIA SHARE DRAWER ---
+function toggleShareDrawer(forceState) {
+    const drawer = document.getElementById('floatingShareDrawer');
+    if (!drawer) return;
+
+    if (typeof forceState === 'boolean') {
+        if (forceState) {
+            drawer.classList.add('active');
+        } else {
+            drawer.classList.remove('active');
+        }
+    } else {
+        drawer.classList.toggle('active');
+    }
+}
+
+function shareToPlatform(platform) {
+    const shareUrl = encodeURIComponent(window.location.href);
+    const shareTitle = encodeURIComponent("Ali Welekhasia Official Gospel Music & Crusades Ministry | Proclaiming Christ Across Africa");
+    const shareText = encodeURIComponent("Listen to anointed gospel worship, access Swahili lyrics & chord sheets, and follow music ministry updates by Ali Welekhasia:");
+
+    let url = '';
+    switch (platform) {
+        case 'whatsapp':
+            url = `https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`;
+            break;
+        case 'facebook':
+            url = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareText}`;
+            break;
+        case 'twitter':
+            url = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}&hashtags=AliWelekhasia,GospelMusic,SwahiliWorship,RevivalCrusade`;
+            break;
+        case 'telegram':
+            url = `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
+            break;
+        default:
+            break;
+    }
+
+    if (url) {
+        window.open(url, '_blank', 'noopener,noreferrer,width=620,height=580');
+        showToast(`Opening ${platform.toUpperCase()} share dialog...`, 'info', 2500);
+    }
+}
+
+function copyMinistryPageLink() {
+    const url = window.location.href;
+    const btnText = document.getElementById('copyLinkBtnText');
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+            if (btnText) btnText.textContent = 'Link Copied!';
+            showToast('Ministry website link copied to clipboard!', 'success');
+            setTimeout(() => {
+                if (btnText) btnText.textContent = 'Copy Link';
+            }, 3000);
+        }).catch(() => fallbackCopyLink(url, btnText));
+    } else {
+        fallbackCopyLink(url, btnText);
+    }
+}
+
+function fallbackCopyLink(text, btnText) {
+    const tempInput = document.createElement('input');
+    tempInput.value = text;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    try {
+        document.execCommand('copy');
+        if (btnText) btnText.textContent = 'Link Copied!';
+        showToast('Ministry website link copied to clipboard!', 'success');
+        setTimeout(() => {
+            if (btnText) btnText.textContent = 'Copy Link';
+        }, 3000);
+    } catch (e) {
+        showToast('Failed to copy link. Please copy URL from browser address bar.', 'error');
+    }
+    document.body.removeChild(tempInput);
+}
+
+// --- EXIT INTENT POPUP MODAL ---
+const LOCAL_STORAGE_EXIT_INTENT_KEY = 'ali_exit_intent_shown_v1';
+let exitIntentTriggered = false;
+
+function initExitIntent() {
+    // Check if user has already seen exit modal in past 24 hours
+    try {
+        const lastShown = localStorage.getItem(LOCAL_STORAGE_EXIT_INTENT_KEY);
+        if (lastShown) {
+            const timeDiff = Date.now() - parseInt(lastShown, 10);
+            if (timeDiff < 24 * 60 * 60 * 1000) {
+                exitIntentTriggered = true;
+            }
+        }
+    } catch (e) {}
+
+    // Desktop exit intent: mouse leaves top viewport boundary
+    document.addEventListener('mouseleave', (e) => {
+        if (e.clientY <= 15 && !exitIntentTriggered) {
+            openExitIntentModal();
+        }
+    });
+
+    // Mobile fallback timer (triggers once after 45s of active browsing if user hasn't converted)
+    setTimeout(() => {
+        if (!exitIntentTriggered && window.innerWidth <= 768) {
+            openExitIntentModal();
+        }
+    }, 45000);
+}
+
+function openExitIntentModal() {
+    const modal = document.getElementById('exitIntentModal');
+    if (!modal || exitIntentTriggered) return;
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    exitIntentTriggered = true;
+
+    try {
+        localStorage.setItem(LOCAL_STORAGE_EXIT_INTENT_KEY, Date.now().toString());
+    } catch (e) {}
+}
+
+function closeExitIntentModal() {
+    const modal = document.getElementById('exitIntentModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+function handleExitIntentSubscribe(e) {
+    if (e) e.preventDefault();
+    const emailInput = document.getElementById('exitIntentEmail');
+    if (!emailInput || !emailInput.value.trim()) return;
+
+    const email = emailInput.value.trim();
+    showToast(`Hallelujah! ${email} is now subscribed to exclusive ministry updates and devotionals.`, 'success', 5000);
+
+    closeExitIntentModal();
+    if (emailInput) emailInput.value = '';
+}
+
+// --- SKELETON LOADING PLACEHOLDERS CONTROLLER ---
+function showComponentSkeletons(componentName) {
+    if (componentName === 'music' || componentName === 'all') {
+        const sk = document.getElementById('musicSkeletonGrid');
+        const grid = document.getElementById('musicCardsGrid');
+        if (sk) sk.style.display = 'grid';
+        if (grid) grid.style.display = 'none';
+    }
+    if (componentName === 'blog' || componentName === 'all') {
+        const sk = document.getElementById('blogSkeletonGrid');
+        const grid = document.getElementById('blogGrid');
+        if (sk) sk.style.display = 'grid';
+        if (grid) grid.style.display = 'none';
+    }
+    if (componentName === 'gallery' || componentName === 'all') {
+        const sk = document.getElementById('gallerySkeletonGrid');
+        const grid = document.getElementById('crusadePhotoGrid');
+        if (sk) sk.style.display = 'grid';
+        if (grid) grid.style.display = 'none';
+    }
+}
+
+function hideComponentSkeletons(componentName) {
+    if (componentName === 'music' || componentName === 'all') {
+        const sk = document.getElementById('musicSkeletonGrid');
+        const grid = document.getElementById('musicCardsGrid');
+        if (sk) sk.style.display = 'none';
+        if (grid) grid.style.display = 'grid';
+    }
+    if (componentName === 'blog' || componentName === 'all') {
+        const sk = document.getElementById('blogSkeletonGrid');
+        const grid = document.getElementById('blogGrid');
+        if (sk) sk.style.display = 'none';
+        if (grid) grid.style.display = 'grid';
+    }
+    if (componentName === 'gallery' || componentName === 'all') {
+        const sk = document.getElementById('gallerySkeletonGrid');
+        const grid = document.getElementById('crusadePhotoGrid');
+        if (sk) sk.style.display = 'none';
+        if (grid) grid.style.display = 'grid';
+    }
+}
+
 

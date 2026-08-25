@@ -1,6 +1,6 @@
 # Ali Welekhasia — Official Personal Website
 
-Official personal website of **Evangelist & Gospel Minister Ali Welekhasia** featuring Swahili worship music releases, interactive lyrics and chords, video sermons, spiritual devotionals, upcoming revival crusade countdowns, global ministry reach maps, online partnership giving, voice prayer requests, praise reports, and automated SEO syndication feeds.
+Official personal website of **Gospel Minister & Worship Artist Ali Welekhasia** featuring Swahili worship music releases, interactive lyrics and chords, video sermons, spiritual devotionals, upcoming revival crusade countdowns, global ministry reach maps, online partnership giving, voice prayer requests, praise reports, and automated SEO syndication feeds.
 
 ## Core Features & Capabilities
 
