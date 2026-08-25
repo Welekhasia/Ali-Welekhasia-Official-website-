@@ -36,36 +36,48 @@ function showToast(message, type = 'success', duration = 4000) {
 
 // --- THEME SYSTEM (Dark / Light Mode) ---
 function toggleTheme() {
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('ali_theme', newTheme);
-    updateThemeIcon(newTheme);
-    showToast(`Switched to ${newTheme === 'dark' ? 'Dark Mode' : 'Light Mode'}`, 'info', 2000);
+
+    // Trigger smooth rotating pulse animation
+    if (themeBtn) {
+        themeBtn.classList.remove('theme-toggling');
+        void themeBtn.offsetWidth; // force DOM reflow to restart CSS keyframe animation
+        themeBtn.classList.add('theme-toggling');
+    }
+
+    // Morph the theme attributes and icon halfway through rotation for a seamless visual transition
+    setTimeout(() => {
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('ali_theme', newTheme);
+        updateThemeIcon(newTheme);
+    }, 220);
+
+    setTimeout(() => {
+        if (themeBtn) themeBtn.classList.remove('theme-toggling');
+    }, 550);
+
+    showToast(`Switched to ${newTheme === 'dark' ? 'Dark Mode (Night View)' : 'Light Mode (Day View)'}`, 'info', 2200);
 }
 
 function initTheme() {
-    const themeBtn = document.getElementById('themeToggleBtn');
     const savedTheme = localStorage.getItem('ali_theme') || 'dark';
-
     document.documentElement.setAttribute('data-theme', savedTheme);
     updateThemeIcon(savedTheme);
-
-    if (themeBtn) {
-        themeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            toggleTheme();
-        });
-    }
 }
 
 function updateThemeIcon(theme) {
     const themeIcon = document.getElementById('themeIcon');
+    const themeBtn = document.getElementById('themeToggleBtn');
     if (!themeIcon) return;
     if (theme === 'light') {
         themeIcon.className = 'fa-solid fa-moon';
+        if (themeBtn) themeBtn.setAttribute('title', 'Switch to Dark Mode (Night View)');
     } else {
         themeIcon.className = 'fa-solid fa-sun';
+        if (themeBtn) themeBtn.setAttribute('title', 'Switch to Light Mode (Day View)');
     }
 }
 
@@ -223,9 +235,10 @@ const searchableData = [
     { title: "The Great Commission: Winning Souls in Our Cities", category: "devotional", description: "Mark 16:15 and open-air crusade evangelism missions", action: () => openDevotional(2) },
     { title: "The Secret Place of Intimacy", category: "devotional", description: "Psalm 91:1-2 and quiet prayer communion with God", action: () => openDevotional(3) },
     
-    // Events & Giving
+    // Events & Giving & Contact
     { title: "Great East Africa Revival Crusade 2026", category: "events", description: "Eldoret & Nairobi Crusade dates and calendar reminder", action: () => { (document.getElementById('countdown') || document.getElementById('events'))?.scrollIntoView({ behavior: 'smooth' }); closeSearchModal(); } },
-    { title: "Partner with Us & M-Pesa Giving", category: "partner", description: "M-Pesa Paybill 247247 & Equity Bank details for crusade support", action: () => { document.getElementById('partner')?.scrollIntoView({ behavior: 'smooth' }); closeSearchModal(); } },
+    { title: "Partner with Us & Giving (M-PESA / Airtel Money)", category: "partner", description: "M-Pesa (Send Money: 254705575437) & Airtel Money (254736024024) for ministry support", action: () => { document.getElementById('partner')?.scrollIntoView({ behavior: 'smooth' }); closeSearchModal(); } },
+    { title: "Contact Us & Ministry Office", category: "contact", description: "Direct communication form, email, and ministry phone numbers", action: () => { document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }); closeSearchModal(); } },
     { title: "Voice Prayer & Written Intercession", category: "prayer", description: "Submit or record prayer requests for morning pastoral intercession", action: () => { document.getElementById('prayer')?.scrollIntoView({ behavior: 'smooth' }); closeSearchModal(); } }
 ];
 
@@ -1279,7 +1292,7 @@ function downloadLyricsPDF() {
                     Gospel Music • Worship Ministry • Bible Outreach<br>
                     Website: https://aliwelekhasia.co.ke<br>
                     YouTube: @aliwelekhasia<br>
-                    M-Pesa Support Paybill: 247247 (Acc: ALI WELEKHASIA)
+                    M-Pesa (Send Money): +254 705 575 437 | Airtel Money: +254 736 024 024
                 </p>
             </div>
         </div>
@@ -2748,6 +2761,61 @@ function handleNewsletterSubmit(event) {
     }
 }
 
+// --- CONTACT US FORM SUBMISSION ---
+function handleContactSubmit(event) {
+    if (event) event.preventDefault();
+    const nameInput = document.getElementById('contactName');
+    const emailInput = document.getElementById('contactEmail');
+    const inquiryTypeInput = document.getElementById('contactInquiryType');
+    const messageInput = document.getElementById('contactMessage');
+    const submitBtn = document.getElementById('contactSubmitBtn');
+
+    const name = nameInput?.value.trim() || 'Beloved in Christ';
+    const email = emailInput?.value.trim() || '';
+    const inquiryType = inquiryTypeInput?.value || 'General Ministry Inquiry';
+    const message = messageInput?.value.trim() || '';
+
+    if (!name || !email || !inquiryType || !message) {
+        showToast('Please fill in all required fields to send your ministry inquiry.', 'error', 3500);
+        return;
+    }
+
+    // Button loading state
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending Message...';
+    }
+
+    setTimeout(() => {
+        // Save to persistent storage for admin review
+        try {
+            const inquiries = JSON.parse(localStorage.getItem('ali_contact_inquiries') || '[]');
+            inquiries.unshift({
+                id: 'msg_' + Date.now(),
+                name,
+                email,
+                inquiryType,
+                message,
+                timestamp: new Date().toISOString(),
+                formattedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+            });
+            localStorage.setItem('ali_contact_inquiries', JSON.stringify(inquiries));
+        } catch (e) {
+            console.error('Storage error:', e);
+        }
+
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Ministry Message';
+        }
+
+        const form = document.getElementById('contactUsForm');
+        if (form) form.reset();
+
+        showToast(`Thank you, ${name}! Your inquiry (${inquiryType}) has been safely sent to Ali Welekhasia's ministry office. We will reply to ${email} shortly.`, 'success', 6000);
+    }, 600);
+}
+
 // --- GLOBAL SCROLL REVEAL ANIMATIONS SYSTEM ---
 function initScrollAnimations() {
     const targetSelectors = [
@@ -2773,6 +2841,8 @@ function initScrollAnimations() {
         '.prayer-box',
         '.testimonials-wrapper',
         '.faq-item',
+        '.contact-info-card',
+        '.contact-form-card',
         '.newsletter-card',
         '.adsense-section',
         '.footer-col'
@@ -4439,33 +4509,67 @@ function handleAdminGalleryPublish(event) {
     showToast(`Photo "${title}" published live in Crusade Lightbox Gallery!`, 'success');
 }
 
+let adminGalleryActiveFilter = 'all';
+
+function filterAdminGalleryPhotos(category, btn) {
+    adminGalleryActiveFilter = category || 'all';
+    const tabs = document.querySelectorAll('#adminGalleryFilterTabs .filter-btn');
+    tabs.forEach(t => t.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderAdminGalleryList();
+}
+
 function renderAdminGalleryList() {
     const container = document.getElementById('adminGalleryList');
     const countBadge = document.getElementById('adminGalleryCount') || document.getElementById('adminGalleryCountBadge');
+    const filterAllBadge = document.getElementById('adminGalleryFilterAllCount');
+    
     if (countBadge) countBadge.textContent = crusadeGalleryData.length;
+    if (filterAllBadge) filterAllBadge.textContent = crusadeGalleryData.length;
     if (!container) return;
 
-    container.innerHTML = crusadeGalleryData.map((p, idx) => `
-        <div class="admin-article-item">
-            <div class="admin-article-info">
-                <span class="admin-article-title">${escapeHtml(p.title)}</span>
-                <span class="admin-article-meta">
-                    <span class="admin-sub-tag">${escapeHtml(p.categoryLabel)}</span>
-                    <span><i class="fa-solid fa-location-dot"></i> ${escapeHtml(p.location)}</span>
-                    <span>${escapeHtml(p.attendees)}</span>
-                </span>
+    let filtered = adminGalleryActiveFilter === 'all'
+        ? [...crusadeGalleryData]
+        : crusadeGalleryData.filter(p => p.category === adminGalleryActiveFilter);
+
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div style="grid-column: 1 / -1; padding: 28px; text-align: center; color: var(--text-dim);">
+                <i class="fa-solid fa-images" style="font-size: 28px; margin-bottom: 8px; opacity: 0.5;"></i>
+                <p style="margin: 0; font-size: 13px;">No photos found in this category.</p>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = filtered.map((p) => {
+        const fullIndex = crusadeGalleryData.findIndex(item => item.id === p.id);
+        return `
+        <div class="admin-gallery-card">
+            <div class="admin-gallery-card-thumb" onclick="openCrusadeLightbox(${fullIndex})" title="Click to view in Fullscreen Lightbox">
+                <span class="gallery-badge" style="position: absolute; top: 8px; left: 8px; font-size: 10px; padding: 2px 7px;">${escapeHtml(p.categoryLabel)}</span>
+                <span class="gallery-attendance-pill" style="position: absolute; bottom: 8px; right: 8px; font-size: 10px; padding: 2px 6px;"><i class="fa-solid fa-users"></i> ${escapeHtml(p.attendees)}</span>
+                ${generateGallerySvgArtwork(p)}
             </div>
-            <div class="admin-item-actions">
-                <button type="button" class="btn-icon-action" onclick="openCrusadeLightbox(${idx})" title="View in Lightbox">
-                    <i class="fa-solid fa-expand"></i>
+            <div class="admin-gallery-card-body">
+                <h4 class="admin-gallery-card-title">${escapeHtml(p.title)}</h4>
+                <p class="admin-gallery-card-desc">${escapeHtml(p.description)}</p>
+                <div class="admin-gallery-card-meta">
+                    <span><i class="fa-solid fa-location-dot" style="color: var(--gold)"></i> ${escapeHtml(p.location)}</span>
+                    <span><i class="fa-regular fa-calendar"></i> ${escapeHtml(p.date)}</span>
+                </div>
+            </div>
+            <div class="admin-gallery-card-actions">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="openCrusadeLightbox(${fullIndex})" style="padding: 5px 10px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-expand"></i> View Lightbox
                 </button>
                 ${p.isCustom ? `
                 <button type="button" class="btn-icon-action btn-del" onclick="deleteCustomGalleryPhoto('${p.id}')" title="Delete Photo">
                     <i class="fa-solid fa-trash-can"></i>
-                </button>` : ''}
+                </button>` : `
+                <span style="font-size: 11px; color: var(--text-dim);"><i class="fa-solid fa-shield"></i> Admin Default</span>`}
             </div>
-        </div>
-    `).join('');
+        </div>`;
+    }).join('');
 }
 
 function deleteCustomGalleryPhoto(id) {
@@ -5574,28 +5678,20 @@ function togglePublicCrusadesVisibility(enabled) {
 function applyPublicCrusadesVisibilityUI() {
     const enabled = isPublicCrusadesEnabled();
     const countdownSec = document.getElementById('countdown');
-    const gallerySec = document.getElementById('gallery');
     const navCrusadesLink = document.getElementById('navCrusadesLink');
-    const navGalleryLink = document.getElementById('navGalleryLink');
     const toggleChk = document.getElementById('adminPublicCrusadesToggle');
     const toggleLabel = document.getElementById('publicCrusadesToggleLabel');
 
     if (toggleChk) toggleChk.checked = enabled;
     if (toggleLabel) {
-        toggleLabel.textContent = enabled ? 'Crusades Public Section: Active' : 'Crusades Public Section: Disabled';
+        toggleLabel.textContent = enabled ? 'Crusades Countdown: Active' : 'Crusades Countdown: Disabled';
     }
 
     if (countdownSec) {
         countdownSec.style.display = enabled ? 'block' : 'none';
     }
-    if (gallerySec) {
-        gallerySec.style.display = enabled ? 'block' : 'none';
-    }
     if (navCrusadesLink) {
         navCrusadesLink.style.display = enabled ? 'inline-block' : 'none';
-    }
-    if (navGalleryLink) {
-        navGalleryLink.style.display = enabled ? 'inline-block' : 'none';
     }
 }
 

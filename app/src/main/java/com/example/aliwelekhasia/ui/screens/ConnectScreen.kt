@@ -444,7 +444,21 @@ fun ConnectScreen(
                         ) {
                             Icon(Icons.Default.AccountBalanceWallet, contentDescription = null, tint = NavyPrimary)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("M-Pesa Giving (+254 736 024 024)", color = NavyPrimary, fontWeight = FontWeight.Bold)
+                            Text("M-Pesa (Send Money: +254 705 575 437)", color = NavyPrimary, fontWeight = FontWeight.Bold)
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Button(
+                            onClick = { showDonationDialog = "Airtel Money" },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444)),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("give_airtel_btn")
+                        ) {
+                            Icon(Icons.Default.PhoneAndroid, contentDescription = null, tint = Color.White)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Airtel Money (+254 736 024 024)", color = Color.White, fontWeight = FontWeight.Bold)
                         }
 
                         Spacer(modifier = Modifier.height(12.dp))
@@ -616,9 +630,10 @@ fun ConnectScreen(
             title = { Text("$method Support Details", color = Color.White) },
             text = {
                 val details = when (method) {
-                    "M-Pesa" -> "Send directly via M-Pesa to:\nPhone Number: +254 736 024 024\nAccount Name: Ali Welekhasia Music"
+                    "M-Pesa" -> "Send Money directly via M-Pesa to:\nPhone Number: +254 705 575 437 (0705 575 437)\nRecipient Name: Ali Welekhasia"
+                    "Airtel Money" -> "Send directly via Airtel Money to:\nPhone Number: +254 736 024 024 (0736 024 024)\nRecipient Name: Ali Welekhasia"
                     "PayPal" -> "PayPal Giving / Inquiries:\nali.werekhasia01@gmail.com"
-                    else -> "Bank Name: Equity Bank Kenya\nAccount Name: Ali Welekhasia Ministry\nPhone Contact: +254 736 024 024"
+                    else -> "Bank Name: Equity Bank Kenya\nAccount Name: Ali Welekhasia Gospel Ministries\nDirect Numbers: +254 705 575 437 / +254 736 024 024"
                 }
                 Text(details, color = Color.White, lineHeight = 22.sp)
             },

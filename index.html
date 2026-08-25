@@ -144,7 +144,6 @@
                 <li><a href="#home" onclick="closeMobileMenu()">Home</a></li>
                 <li><a href="#music" onclick="closeMobileMenu()">Music</a></li>
                 <li><a href="#videos" onclick="closeMobileMenu()">Videos</a></li>
-                <li id="navGalleryLink" style="display: none;"><a href="#gallery" onclick="closeMobileMenu()">Crusade Gallery</a></li>
                 <li><a href="#blog" onclick="closeMobileMenu()">Devotionals</a></li>
                 <li id="navCrusadesLink" style="display: none;"><a href="#countdown" onclick="closeMobileMenu()">Crusades</a></li>
                 <li><a href="#reach" onclick="closeMobileMenu()">Global Reach</a></li>
@@ -152,6 +151,7 @@
                 <li><a href="#social" onclick="closeMobileMenu()">Social</a></li>
                 <li><a href="#prayer" onclick="closeMobileMenu()">Prayer</a></li>
                 <li><a href="#faq" onclick="closeMobileMenu()">FAQ</a></li>
+                <li><a href="#contact" onclick="closeMobileMenu()">Contact</a></li>
             </ul>
         </nav>
 
@@ -772,97 +772,6 @@
         </div>
     </section>
 
-    <!-- CRUSADE PHOTO GALLERY WITH LIGHTBOX SECTION -->
-    <section id="gallery" class="section-container bg-darker">
-        <div class="section-header">
-            <span class="section-tag"><i class="fa-solid fa-camera-retro"></i> Revival in Pictures</span>
-            <h2 class="section-title">Crusade Photo Gallery & Moments</h2>
-            <p class="section-desc">Visual testimonies of open-air gospel crusades, powerful praise worship nights, altar calls, and soul harvests across Kenya and East Africa. Click any photo to view in high-resolution full-screen lightbox.</p>
-            
-            <!-- Category Filter Tabs & Date Sorting Toolbar for Gallery -->
-            <div class="gallery-toolbar-row">
-                <div class="filter-pills" id="galleryFilterTabs" role="tablist" aria-label="Gallery Categories">
-                    <button type="button" class="filter-btn active" onclick="filterGalleryPhotos('all', this)" role="tab" aria-selected="true">
-                        <i class="fa-solid fa-border-all"></i> All Photos (<span id="galleryCountAll">8</span>)
-                    </button>
-                    <button type="button" class="filter-btn" onclick="filterGalleryPhotos('crusade', this)" role="tab" aria-selected="false">
-                        <i class="fa-solid fa-fire-flame-curved"></i> Open-Air Crusades
-                    </button>
-                    <button type="button" class="filter-btn" onclick="filterGalleryPhotos('worship', this)" role="tab" aria-selected="false">
-                        <i class="fa-solid fa-hands-holding-child"></i> Worship & Praise
-                    </button>
-                    <button type="button" class="filter-btn" onclick="filterGalleryPhotos('altar', this)" role="tab" aria-selected="false">
-                        <i class="fa-solid fa-cross"></i> Altar Call & Miracles
-                    </button>
-                    <button type="button" class="filter-btn" onclick="filterGalleryPhotos('stage', this)" role="tab" aria-selected="false">
-                        <i class="fa-solid fa-microphone-lines"></i> Stage & Ministry
-                    </button>
-                </div>
-
-                <div class="gallery-sort-controls">
-                    <label for="gallerySortSelect" class="sort-label">
-                        <i class="fa-solid fa-arrow-down-short-wide"></i> Sort By Date:
-                    </label>
-                    <select id="gallerySortSelect" class="gallery-sort-select" onchange="sortGalleryPhotos(this.value)">
-                        <option value="newest">Most Recent Event (Newest First)</option>
-                        <option value="oldest">Chronological Order (Oldest First)</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- Gallery Skeleton Placeholder Grid -->
-        <div id="gallerySkeletonGrid" class="skeleton-grid gallery-skeleton-grid" style="display: none;">
-            <div class="skeleton-card skeleton-gallery-card">
-                <div class="skeleton-box skeleton-img-ph"></div>
-                <div class="skeleton-gallery-body">
-                    <div class="skeleton-box skeleton-line skeleton-w75"></div>
-                    <div class="skeleton-box skeleton-line skeleton-w50"></div>
-                    <div class="skeleton-box skeleton-line skeleton-w90"></div>
-                </div>
-            </div>
-            <div class="skeleton-card skeleton-gallery-card">
-                <div class="skeleton-box skeleton-img-ph"></div>
-                <div class="skeleton-gallery-body">
-                    <div class="skeleton-box skeleton-line skeleton-w75"></div>
-                    <div class="skeleton-box skeleton-line skeleton-w50"></div>
-                    <div class="skeleton-box skeleton-line skeleton-w90"></div>
-                </div>
-            </div>
-            <div class="skeleton-card skeleton-gallery-card">
-                <div class="skeleton-box skeleton-img-ph"></div>
-                <div class="skeleton-gallery-body">
-                    <div class="skeleton-box skeleton-line skeleton-w75"></div>
-                    <div class="skeleton-box skeleton-line skeleton-w50"></div>
-                    <div class="skeleton-box skeleton-line skeleton-w90"></div>
-                </div>
-            </div>
-            <div class="skeleton-card skeleton-gallery-card">
-                <div class="skeleton-box skeleton-img-ph"></div>
-                <div class="skeleton-gallery-body">
-                    <div class="skeleton-box skeleton-line skeleton-w75"></div>
-                    <div class="skeleton-box skeleton-line skeleton-w50"></div>
-                    <div class="skeleton-box skeleton-line skeleton-w90"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Gallery Grid Container (Populated with rich interactive cards) -->
-        <div class="gallery-photo-grid" id="crusadePhotoGrid">
-            <!-- Photos will be dynamically rendered & hydrated with lightbox capabilities -->
-        </div>
-
-        <!-- Gallery Footer Action -->
-        <div class="gallery-footer-bar">
-            <div class="gallery-counter-pill">
-                <i class="fa-solid fa-images"></i> 50+ Regional Crusades Documented • 70,000+ Souls Touched
-            </div>
-            <a href="#countdown" class="btn btn-gold btn-sm">
-                <i class="fa-solid fa-calendar-check"></i> Join Next Live Crusade
-            </a>
-        </div>
-    </section>
-
     <!-- DEVOTIONALS & BLOG SECTION -->
     <section id="blog" class="section-container">
         <div class="section-header">
@@ -1256,26 +1165,47 @@
                     <h3><i class="fa-solid fa-hand-holding-heart"></i> Ways to Give & Support</h3>
                     <p class="partner-intro">Every seed sown helps print bibles, stage massive sound systems for open-air crusades, and produce spirit-filled gospel songs.</p>
 
-                    <!-- M-PESA Box -->
+                    <!-- M-PESA Direct Send Money Box -->
                     <div class="giving-method-card">
                         <div class="giving-method-header">
-                            <span class="mpesa-logo">M-PESA</span>
+                            <span class="mpesa-logo"><i class="fa-solid fa-mobile-screen-button"></i> M-PESA (Send Money)</span>
                             <span class="giving-badge">Direct & Instant</span>
                         </div>
                         <div class="giving-detail-row">
-                            <span>Paybill / Business No:</span>
-                            <strong id="mpesaPaybill">247247</strong>
-                            <button class="copy-pill-btn" onclick="copyToClipboard('247247', 'Paybill Number')"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <span>Send Money To:</span>
+                            <strong id="mpesaNumber">+254 705 575 437</strong>
+                            <button class="copy-pill-btn" onclick="copyToClipboard('+254705575437', 'M-PESA Number')"><i class="fa-regular fa-copy"></i> Copy</button>
                         </div>
                         <div class="giving-detail-row">
-                            <span>Account Name:</span>
-                            <strong id="mpesaAccount">ALI WELEKHASIA</strong>
-                            <button class="copy-pill-btn" onclick="copyToClipboard('ALI WELEKHASIA', 'Account Name')"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <span>Recipient Name:</span>
+                            <strong>Ali Welekhasia</strong>
+                            <button class="copy-pill-btn" onclick="copyToClipboard('Ali Welekhasia', 'Account Name')"><i class="fa-regular fa-copy"></i> Copy</button>
                         </div>
                         <div class="giving-detail-row">
-                            <span>Direct Line:</span>
-                            <strong>+254 736 024 024</strong>
-                            <button class="copy-pill-btn" onclick="copyToClipboard('+254736024024', 'Direct Phone')"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <span>Direct Format:</span>
+                            <code>0705 575 437 / 254705575437</code>
+                        </div>
+                    </div>
+
+                    <!-- Airtel Money Box -->
+                    <div class="giving-method-card">
+                        <div class="giving-method-header">
+                            <span class="airtel-logo"><i class="fa-solid fa-tower-broadcast"></i> AIRTEL MONEY</span>
+                            <span class="airtel-badge">Direct & Instant</span>
+                        </div>
+                        <div class="giving-detail-row">
+                            <span>Airtel Money Number:</span>
+                            <strong id="airtelNumber">+254 736 024 024</strong>
+                            <button class="copy-pill-btn" onclick="copyToClipboard('+254736024024', 'Airtel Money Number')"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                        <div class="giving-detail-row">
+                            <span>Recipient Name:</span>
+                            <strong>Ali Welekhasia</strong>
+                            <button class="copy-pill-btn" onclick="copyToClipboard('Ali Welekhasia', 'Account Name')"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                        <div class="giving-detail-row">
+                            <span>Direct Format:</span>
+                            <code>0736 024 024 / 254736024024</code>
                         </div>
                     </div>
 
@@ -1293,8 +1223,8 @@
                             <strong>Ali Welekhasia Gospel Ministries</strong>
                         </div>
                         <div class="giving-detail-row">
-                            <span>Branch / SWIFT:</span>
-                            <strong>Nairobi Hub • EQBLKENA</strong>
+                            <span>PayPal / Inquiries:</span>
+                            <strong>ali.werekhasia01@gmail.com</strong>
                         </div>
                     </div>
                 </div>
@@ -1675,7 +1605,7 @@
                     <i class="fa-solid fa-chevron-down faq-icon"></i>
                 </button>
                 <div class="faq-answer">
-                    <p>You can partner with us via M-PESA Paybill (<strong>247247</strong>, Account: <strong>ALI WELEKHASIA</strong>) or via our verified Equity Bank details shown in the Partner With Us section. All partner funds directly finance open-air sound logistics, bibles, and village crusades.</p>
+                    <p>You can partner with us directly via <strong>M-PESA (Send Money to +254 705 575 437)</strong>, <strong>Airtel Money (+254 736 024 024)</strong>, or via our verified Equity Bank details shown in the Partner With Us section. All partner funds directly finance open-air sound logistics, bibles, and village crusades.</p>
                 </div>
             </div>
         </div>
@@ -1694,6 +1624,123 @@
             <script>
                  (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
+        </div>
+    </section>
+
+    <!-- CONTACT US SECTION -->
+    <section id="contact" class="section-container bg-darker">
+        <div class="section-header">
+            <span class="section-tag"><i class="fa-solid fa-envelope-open-text"></i> Get in Touch</span>
+            <h2 class="section-title">Contact Ministry & Office</h2>
+            <p class="section-desc">Have a question, testimony, booking request, or partnership inquiry? Send a direct message to Ali Welekhasia's ministry office.</p>
+        </div>
+
+        <div class="contact-grid-container">
+            <!-- Contact Info Column -->
+            <div class="contact-info-col">
+                <div class="contact-info-card">
+                    <h3><i class="fa-solid fa-headset"></i> Direct Ministry Contacts</h3>
+                    <p>We welcome your messages and fellowship. Our ministry office responds to all pastoral, music, and event inquiries promptly.</p>
+                    
+                    <div class="contact-methods-list">
+                        <div class="contact-method-item">
+                            <div class="contact-method-icon">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <div class="contact-method-details">
+                                <span class="contact-method-label">Official Email</span>
+                                <a href="mailto:ali.werekhasia01@gmail.com" class="contact-method-val">ali.werekhasia01@gmail.com</a>
+                            </div>
+                        </div>
+
+                        <div class="contact-method-item">
+                            <div class="contact-method-icon">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div class="contact-method-details">
+                                <span class="contact-method-label">Ministry Phone & WhatsApp</span>
+                                <a href="tel:+254736024024" class="contact-method-val">+254 736 024 024</a>
+                                <span class="contact-sub-text">M-Pesa Direct: +254 705 575 437</span>
+                            </div>
+                        </div>
+
+                        <div class="contact-method-item">
+                            <div class="contact-method-icon">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div class="contact-method-details">
+                                <span class="contact-method-label">Ministry Headquarters</span>
+                                <span class="contact-method-val">Nairobi & Mombasa, Kenya</span>
+                            </div>
+                        </div>
+
+                        <div class="contact-method-item">
+                            <div class="contact-method-icon">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div class="contact-method-details">
+                                <span class="contact-method-label">Response Time & Hours</span>
+                                <span class="contact-method-val">Mon – Sat: 8:00 AM – 6:00 PM (EAT)</span>
+                                <span class="contact-sub-text"><i class="fa-solid fa-bolt" style="color: var(--gold);"></i> Typically replies within 24 hours</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form Column -->
+            <div class="contact-form-col">
+                <div class="contact-form-card">
+                    <h3><i class="fa-solid fa-paper-plane"></i> Send an Inquiry</h3>
+                    <p>Fill out your details below to reach out to Ali Welekhasia and the ministry team.</p>
+
+                    <form id="contactUsForm" class="contact-us-form" onsubmit="handleContactSubmit(event)">
+                        <div class="form-group">
+                            <label for="contactName" class="form-label">
+                                <i class="fa-solid fa-user"></i> Full Name <span class="required-star">*</span>
+                            </label>
+                            <input type="text" id="contactName" name="name" placeholder="e.g. Pastor David / Mary Wanjiku" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactEmail" class="form-label">
+                                <i class="fa-solid fa-envelope"></i> Email Address <span class="required-star">*</span>
+                            </label>
+                            <input type="email" id="contactEmail" name="email" placeholder="e.g. yourname@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactInquiryType" class="form-label">
+                                <i class="fa-solid fa-tag"></i> Inquiry Type <span class="required-star">*</span>
+                            </label>
+                            <select id="contactInquiryType" name="inquiryType" required>
+                                <option value="" disabled selected>-- Select Inquiry Type --</option>
+                                <option value="General Ministry Inquiry">General Ministry Inquiry</option>
+                                <option value="Music Ministry & Song Licensing">Music Ministry & Song Licensing</option>
+                                <option value="Church Booking / Live Concert Invitation">Church Booking / Live Concert Invitation</option>
+                                <option value="Crusade & Mission Collaboration">Crusade & Mission Collaboration</option>
+                                <option value="Prayer & Pastoral Counseling">Prayer & Pastoral Counseling</option>
+                                <option value="Ministry Partnership & Giving">Ministry Partnership & Giving</option>
+                                <option value="Media & Press Inquiry">Media & Press Inquiry</option>
+                                <option value="Other">Other Inquiry</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactMessage" class="form-label">
+                                <i class="fa-solid fa-message"></i> Message / Details <span class="required-star">*</span>
+                            </label>
+                            <textarea id="contactMessage" name="message" rows="4" placeholder="Type your message, question, or inquiry details here..." required></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-gold btn-block" id="contactSubmitBtn">
+                                <i class="fa-solid fa-paper-plane"></i> Send Ministry Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1727,9 +1774,9 @@
                     <li><a href="#home">Home</a></li>
                     <li><a href="#music">Music & Lyrics</a></li>
                     <li><a href="#videos">Videos & Sermons</a></li>
-                    <li><a href="#gallery">Crusade Gallery</a></li>
                     <li><a href="#blog">Devotionals & Blog</a></li>
                     <li><a href="#partner">Partner With Us</a></li>
+                    <li><a href="#contact">Contact Us</a></li>
                     <li><a href="sitemap.xml" target="_blank"><i class="fa-solid fa-sitemap"></i> Sitemap (XML)</a></li>
                     <li><a href="rss.xml" target="_blank"><i class="fa-solid fa-rss"></i> RSS Feed</a></li>
                     <li><a href="javascript:void(0)" onclick="openAdminPortal()"><i class="fa-solid fa-user-shield"></i> Admin Portal</a></li>
@@ -2301,13 +2348,13 @@
                                 <i class="fa-solid fa-eye"></i> Public Website Crusades Section Status
                             </h4>
                             <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-muted);">
-                                Move events & crusades to admin control. Turn ON to display the Crusades countdown & gallery on the public site, or leave OFF for future use.
+                                Move events & crusades to admin control. Turn ON to display the Crusades countdown on the public site, or leave OFF for future use.
                             </p>
                         </div>
                         <div style="display: flex; align-items: center; gap: 10px; background: var(--bg-surface); padding: 8px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
                             <input type="checkbox" id="adminPublicCrusadesToggle" onchange="togglePublicCrusadesVisibility(this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--gold);">
                             <label for="adminPublicCrusadesToggle" id="publicCrusadesToggleLabel" style="font-weight: 700; font-size: 13px; cursor: pointer; color: var(--text-main);">
-                                Crusades Public Section: Disabled
+                                Crusades Countdown: Disabled
                             </label>
                         </div>
                     </div>
@@ -2555,76 +2602,94 @@
             <div class="admin-tab-content" id="adminContentGallery" style="display: none;">
                 <div class="admin-section-intro">
                     <h3><i class="fa-solid fa-images"></i> Crusade Photo Gallery & Moments</h3>
-                    <p>Add new open-air crusade photos and testimonies to the gallery grid and fullscreen lightbox.</p>
+                    <p>Private Admin Photo Archive: Browse, view in full-screen Lightbox, manage, and add crusade photos & ministry moments.</p>
                 </div>
 
-                <form id="adminGalleryForm" class="admin-content-form" onsubmit="handleAdminGalleryPublish(event)">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="adminGalleryTitle" class="form-label">Moment / Photo Title</label>
-                            <input type="text" id="adminGalleryTitle" required placeholder="e.g. Eldoret Mass Anointing & Deliverance Service">
-                        </div>
-                        <div class="form-group">
-                            <label for="adminGalleryCategory" class="form-label">Category</label>
-                            <select id="adminGalleryCategory" required>
-                                <option value="crusade">Open-Air Crusade</option>
-                                <option value="worship">Worship & Praise</option>
-                                <option value="altar">Altar Call & Miracles</option>
-                                <option value="outreach">Community Outreach</option>
-                            </select>
+                <!-- Admin Photo Archive Viewer with Category Filter -->
+                <div class="admin-sub-card" style="margin-bottom: 24px; padding: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 16px;">
+                        <h4 style="margin: 0; color: var(--gold); display: flex; align-items: center; gap: 8px; font-size: 16px;">
+                            <i class="fa-solid fa-camera-retro"></i> Revival Moments Archive (<span id="adminGalleryCount">8</span> Photos)
+                        </h4>
+                        <div class="filter-pills" id="adminGalleryFilterTabs">
+                            <button type="button" class="filter-btn active" onclick="filterAdminGalleryPhotos('all', this)">All (<span id="adminGalleryFilterAllCount">8</span>)</button>
+                            <button type="button" class="filter-btn" onclick="filterAdminGalleryPhotos('crusade', this)"><i class="fa-solid fa-fire-flame-curved"></i> Crusades</button>
+                            <button type="button" class="filter-btn" onclick="filterAdminGalleryPhotos('worship', this)"><i class="fa-solid fa-hands-holding-child"></i> Worship</button>
+                            <button type="button" class="filter-btn" onclick="filterAdminGalleryPhotos('altar', this)"><i class="fa-solid fa-cross"></i> Altar Calls</button>
+                            <button type="button" class="filter-btn" onclick="filterAdminGalleryPhotos('stage', this)"><i class="fa-solid fa-microphone-lines"></i> Ministry</button>
                         </div>
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="adminGalleryLocation" class="form-label">Location / Grounds</label>
-                            <input type="text" id="adminGalleryLocation" required placeholder="e.g. 64 Stadium, Eldoret">
-                        </div>
-                        <div class="form-group">
-                            <label for="adminGalleryDate" class="form-label">Date (Month/Year)</label>
-                            <input type="text" id="adminGalleryDate" required placeholder="e.g. August 2026">
-                        </div>
-                        <div class="form-group">
-                            <label for="adminGalleryAttendees" class="form-label">Attendance / Souls Count</label>
-                            <input type="text" id="adminGalleryAttendees" required placeholder="e.g. 15,000+ Attended">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="adminGalleryThemeColor" class="form-label">Visual Accent Color</label>
-                            <select id="adminGalleryThemeColor">
-                                <option value="#38bdf8">Sky Blue (#38bdf8)</option>
-                                <option value="#f59e0b">Golden Amber (#f59e0b)</option>
-                                <option value="#e11d48">Rose Crimson (#e11d48)</option>
-                                <option value="#10b981">Emerald Green (#10b981)</option>
-                                <option value="#8b5cf6">Royal Purple (#8b5cf6)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="adminGalleryImageUrl" class="form-label">Custom Image URL (Optional)</label>
-                            <input type="url" id="adminGalleryImageUrl" placeholder="https://example.com/crusade-photo.jpg (or leave blank for high-res visual art)">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="adminGalleryDesc" class="form-label">Photo Caption & Revival Narrative</label>
-                        <textarea id="adminGalleryDesc" rows="3" required placeholder="Describe the atmosphere, miracles, healings, and the moving of the Holy Spirit..."></textarea>
-                    </div>
-
-                    <div class="admin-form-actions">
-                        <button type="submit" class="btn btn-gold">
-                            <i class="fa-solid fa-camera"></i> Publish to Photo Gallery
-                        </button>
-                    </div>
-                </form>
-
-                <!-- List of Gallery Items -->
-                <div class="admin-sub-list-card">
-                    <h4><i class="fa-solid fa-photo-film"></i> Gallery Photos (<span id="adminGalleryCount">8</span> Photos)</h4>
-                    <div class="admin-articles-table-wrap" id="adminGalleryList">
+                    
+                    <!-- Admin Interactive Photo Grid -->
+                    <div class="admin-gallery-interactive-grid" id="adminGalleryList">
                         <!-- Dynamic rendered list of photos -->
                     </div>
+                </div>
+
+                <!-- Add New Photo / Moment Form -->
+                <div class="admin-sub-list-card">
+                    <h4><i class="fa-solid fa-circle-plus"></i> Add New Crusade Moment / Photo</h4>
+                    <form id="adminGalleryForm" class="admin-content-form" onsubmit="handleAdminGalleryPublish(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="adminGalleryTitle" class="form-label">Moment / Photo Title</label>
+                                <input type="text" id="adminGalleryTitle" required placeholder="e.g. Eldoret Mass Anointing & Deliverance Service">
+                            </div>
+                            <div class="form-group">
+                                <label for="adminGalleryCategory" class="form-label">Category</label>
+                                <select id="adminGalleryCategory" required>
+                                    <option value="crusade">Open-Air Crusade</option>
+                                    <option value="worship">Worship & Praise</option>
+                                    <option value="altar">Altar Call & Miracles</option>
+                                    <option value="outreach">Community Outreach</option>
+                                    <option value="stage">Stage & Ministry</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="adminGalleryLocation" class="form-label">Location / Grounds</label>
+                                <input type="text" id="adminGalleryLocation" required placeholder="e.g. 64 Stadium, Eldoret">
+                            </div>
+                            <div class="form-group">
+                                <label for="adminGalleryDate" class="form-label">Date (Month/Year)</label>
+                                <input type="text" id="adminGalleryDate" required placeholder="e.g. August 2026">
+                            </div>
+                            <div class="form-group">
+                                <label for="adminGalleryAttendees" class="form-label">Attendance / Souls Count</label>
+                                <input type="text" id="adminGalleryAttendees" required placeholder="e.g. 15,000+ Attended">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="adminGalleryThemeColor" class="form-label">Visual Accent Color</label>
+                                <select id="adminGalleryThemeColor">
+                                    <option value="#38bdf8">Sky Blue (#38bdf8)</option>
+                                    <option value="#f59e0b">Golden Amber (#f59e0b)</option>
+                                    <option value="#e11d48">Rose Crimson (#e11d48)</option>
+                                    <option value="#10b981">Emerald Green (#10b981)</option>
+                                    <option value="#8b5cf6">Royal Purple (#8b5cf6)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="adminGalleryImageUrl" class="form-label">Custom Image URL (Optional)</label>
+                                <input type="url" id="adminGalleryImageUrl" placeholder="https://example.com/crusade-photo.jpg (or leave blank for high-res visual art)">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="adminGalleryDesc" class="form-label">Photo Caption & Revival Narrative</label>
+                            <textarea id="adminGalleryDesc" rows="3" required placeholder="Describe the atmosphere, miracles, healings, and the moving of the Holy Spirit..."></textarea>
+                        </div>
+
+                        <div class="admin-form-actions">
+                            <button type="submit" class="btn btn-gold">
+                                <i class="fa-solid fa-camera"></i> Publish to Admin Gallery Archive
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
 

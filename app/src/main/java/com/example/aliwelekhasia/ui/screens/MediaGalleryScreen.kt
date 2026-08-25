@@ -53,13 +53,6 @@ fun MediaGalleryScreen(
         else -> videos
     }
 
-    val galleryImages = listOf(
-        Triple(R.drawable.img_crusade_crowd_1786620923326, "Mombasa Open-Air Revival Crusade", "Over 5,000 attendees gathered at sunset in worship"),
-        Triple(R.drawable.img_live_worship_1786620938622, "Nairobi Praise & Worship Concert", "Live gospel concert performance with worship team"),
-        Triple(R.drawable.img_crusade_crowd_1786620923326, "National Gospel Assembly Stage", "Ali Welekhasia leading congregation in ministry"),
-        Triple(R.drawable.img_live_worship_1786620938622, "Album & Worship Session Launch", "Official gospel album release and dedication")
-    )
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -266,78 +259,6 @@ fun MediaGalleryScreen(
                                 ) {
                                     Icon(Icons.Default.OpenInNew, contentDescription = null, modifier = Modifier.size(16.dp))
                                 }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Ministry Photo Gallery
-        Text(
-            text = "Ministry Photo Gallery & Crusades",
-            style = MaterialTheme.typography.titleLarge,
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = "High-quality photos highlighting past gospel crusades, open-air revival rallies, and live concert performances.",
-            style = MaterialTheme.typography.bodySmall,
-            color = Color.White.copy(alpha = 0.75f),
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            galleryImages.forEach { (imgRes, label, sub) ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(220.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Image(
-                            painter = painterResource(id = imgRes),
-                            contentDescription = label,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Black.copy(alpha = 0.45f))
-                        )
-                        Surface(
-                            color = NavyPrimary.copy(alpha = 0.9f),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .align(Alignment.BottomStart)
-                        ) {
-                            Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
-                                Text(
-                                    text = label,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = AmberAccent,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = sub,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = Color.White.copy(alpha = 0.9f)
-                                )
                             }
                         }
                     }
