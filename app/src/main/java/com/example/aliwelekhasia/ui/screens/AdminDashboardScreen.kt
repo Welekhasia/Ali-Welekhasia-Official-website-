@@ -1451,7 +1451,7 @@ private fun AddPrayerRequestDialog(
             Button(
                 onClick = {
                     if (name.isNotBlank() && request.isNotBlank()) {
-                        onAdd(name, email.ifBlank { "intercessor@aliwelekhasia.com" }, request, category)
+                        onAdd(name, email.ifBlank { "intercessor@aliwelekhasia.co.ke" }, request, category)
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = AmberAccent)

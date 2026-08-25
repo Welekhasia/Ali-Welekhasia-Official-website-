@@ -287,7 +287,7 @@ fun MediaGalleryScreen(
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "High-quality photos highlighting past evangelistic crusades, open-air revival rallies, and live concert performances.",
+            text = "High-quality photos highlighting past gospel crusades, open-air revival rallies, and live concert performances.",
             style = MaterialTheme.typography.bodySmall,
             color = Color.White.copy(alpha = 0.75f),
             modifier = Modifier.padding(horizontal = 16.dp)

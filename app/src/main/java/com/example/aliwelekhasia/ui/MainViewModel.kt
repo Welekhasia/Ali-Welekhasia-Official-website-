@@ -223,7 +223,7 @@ class MainViewModel : ViewModel() {
         Event(
             id = "ev2",
             title = "Mombasa Mega Crusade & Healing Service",
-            description = "Open-air evangelistic gathering with mass altar call and prayer.",
+            description = "Open-air gospel gathering with mass altar call and prayer.",
             location = "Treasury Square Grounds, Mombasa",
             date = "Sept 12-14, 2026",
             actionText = "Invite Ali"

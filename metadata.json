@@ -1,6 +1,6 @@
 {
-  "name": "Ali Welekhasia",
-  "description": "Official personal gospel music, crusades and ministry website of Ali Welekhasia",
+  "name": "Ali Welekhasia Music",
+  "description": "Official gospel music and ministry website of Ali Welekhasia Music",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

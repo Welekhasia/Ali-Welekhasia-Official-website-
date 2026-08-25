@@ -2816,7 +2816,7 @@ function initScrollAnimations() {
 let currentSeoTab = 'sitemap';
 
 function generateDynamicSitemapXML() {
-    const baseUrl = 'https://aliwelekhasia.com';
+    const baseUrl = 'https://aliwelekhasia.co.ke';
     const currentDate = new Date().toISOString().split('T')[0];
 
     const staticSections = [
@@ -2876,15 +2876,15 @@ function generateDynamicSitemapXML() {
 }
 
 function generateDynamicRssXML() {
-    const baseUrl = 'https://aliwelekhasia.com';
+    const baseUrl = 'https://aliwelekhasia.co.ke';
     const nowRfc = new Date().toUTCString();
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n`;
     xml += `  <channel>\n`;
-    xml += `    <title>Ali Welekhasia | Gospel Music, Crusades &amp; Devotionals Feed</title>\n`;
+    xml += `    <title>Ali Welekhasia Music | Gospel Music, Crusades &amp; Devotionals Feed</title>\n`;
     xml += `    <link>${baseUrl}/</link>\n`;
-    xml += `    <description>Official RSS feed of Ali Welekhasia. Receive latest Swahili gospel music releases, open-air crusade schedules, prayer alerts, and spiritual devotionals.</description>\n`;
+    xml += `    <description>Official RSS feed of Ali Welekhasia Music. Receive latest Swahili gospel music releases, open-air crusade schedules, prayer alerts, and spiritual devotionals.</description>\n`;
     xml += `    <language>en-US</language>\n`;
     xml += `    <lastBuildDate>${nowRfc}</lastBuildDate>\n`;
     xml += `    <atom:link href="${baseUrl}/rss.xml" rel="self" type="application/rss+xml" />\n\n`;
@@ -3101,7 +3101,7 @@ const crusadeGalleryData = [
         location: "Afraha Stadium, Nakuru",
         date: "November 2025",
         attendees: "9,500+ Youth",
-        description: "Next-generation revival meeting sparking evangelistic passion in high school and university students across the Rift Valley.",
+        description: "Next-generation revival meeting sparking gospel passion in high school and university students across the Rift Valley.",
         themeColor: "#8b5cf6",
         svgGradient: "linear-gradient(135deg, #1e1b4b 0%, #2e1065 50%, #581c87 100%)",
         icon: "fa-dove",
@@ -3620,7 +3620,7 @@ function handleAdminLogin(event) {
 }
 
 function verifyLocalCredentialsFallback(user, pass, remember) {
-    const validUsers = ['admin', 'ali.werekhasia01@gmail.com', 'evangelist', 'ali'];
+    const validUsers = ['admin', 'ali.werekhasia01@gmail.com', 'minister', 'ali'];
     const validPass = 'minister2026';
 
     const normalizedUser = user.toLowerCase();
