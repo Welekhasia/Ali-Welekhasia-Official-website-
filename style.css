@@ -5994,6 +5994,530 @@ a.contact-method-val:hover {
     }
 }
 
+/* ==========================================================================
+   SITE-WIDE IMAGE EDITOR & ASSET MANAGEMENT STYLES
+   ========================================================================== */
+.site-image-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 18px;
+}
+
+.site-img-slot-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: var(--transition);
+}
+
+.site-img-slot-card:hover {
+    border-color: var(--gold);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.slot-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.slot-badge {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.slot-card-header h5 {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.slot-preview-box {
+    width: 100%;
+    height: 140px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+.slot-preview-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.slot-preview-box:hover img {
+    transform: scale(1.05);
+}
+
+.slot-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.slot-controls input[type="text"] {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 12px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+.slot-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.slot-actions .btn {
+    flex: 1;
+    font-size: 11px;
+    padding: 6px 8px;
+}
+
+/* ==========================================================================
+   M-PESA STK PUSH (LIPA NA M-PESA ONLINE) STYLES
+   ========================================================================== */
+.mpesa-stk-highlight-card {
+    background: linear-gradient(145deg, var(--bg-surface), rgba(34, 197, 94, 0.05));
+    border: 2px solid rgba(34, 197, 94, 0.4);
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.1);
+}
+
+.stk-phone-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    overflow: hidden;
+}
+
+.stk-phone-prefix {
+    padding: 10px 14px;
+    background: rgba(34, 197, 94, 0.12);
+    color: #22c55e;
+    font-weight: 800;
+    font-size: 13px;
+    border-right: 1px solid var(--border-color);
+}
+
+.stk-phone-input-wrap input {
+    flex: 1;
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.stk-phone-input-wrap input:focus {
+    outline: none;
+}
+
+.stk-amount-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.stk-amount-chip {
+    flex: 1;
+    min-width: 60px;
+    padding: 8px 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+}
+
+.stk-amount-chip:hover {
+    border-color: #22c55e;
+    background: rgba(34, 197, 94, 0.08);
+}
+
+.stk-amount-chip.active {
+    background: #22c55e;
+    color: #000;
+    border-color: #22c55e;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.stk-custom-amount-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+}
+
+.stk-custom-amount-wrap input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.stk-custom-amount-wrap input:focus {
+    outline: none;
+}
+
+.btn-mpesa-stk {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    color: #fff;
+    font-weight: 800;
+    padding: 13px 20px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: var(--transition);
+    box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3);
+}
+
+.btn-mpesa-stk:hover {
+    background: linear-gradient(135deg, #22c55e, #4ade80);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(34, 197, 94, 0.4);
+    color: #000;
+}
+
+/* STK Push Modal & Handset Simulation */
+.mpesa-stk-modal-card {
+    max-width: 520px;
+    width: 92%;
+    background: var(--bg-card);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+.mpesa-stk-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.mpesa-green-badge {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #22c55e;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.mpesa-stk-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--text-main);
+}
+
+.stk-modal-body {
+    padding: 24px;
+}
+
+/* Animated Phone Mockup */
+.stk-phone-mockup {
+    width: 240px;
+    height: 180px;
+    background: #0f172a;
+    border-radius: 20px;
+    border: 4px solid #334155;
+    margin: 0 auto 20px;
+    padding: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stk-phone-speaker {
+    width: 40px;
+    height: 4px;
+    background: #475569;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.stk-phone-screen {
+    width: 100%;
+    flex: 1;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+
+.stk-prompt-bubble {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 8px;
+    width: 100%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    animation: stkPulse 2s infinite ease-in-out;
+}
+
+@keyframes stkPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.stk-prompt-header {
+    font-size: 8px;
+    font-weight: 800;
+    color: #16a34a;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.stk-query-text {
+    font-size: 8.5px;
+    color: #0f172a;
+    margin: 0 0 6px;
+    line-height: 1.2;
+}
+
+.stk-pin-field {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.pin-dot {
+    width: 7px;
+    height: 7px;
+    background: #0f172a;
+    border-radius: 50%;
+    animation: pinBlink 1.4s infinite ease-in-out;
+}
+
+.pin-dot:nth-child(2) { animation-delay: 0.2s; }
+.pin-dot:nth-child(3) { animation-delay: 0.4s; }
+.pin-dot:nth-child(4) { animation-delay: 0.6s; }
+
+@keyframes pinBlink {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; transform: scale(1.3); }
+}
+
+.stk-prompt-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 8px;
+    color: #64748b;
+    font-weight: 700;
+    padding-top: 4px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.stk-instructions-box h4 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    color: #22c55e;
+    text-align: center;
+}
+
+.stk-instructions-box p {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.stk-steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stk-steps-list li {
+    font-size: 12.5px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stk-steps-list li i {
+    color: #22c55e;
+}
+
+.stk-countdown-bar {
+    margin-bottom: 18px;
+}
+
+.stk-countdown-track {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-surface);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.stk-countdown-progress {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #22c55e, var(--gold));
+    border-radius: 4px;
+    transition: width 1s linear;
+}
+
+.stk-timer-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.stk-action-row {
+    display: flex;
+    gap: 10px;
+}
+
+.stk-action-row .btn {
+    flex: 1;
+}
+
+/* Receipt Card */
+.mpesa-receipt-card {
+    text-align: center;
+}
+
+.receipt-checkmark {
+    font-size: 48px;
+    color: #22c55e;
+    margin-bottom: 8px;
+}
+
+.receipt-success-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+}
+
+.receipt-blessing {
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gold);
+    margin-bottom: 18px;
+}
+
+.receipt-table {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 8px;
+}
+
+.receipt-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.receipt-row span {
+    color: var(--text-muted);
+}
+
+.receipt-row strong {
+    color: var(--text-main);
+}
+
+.receipt-ref-code {
+    font-family: monospace;
+    font-size: 14px;
+    color: var(--gold);
+    letter-spacing: 1px;
+}
+
+.receipt-status-pill {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.receipt-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.receipt-actions .btn {
+    flex: 1;
+}
+
+
 
 
 

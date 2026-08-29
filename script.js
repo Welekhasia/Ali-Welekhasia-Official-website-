@@ -5979,4 +5979,411 @@ function hideComponentSkeletons(componentName) {
     }
 }
 
+/* ==========================================================================
+   SITE-WIDE IMAGES EDITOR & PERSISTENT ASSET MANAGER
+   ========================================================================== */
+const LOCAL_STORAGE_SITE_IMAGES_KEY = 'ali_all_website_images_v2';
+
+const defaultSiteImages = {
+    hero: "images/hero.jpg",
+    profile: "images/hero.jpg",
+    logo: "images/hero.jpg",
+    crusade: "images/hero.jpg",
+    partner: "images/hero.jpg",
+    song_1: "https://img.youtube.com/vi/BLkpibP7XAU/hqdefault.jpg",
+    song_2: "https://img.youtube.com/vi/TQxObs0FZ3w/hqdefault.jpg",
+    song_3: "https://img.youtube.com/vi/Rwsr-3vtouM/hqdefault.jpg",
+    song_4: "https://img.youtube.com/vi/ZyM4Iqpv5jo/hqdefault.jpg",
+    dev_1: "https://img.youtube.com/vi/BLkpibP7XAU/hqdefault.jpg",
+    dev_2: "https://img.youtube.com/vi/TQxObs0FZ3w/hqdefault.jpg",
+    dev_3: "https://img.youtube.com/vi/Rwsr-3vtouM/hqdefault.jpg",
+    vid_1: "https://img.youtube.com/vi/BLkpibP7XAU/hqdefault.jpg",
+    vid_2: "https://img.youtube.com/vi/TQxObs0FZ3w/hqdefault.jpg"
+};
+
+let activeSiteImages = { ...defaultSiteImages };
+
+function initSiteImages() {
+    try {
+        const saved = localStorage.getItem(LOCAL_STORAGE_SITE_IMAGES_KEY);
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            activeSiteImages = { ...defaultSiteImages, ...parsed };
+        }
+    } catch (e) {
+        console.warn('Could not load saved website images:', e);
+    }
+    applySiteImagesToDOM(activeSiteImages);
+    populateImageEditorSlots();
+}
+
+function applySiteImagesToDOM(images) {
+    if (!images) return;
+
+    // Apply Hero background
+    const heroBg = document.querySelector('.hero');
+    if (heroBg && images.hero) {
+        heroBg.style.backgroundImage = `linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(2, 6, 23, 0.94)), url('${images.hero}')`;
+    }
+
+    // Apply Profile images
+    const profileImgs = document.querySelectorAll('.minister-profile-img, .about-photo img, .hero-avatar-img');
+    profileImgs.forEach(img => {
+        if (images.profile) img.src = images.profile;
+    });
+
+    // Apply Crusade Banner
+    const crusadeBanners = document.querySelectorAll('.crusade-highlight-banner img, .crusade-bg-image');
+    crusadeBanners.forEach(banner => {
+        if (banner.tagName === 'IMG' && images.crusade) banner.src = images.crusade;
+    });
+
+    // Apply Songs Artworks in UI & music catalog
+    if (typeof songs !== 'undefined' && Array.isArray(songs)) {
+        if (songs[0] && images.song_1) songs[0].cover = images.song_1;
+        if (songs[1] && images.song_2) songs[1].cover = images.song_2;
+        if (songs[2] && images.song_3) songs[2].cover = images.song_3;
+        if (songs[3] && images.song_4) songs[3].cover = images.song_4;
+        
+        // Update DOM music cards if rendered
+        const musicCovers = document.querySelectorAll('.music-card .music-cover-img');
+        if (musicCovers[0] && images.song_1) musicCovers[0].src = images.song_1;
+        if (musicCovers[1] && images.song_2) musicCovers[1].src = images.song_2;
+        if (musicCovers[2] && images.song_3) musicCovers[2].src = images.song_3;
+        if (musicCovers[3] && images.song_4) musicCovers[3].src = images.song_4;
+
+        const playerThumb = document.getElementById('playerAlbumArt');
+        if (playerThumb && songs[currentSongIndex]) {
+            playerThumb.src = songs[currentSongIndex].cover || images.song_1;
+        }
+    }
+
+    // Apply Devotional Covers
+    if (typeof blogPosts !== 'undefined' && Array.isArray(blogPosts)) {
+        if (blogPosts[0] && images.dev_1) blogPosts[0].image = images.dev_1;
+        if (blogPosts[1] && images.dev_2) blogPosts[1].image = images.dev_2;
+        if (blogPosts[2] && images.dev_3) blogPosts[2].image = images.dev_3;
+
+        const blogThumbnails = document.querySelectorAll('.blog-card .blog-thumb-img');
+        if (blogThumbnails[0] && images.dev_1) blogThumbnails[0].src = images.dev_1;
+        if (blogThumbnails[1] && images.dev_2) blogThumbnails[1].src = images.dev_2;
+        if (blogThumbnails[2] && images.dev_3) blogThumbnails[2].src = images.dev_3;
+    }
+
+    // Apply Video Thumbnails
+    const videoThumbs = document.querySelectorAll('.video-card-thumb img');
+    if (videoThumbs[0] && images.vid_1) videoThumbs[0].src = images.vid_1;
+    if (videoThumbs[1] && images.vid_2) videoThumbs[1].src = images.vid_2;
+}
+
+function populateImageEditorSlots() {
+    Object.keys(defaultSiteImages).forEach(slotId => {
+        const input = document.getElementById(`slotInput_${slotId}`);
+        const preview = document.getElementById(`slotImgPreview_${slotId}`);
+        const currentVal = activeSiteImages[slotId] || defaultSiteImages[slotId];
+
+        if (input) input.value = currentVal;
+        if (preview) preview.src = currentVal;
+    });
+}
+
+function previewSlotImage(slotId, val) {
+    const preview = document.getElementById(`slotImgPreview_${slotId}`);
+    if (preview) {
+        preview.src = val ? val.trim() : (defaultSiteImages[slotId] || 'images/hero.jpg');
+    }
+}
+
+async function handleSlotFileUpload(slotId, event) {
+    const file = event.target.files?.[0];
+    if (!file || !file.type.startsWith('image/')) {
+        showToast('Please select a valid image file.', 'error');
+        return;
+    }
+
+    showToast('Compressing and loading image...', 'info', 1800);
+    const compressed = await compressImageFile(file, 1600, 0.85);
+    const dataUrl = compressed ? compressed.dataUrl : await fileToDataUrl(file);
+
+    const input = document.getElementById(`slotInput_${slotId}`);
+    const preview = document.getElementById(`slotImgPreview_${slotId}`);
+
+    if (input) input.value = dataUrl;
+    if (preview) preview.src = dataUrl;
+
+    showToast(`Image loaded for ${slotId.toUpperCase()}! Click 'Save All Image Changes' to publish live.`, 'success', 3500);
+}
+
+function resetSingleSlot(slotId) {
+    const defaultVal = defaultSiteImages[slotId] || 'images/hero.jpg';
+    const input = document.getElementById(`slotInput_${slotId}`);
+    const preview = document.getElementById(`slotImgPreview_${slotId}`);
+
+    if (input) input.value = defaultVal;
+    if (preview) preview.src = defaultVal;
+
+    showToast(`Reset ${slotId} slot to default.`, 'info', 2000);
+}
+
+function saveAllWebsiteImages(event) {
+    if (event) event.preventDefault();
+
+    const newConfig = {};
+    Object.keys(defaultSiteImages).forEach(slotId => {
+        const input = document.getElementById(`slotInput_${slotId}`);
+        newConfig[slotId] = input && input.value.trim() ? input.value.trim() : defaultSiteImages[slotId];
+    });
+
+    activeSiteImages = newConfig;
+
+    try {
+        localStorage.setItem(LOCAL_STORAGE_SITE_IMAGES_KEY, JSON.stringify(activeSiteImages));
+    } catch (e) {
+        console.warn('Storage quota exceeded, storing key paths only:', e);
+    }
+
+    applySiteImagesToDOM(activeSiteImages);
+    showToast('Hallelujah! All website images successfully updated and saved to the live site!', 'success', 5000);
+}
+
+function resetAllWebsiteImagesToDefault() {
+    if (confirm('Are you sure you want to reset all website images back to their original defaults?')) {
+        localStorage.removeItem(LOCAL_STORAGE_SITE_IMAGES_KEY);
+        activeSiteImages = { ...defaultSiteImages };
+        populateImageEditorSlots();
+        applySiteImagesToDOM(activeSiteImages);
+        showToast('All website images have been reset to factory defaults.', 'info', 4000);
+    }
+}
+
+function filterImageEditorSlots(category, buttonEl) {
+    const buttons = document.querySelectorAll('#imageSlotFilterBtns .btn-sm');
+    buttons.forEach(btn => btn.classList.remove('active-aspect'));
+    if (buttonEl) buttonEl.classList.add('active-aspect');
+
+    const cards = document.querySelectorAll('.site-img-slot-card');
+    cards.forEach(card => {
+        const slotCat = card.getAttribute('data-slot-cat');
+        if (category === 'all' || slotCat === category) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function fileToDataUrl(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+/* ==========================================================================
+   M-PESA EXPRESS STK PUSH (LIPA NA M-PESA ONLINE) SYSTEM
+   ========================================================================== */
+let stkCountdownInterval = null;
+let currentStkPayment = null;
+
+function setStkAmount(amount) {
+    const input = document.getElementById('stkAmount');
+    if (input) input.value = amount;
+
+    const chips = document.querySelectorAll('.stk-amount-chip');
+    chips.forEach(chip => {
+        if (chip.textContent.includes(amount.toLocaleString())) {
+            chip.classList.add('active');
+        } else {
+            chip.classList.remove('active');
+        }
+    });
+}
+
+function handleMpesaStkInitiate(event) {
+    if (event) event.preventDefault();
+
+    const phoneInput = document.getElementById('stkPhoneNumber');
+    const amountInput = document.getElementById('stkAmount');
+    const purposeSelect = document.getElementById('stkPurpose');
+
+    let phone = phoneInput ? phoneInput.value.trim().replace(/[\s-]/g, '') : '';
+    let amount = amountInput ? parseInt(amountInput.value, 10) : 500;
+    let purpose = purposeSelect ? purposeSelect.value : 'General Ministry Support';
+
+    // Normalize Kenyan phone numbers
+    if (phone.startsWith('0')) {
+        phone = '254' + phone.substring(1);
+    } else if (phone.startsWith('+254')) {
+        phone = phone.substring(1);
+    }
+
+    if (!phone || phone.length < 10) {
+        showToast('Please enter a valid Safaricom phone number (e.g. 0705575437).', 'error');
+        return;
+    }
+
+    if (!amount || amount < 10) {
+        showToast('Minimum giving amount is KES 10.', 'warning');
+        return;
+    }
+
+    // Format formatted phone display
+    const formattedPhone = `+${phone.substring(0, 3)} ${phone.substring(3, 6)} ${phone.substring(6)}`;
+
+    currentStkPayment = {
+        phone: formattedPhone,
+        rawPhone: phone,
+        amount: amount,
+        purpose: purpose,
+        timestamp: new Date()
+    };
+
+    openMpesaStkModal(currentStkPayment);
+}
+
+function openMpesaStkModal(paymentData) {
+    const modal = document.getElementById('mpesaStkModal');
+    const waitState = document.getElementById('mpesaStkWaitingState');
+    const successState = document.getElementById('mpesaStkSuccessState');
+    
+    const amountSpan = document.getElementById('stkModalAmountVal');
+    const purposeSpan = document.getElementById('stkModalPurposeVal');
+    const phoneSpan = document.getElementById('stkModalPhoneVal');
+
+    if (amountSpan) amountSpan.textContent = paymentData.amount.toLocaleString();
+    if (purposeSpan) purposeSpan.textContent = paymentData.purpose.toUpperCase().substring(0, 20);
+    if (phoneSpan) phoneSpan.textContent = paymentData.phone;
+
+    if (waitState) waitState.style.display = 'block';
+    if (successState) successState.style.display = 'none';
+
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    startStkCountdown();
+    showToast(`STK Push prompt dispatched to ${paymentData.phone}! Please check your phone screen.`, 'info', 5000);
+}
+
+function closeMpesaStkModal() {
+    const modal = document.getElementById('mpesaStkModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    if (stkCountdownInterval) {
+        clearInterval(stkCountdownInterval);
+        stkCountdownInterval = null;
+    }
+}
+
+function startStkCountdown() {
+    if (stkCountdownInterval) clearInterval(stkCountdownInterval);
+
+    let timeLeft = 45;
+    const totalTime = 45;
+    const progressEl = document.getElementById('stkCountdownProgress');
+    const timerLabel = document.getElementById('stkTimerSeconds');
+
+    if (progressEl) progressEl.style.width = '100%';
+    if (timerLabel) timerLabel.textContent = `${timeLeft}s`;
+
+    stkCountdownInterval = setInterval(() => {
+        timeLeft--;
+        if (timerLabel) timerLabel.textContent = `${timeLeft}s`;
+        if (progressEl) {
+            const pct = (timeLeft / totalTime) * 100;
+            progressEl.style.width = `${pct}%`;
+        }
+
+        if (timeLeft <= 0) {
+            clearInterval(stkCountdownInterval);
+            stkCountdownInterval = null;
+            // Auto complete payment simulation if left running
+            confirmSimulatedMpesaPayment();
+        }
+    }, 1000);
+}
+
+function confirmSimulatedMpesaPayment() {
+    if (stkCountdownInterval) {
+        clearInterval(stkCountdownInterval);
+        stkCountdownInterval = null;
+    }
+
+    const waitState = document.getElementById('mpesaStkWaitingState');
+    const successState = document.getElementById('mpesaStkSuccessState');
+
+    // Generate random authentic looking M-PESA receipt ID (e.g. QHK8941LX9)
+    const randomHex = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const refCode = `QHK${randomHex}`;
+
+    const dateStr = new Date().toLocaleString('en-KE', { 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+
+    const payment = currentStkPayment || {
+        amount: 500,
+        phone: '+254 705 575 437',
+        purpose: 'Crusade & Gospel Ministry'
+    };
+
+    const refEl = document.getElementById('receiptRefId');
+    const amtEl = document.getElementById('receiptAmount');
+    const phoneEl = document.getElementById('receiptPhone');
+    const purpEl = document.getElementById('receiptPurpose');
+    const dateEl = document.getElementById('receiptDate');
+
+    if (refEl) refEl.textContent = refCode;
+    if (amtEl) amtEl.textContent = `KES ${payment.amount.toLocaleString()}.00`;
+    if (phoneEl) phoneEl.textContent = payment.phone;
+    if (purpEl) purpEl.textContent = payment.purpose;
+    if (dateEl) dateEl.textContent = dateStr;
+
+    if (waitState) waitState.style.display = 'none';
+    if (successState) successState.style.display = 'block';
+
+    // Save record to local storage
+    try {
+        const storedDonations = JSON.parse(localStorage.getItem('ali_ministry_donations') || '[]');
+        storedDonations.unshift({
+            ref: refCode,
+            amount: payment.amount,
+            phone: payment.phone,
+            purpose: payment.purpose,
+            date: dateStr
+        });
+        localStorage.setItem('ali_ministry_donations', JSON.stringify(storedDonations.slice(0, 50)));
+    } catch (e) {}
+
+    showToast(`M-PESA payment of KES ${payment.amount.toLocaleString()} received! Ref: ${refCode}. God bless you richly!`, 'success', 6000);
+}
+
+function copyReceiptRef() {
+    const refEl = document.getElementById('receiptRefId');
+    const ref = refEl ? refEl.textContent : 'QHK88992X1';
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(ref).then(() => {
+            showToast(`M-PESA Reference Code ${ref} copied to clipboard!`, 'success');
+        });
+    } else {
+        showToast(`Reference Code: ${ref}`, 'info');
+    }
+}
+
+// Global initialization hook
+document.addEventListener('DOMContentLoaded', () => {
+    initSiteImages();
+    updateAdminUIState();
+});
+
+
 

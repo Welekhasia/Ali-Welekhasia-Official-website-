@@ -167,11 +167,6 @@
                 <i class="fa-solid fa-moon" id="themeIcon"></i>
             </button>
 
-            <!-- Admin Portal Quick Access Trigger -->
-            <button class="tool-btn admin-portal-btn" id="adminPortalHeaderBtn" onclick="openAdminPortal()" title="Admin Content Management Portal" aria-label="Admin Portal">
-                <i class="fa-solid fa-lock" id="adminLockIcon"></i>
-            </button>
-
             <!-- Mobile Nav Toggle -->
             <button class="mobile-nav-toggle" id="mobileNavToggle" onclick="toggleMobileMenu()" aria-label="Toggle Navigation Menu">
                 <span class="bar"></span>
@@ -1164,6 +1159,63 @@
                 <div class="partner-giving-col">
                     <h3><i class="fa-solid fa-hand-holding-heart"></i> Ways to Give & Support</h3>
                     <p class="partner-intro">Every seed sown helps print bibles, stage massive sound systems for open-air crusades, and produce spirit-filled gospel songs.</p>
+
+                    <!-- M-PESA STK PUSH (Instant Prompt to Handset) -->
+                    <div class="giving-method-card mpesa-stk-highlight-card">
+                        <div class="giving-method-header">
+                            <span class="mpesa-logo"><i class="fa-solid fa-bolt" style="color: #22c55e;"></i> M-PESA Express STK Push</span>
+                            <span class="giving-badge" style="background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid #22c55e;"><i class="fa-solid fa-satellite-dish"></i> Instant Phone Pop-Up</span>
+                        </div>
+                        <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">
+                            Enter your Safaricom mobile number and desired amount below to receive an instant M-PESA PIN prompt directly on your handset screen.
+                        </p>
+                        
+                        <form id="mpesaStkForm" onsubmit="handleMpesaStkInitiate(event)" class="stk-push-form">
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label for="stkPhoneNumber" class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text-main);">
+                                    <i class="fa-solid fa-phone" style="color: #22c55e;"></i> Safaricom M-PESA Phone Number <span class="required-star">*</span>
+                                </label>
+                                <div class="stk-phone-input-wrap">
+                                    <span class="stk-phone-prefix">+254</span>
+                                    <input type="tel" id="stkPhoneNumber" placeholder="705 575 437 or 07..." required pattern="[0-9+ ]{9,15}" value="0705575437">
+                                </div>
+                                <small style="font-size: 11px; color: var(--text-dim);">Accepts formats: 07XXXXXXXX, 01XXXXXXXX, or 2547XXXXXXXX</small>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text-main);">
+                                    <i class="fa-solid fa-hand-holding-dollar" style="color: var(--gold);"></i> Select Giving Amount (KES)
+                                </label>
+                                <div class="stk-amount-chips">
+                                    <button type="button" class="stk-amount-chip" onclick="setStkAmount(250)">KES 250</button>
+                                    <button type="button" class="stk-amount-chip active" onclick="setStkAmount(500)">KES 500</button>
+                                    <button type="button" class="stk-amount-chip" onclick="setStkAmount(1000)">KES 1,000</button>
+                                    <button type="button" class="stk-amount-chip" onclick="setStkAmount(2500)">KES 2,500</button>
+                                    <button type="button" class="stk-amount-chip" onclick="setStkAmount(5000)">KES 5,000</button>
+                                </div>
+                                <div class="stk-custom-amount-wrap" style="margin-top: 8px;">
+                                    <span style="font-weight: 700; color: var(--gold); font-size: 13px;">KES</span>
+                                    <input type="number" id="stkAmount" min="10" max="300000" placeholder="Or enter custom amount (KES)" value="500" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 14px;">
+                                <label for="stkPurpose" class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text-main);">
+                                    <i class="fa-solid fa-tag" style="color: var(--gold);"></i> Ministry Covenant / Purpose
+                                </label>
+                                <select id="stkPurpose" style="padding: 9px 12px; font-size: 12.5px; border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); width: 100%;">
+                                    <option value="Open-Air Crusade Sound & Mission">Open-Air Crusade Sound & Evangelism</option>
+                                    <option value="Swahili Gospel Music Production">Swahili Gospel Music & Studio Production</option>
+                                    <option value="Bible Printing & Needy Outreach">Bible Printing & Free Distribution</option>
+                                    <option value="General Ministry Tithes & Offerings">General Ministry Tithes & Free-Will Seed</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-mpesa-stk btn-block" id="stkPushSubmitBtn">
+                                <i class="fa-solid fa-mobile-screen-button"></i> <span>Send M-PESA STK Push Prompt</span>
+                            </button>
+                        </form>
+                    </div>
 
                     <!-- M-PESA Direct Send Money Box -->
                     <div class="giving-method-card">
@@ -2233,10 +2285,10 @@
 
             <form id="adminLoginForm" class="admin-form" onsubmit="handleAdminLogin(event)">
                 <div class="admin-auth-notice">
-                    <i class="fa-solid fa-circle-info"></i>
+                    <i class="fa-solid fa-shield-halved"></i>
                     <div>
-                        <strong>Firebase & Admin Access</strong>
-                        <p>Sign in with your Firebase Auth email/password, or Demo Credentials: <code>ali.werekhasia01@gmail.com</code> | Password: <code>minister2026</code></p>
+                        <strong>Authorized Ministry Administration</strong>
+                        <p>Please enter your authorized ministry administrator credentials to access dashboard management controls.</p>
                     </div>
                 </div>
 
@@ -2244,7 +2296,7 @@
                     <label for="adminUsername" class="form-label">Admin Email / Username</label>
                     <div class="admin-input-wrap">
                         <i class="fa-solid fa-envelope input-icon"></i>
-                        <input type="text" id="adminUsername" placeholder="e.g. ali.werekhasia01@gmail.com" required autocomplete="username">
+                        <input type="text" id="adminUsername" placeholder="Enter administrator email..." required autocomplete="username">
                     </div>
                 </div>
 
@@ -2329,7 +2381,7 @@
                     <i class="fa-solid fa-sliders"></i> 8. SEO & Feeds
                 </button>
                 <button type="button" class="admin-tab-btn" id="tabImagesAdmin" onclick="switchAdminTab('images')" role="tab" aria-selected="false">
-                    <i class="fa-solid fa-folder-open"></i> 9. Image Uploads & Library
+                    <i class="fa-solid fa-images"></i> 9. Edit All Website Images & Assets
                 </button>
             </div>
 
@@ -2916,17 +2968,352 @@
                 </div>
             </div>
 
-            <!-- Tab 9: Easy Image Uploads & Media File Manager (images/ directory) -->
+            <!-- Tab 9: Edit All Website Images & Assets -->
             <div class="admin-tab-content" id="adminContentImages" style="display: none;">
                 <div class="admin-section-intro">
-                    <h3><i class="fa-solid fa-folder-open"></i> Image Library & Upload Center (<code>images/</code>)</h3>
-                    <p>Easily upload pictures, manage website image assets, preview thumbnail images, and copy image file paths for your hero section, crusade gallery, and devotionals.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px;">
+                        <div>
+                            <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Edit All Website Images & Save Changes</h3>
+                            <p>Customize and replace any image on the website (Hero, Profile, Logo, Songs, Devotionals, Videos, Banners). Click <strong>"Save All Image Changes"</strong> to apply and save changes permanently.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-gold" onclick="saveAllWebsiteImages(event)" style="box-shadow: 0 4px 16px var(--gold-glow); font-weight: 700;">
+                                <i class="fa-solid fa-floppy-disk"></i> <span>Save All Image Changes</span>
+                            </button>
+                            <button type="button" class="btn btn-outline" onclick="resetAllWebsiteImagesToDefault()">
+                                <i class="fa-solid fa-rotate-left"></i> Reset Defaults
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Site-Wide Visual Image Slots Manager Card -->
+                <div class="admin-sub-card" style="padding: 24px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); margin-bottom: 28px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+                        <h4 style="margin: 0; color: var(--gold); display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-images"></i> Website Image Slots & Live Visual Customizer
+                        </h4>
+                        <!-- Category Filter for slots -->
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="imageSlotFilterBtns">
+                            <button type="button" class="btn-sm btn-outline active-aspect" onclick="filterImageEditorSlots('all', this)">All Slots (<span id="allSlotsCount">14</span>)</button>
+                            <button type="button" class="btn-sm btn-outline" onclick="filterImageEditorSlots('branding', this)">Hero & Brand</button>
+                            <button type="button" class="btn-sm btn-outline" onclick="filterImageEditorSlots('songs', this)">Song Covers</button>
+                            <button type="button" class="btn-sm btn-outline" onclick="filterImageEditorSlots('blog', this)">Devotionals</button>
+                            <button type="button" class="btn-sm btn-outline" onclick="filterImageEditorSlots('videos', this)">Video Thumbnails</button>
+                        </div>
+                    </div>
+
+                    <!-- Image Slots Grid -->
+                    <div class="site-image-slots-grid" id="siteImageSlotsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px;">
+                        <!-- Slot 1: Hero Banner Background -->
+                        <div class="site-img-slot-card" data-slot-cat="branding">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-star"></i> Hero Section</span>
+                                <h5>Hero Background Banner</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_hero" src="images/hero.jpg" alt="Hero Banner Preview" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_hero" placeholder="Image URL or images/hero.jpg" value="images/hero.jpg" oninput="previewSlotImage('hero', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_hero').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_hero" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('hero', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('hero')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 2: Minister / Artist Profile Image -->
+                        <div class="site-img-slot-card" data-slot-cat="branding">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-user"></i> Profile / About</span>
+                                <h5>Minister Ali Welekhasia Photo</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_profile" src="images/hero.jpg" alt="Minister Profile Preview" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_profile" placeholder="Profile image URL or data URI" value="images/hero.jpg" oninput="previewSlotImage('profile', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_profile').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_profile" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('profile', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('profile')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 3: Ministry Brand Logo -->
+                        <div class="site-img-slot-card" data-slot-cat="branding">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-certificate"></i> Brand Identity</span>
+                                <h5>Ministry Brand Logo Mark</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_logo" src="images/hero.jpg" alt="Logo Preview" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_logo" placeholder="Logo image URL or SVG path" value="" oninput="previewSlotImage('logo', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_logo').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_logo" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('logo', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('logo')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 4: Crusade Countdown Banner -->
+                        <div class="site-img-slot-card" data-slot-cat="branding">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-fire"></i> Crusade Banner</span>
+                                <h5>Revival Crusade Countdown Art</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_crusade" src="images/hero.jpg" alt="Crusade Banner Preview" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_crusade" placeholder="Crusade banner URL or path" value="images/hero.jpg" oninput="previewSlotImage('crusade', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_crusade').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_crusade" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('crusade', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('crusade')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 5: Song 1 - Umetenda Haya -->
+                        <div class="site-img-slot-card" data-slot-cat="songs">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-music"></i> Song Cover 1</span>
+                                <h5>UMETENDA HAYA Artwork</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_song_1" src="https://img.youtube.com/vi/BLkpibP7XAU/hqdefault.jpg" alt="UMETENDA HAYA Cover" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_song_1" placeholder="Song 1 Artwork URL" value="https://img.youtube.com/vi/BLkpibP7XAU/hqdefault.jpg" oninput="previewSlotImage('song_1', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_song_1').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_song_1" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('song_1', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('song_1')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 6: Song 2 - Nasimama -->
+                        <div class="site-img-slot-card" data-slot-cat="songs">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-music"></i> Song Cover 2</span>
+                                <h5>NASIMAMA Artwork</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_song_2" src="https://img.youtube.com/vi/TQxObs0FZ3w/hqdefault.jpg" alt="NASIMAMA Cover" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_song_2" placeholder="Song 2 Artwork URL" value="https://img.youtube.com/vi/TQxObs0FZ3w/hqdefault.jpg" oninput="previewSlotImage('song_2', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_song_2').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_song_2" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('song_2', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('song_2')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 7: Song 3 - Nintsie Hena -->
+                        <div class="site-img-slot-card" data-slot-cat="songs">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-music"></i> Song Cover 3</span>
+                                <h5>NINTSIE HENA Artwork</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_song_3" src="https://img.youtube.com/vi/Rwsr-3vtouM/hqdefault.jpg" alt="NINTSIE HENA Cover" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_song_3" placeholder="Song 3 Artwork URL" value="https://img.youtube.com/vi/Rwsr-3vtouM/hqdefault.jpg" oninput="previewSlotImage('song_3', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_song_3').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_song_3" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('song_3', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('song_3')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 8: Song 4 - Njooni Tumwimbie -->
+                        <div class="site-img-slot-card" data-slot-cat="songs">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-music"></i> Song Cover 4</span>
+                                <h5>NJOONI TUMWIMBIE Artwork</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_song_4" src="https://img.youtube.com/vi/ZyM4Iqpv5jo/hqdefault.jpg" alt="NJOONI TUMWIMBIE Cover" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_song_4" placeholder="Song 4 Artwork URL" value="https://img.youtube.com/vi/ZyM4Iqpv5jo/hqdefault.jpg" oninput="previewSlotImage('song_4', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_song_4').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_song_4" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('song_4', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('song_4')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 9: Devotional 1 Cover -->
+                        <div class="site-img-slot-card" data-slot-cat="blog">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-feather"></i> Devotional 1</span>
+                                <h5>Walking by Faith Cover</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_dev_1" src="https://img.youtube.com/vi/BLkpibP7XAU/hqdefault.jpg" alt="Devotional 1 Cover" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_dev_1" placeholder="Devotional 1 Cover URL" value="https://img.youtube.com/vi/BLkpibP7XAU/hqdefault.jpg" oninput="previewSlotImage('dev_1', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_dev_1').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_dev_1" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('dev_1', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('dev_1')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 10: Devotional 2 Cover -->
+                        <div class="site-img-slot-card" data-slot-cat="blog">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-feather"></i> Devotional 2</span>
+                                <h5>The Great Commission Cover</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_dev_2" src="https://img.youtube.com/vi/TQxObs0FZ3w/hqdefault.jpg" alt="Devotional 2 Cover" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_dev_2" placeholder="Devotional 2 Cover URL" value="https://img.youtube.com/vi/TQxObs0FZ3w/hqdefault.jpg" oninput="previewSlotImage('dev_2', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_dev_2').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_dev_2" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('dev_2', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('dev_2')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 11: Devotional 3 Cover -->
+                        <div class="site-img-slot-card" data-slot-cat="blog">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-feather"></i> Devotional 3</span>
+                                <h5>The Secret Place Cover</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_dev_3" src="https://img.youtube.com/vi/Rwsr-3vtouM/hqdefault.jpg" alt="Devotional 3 Cover" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_dev_3" placeholder="Devotional 3 Cover URL" value="https://img.youtube.com/vi/Rwsr-3vtouM/hqdefault.jpg" oninput="previewSlotImage('dev_3', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_dev_3').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_dev_3" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('dev_3', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('dev_3')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 12: Video 1 Thumbnail -->
+                        <div class="site-img-slot-card" data-slot-cat="videos">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-video"></i> Video 1</span>
+                                <h5>NI WEWE Video Thumbnail</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_vid_1" src="https://img.youtube.com/vi/BLkpibP7XAU/hqdefault.jpg" alt="Video 1 Thumbnail" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_vid_1" placeholder="Video 1 Thumbnail URL" value="https://img.youtube.com/vi/BLkpibP7XAU/hqdefault.jpg" oninput="previewSlotImage('vid_1', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_vid_1').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_vid_1" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('vid_1', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('vid_1')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 13: Video 2 Thumbnail -->
+                        <div class="site-img-slot-card" data-slot-cat="videos">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-video"></i> Video 2</span>
+                                <h5>BADO Video Thumbnail</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_vid_2" src="https://img.youtube.com/vi/TQxObs0FZ3w/hqdefault.jpg" alt="Video 2 Thumbnail" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_vid_2" placeholder="Video 2 Thumbnail URL" value="https://img.youtube.com/vi/TQxObs0FZ3w/hqdefault.jpg" oninput="previewSlotImage('vid_2', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_vid_2').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_vid_2" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('vid_2', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('vid_2')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slot 14: Partner & Giving Banner -->
+                        <div class="site-img-slot-card" data-slot-cat="branding">
+                            <div class="slot-card-header">
+                                <span class="slot-badge"><i class="fa-solid fa-hand-holding-heart"></i> Partner Banner</span>
+                                <h5>Giving & Partner Banner Image</h5>
+                            </div>
+                            <div class="slot-preview-box">
+                                <img id="slotImgPreview_partner" src="images/hero.jpg" alt="Partner Banner Preview" onerror="this.src='images/hero.jpg'">
+                            </div>
+                            <div class="slot-controls">
+                                <input type="text" id="slotInput_partner" placeholder="Partner Banner URL or path" value="images/hero.jpg" oninput="previewSlotImage('partner', this.value)">
+                                <div class="slot-actions">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('slotFile_partner').click()">
+                                        <i class="fa-solid fa-upload"></i> Upload File
+                                    </button>
+                                    <input type="file" id="slotFile_partner" accept="image/*" style="display: none;" onchange="handleSlotFileUpload('partner', event)">
+                                    <button type="button" class="btn btn-sm btn-outline" onclick="resetSingleSlot('partner')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+                        <button type="button" class="btn btn-gold" onclick="saveAllWebsiteImages(event)" style="box-shadow: 0 4px 16px var(--gold-glow); font-weight: 700; padding: 12px 28px;">
+                            <i class="fa-solid fa-floppy-disk"></i> <span>Save All Image Changes to Live Website</span>
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="resetAllWebsiteImagesToDefault()">
+                            <i class="fa-solid fa-rotate-left"></i> Reset All Slots to Default
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Easy Drag & Drop Upload Form -->
                 <div class="admin-sub-card" style="padding: 24px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); margin-bottom: 24px;">
                     <h4 style="margin-top: 0; color: var(--gold); display: flex; align-items: center; gap: 8px;">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload New Picture
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload New Picture to Image Library (<code>images/</code>)
                     </h4>
                     
                     <form id="adminImageUploadForm" onsubmit="handleAdminImageUpload(event)" style="display: flex; flex-direction: column; gap: 16px;">
@@ -3030,6 +3417,131 @@
 
                     <div id="adminImageLibraryGrid" class="image-library-grid">
                         <!-- Dynamic rendered image cards -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M-PESA STK PUSH LIVE PROMPT & RECEIPT MODAL -->
+    <div id="mpesaStkModal" class="modal-overlay" onclick="handleModalBackdropClick(event, 'mpesaStkModal')" role="dialog" aria-modal="true" aria-labelledby="mpesaStkTitle">
+        <div class="modal-container mpesa-stk-modal-card">
+            <div class="mpesa-stk-header">
+                <div class="mpesa-stk-title-wrap">
+                    <span class="mpesa-green-badge"><i class="fa-solid fa-bolt"></i> Lipa Na M-PESA Online</span>
+                    <h3 id="mpesaStkTitle">M-PESA Express STK Push</h3>
+                </div>
+                <button class="modal-close-icon" onclick="closeMpesaStkModal()" aria-label="Close STK Push Dialog">&times;</button>
+            </div>
+
+            <!-- Processing / Waiting State -->
+            <div id="mpesaStkWaitingState" class="stk-modal-body">
+                <!-- Realistic Animated Phone Handset Frame -->
+                <div class="stk-phone-mockup">
+                    <div class="stk-phone-speaker"></div>
+                    <div class="stk-phone-screen">
+                        <div class="stk-prompt-bubble">
+                            <div class="stk-prompt-header">
+                                <i class="fa-solid fa-sim-card"></i> <span>M-PESA SIM TOOLKIT</span>
+                            </div>
+                            <div class="stk-prompt-body">
+                                <p class="stk-query-text">
+                                    Do you want to pay <strong>KES <span id="stkModalAmountVal">500</span></strong> to <strong>ALI WELEKHASIA MINISTRY</strong> (Acc: <span id="stkModalPurposeVal">GIVING</span>)?
+                                </p>
+                                <div class="stk-pin-field">
+                                    <span class="pin-dot"></span>
+                                    <span class="pin-dot"></span>
+                                    <span class="pin-dot"></span>
+                                    <span class="pin-dot"></span>
+                                </div>
+                                <div class="stk-prompt-footer">
+                                    <span>[Cancel]</span>
+                                    <strong style="color: #15803d;">[OK]</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stk-instructions-box">
+                    <h4><i class="fa-solid fa-satellite-dish fa-beat"></i> STK Push Request Sent to Your Phone!</h4>
+                    <p>
+                        A prompt has been sent to phone number <strong id="stkModalPhoneVal">+254 705 575 437</strong>.
+                    </p>
+                    <ul class="stk-steps-list">
+                        <li><i class="fa-solid fa-circle-check"></i> 1. Check your phone screen for the M-PESA pop-up prompt.</li>
+                        <li><i class="fa-solid fa-circle-check"></i> 2. Enter your 4-digit <strong>M-PESA Secret PIN</strong>.</li>
+                        <li><i class="fa-solid fa-circle-check"></i> 3. Press <strong>OK / Send</strong> to complete the giving seed.</li>
+                    </ul>
+
+                    <div class="stk-countdown-bar">
+                        <div class="stk-countdown-track">
+                            <div class="stk-countdown-progress" id="stkCountdownProgress"></div>
+                        </div>
+                        <div class="stk-timer-label">Waiting for PIN entry: <strong id="stkTimerSeconds">45s</strong></div>
+                    </div>
+
+                    <div class="stk-action-row">
+                        <button type="button" class="btn btn-mpesa-stk" onclick="confirmSimulatedMpesaPayment()">
+                            <i class="fa-solid fa-check-double"></i> I Have Entered My PIN (Verify)
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="closeMpesaStkModal()">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success State: Official M-PESA Confirmation & Receipt -->
+            <div id="mpesaStkSuccessState" class="stk-modal-body" style="display: none;">
+                <div class="mpesa-receipt-card">
+                    <div class="receipt-checkmark">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <span class="receipt-success-badge">M-PESA PAYMENT CONFIRMED</span>
+                    <h3>Seed Received With Thanks!</h3>
+                    <p class="receipt-blessing">
+                        "May the Lord bless you and multiply your seed sown a hundredfold!" (2 Cor 9:10)
+                    </p>
+
+                    <div class="receipt-table">
+                        <div class="receipt-row">
+                            <span>M-PESA Ref ID:</span>
+                            <strong id="receiptRefId" class="receipt-ref-code">QHK88992X1</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Amount Paid:</span>
+                            <strong id="receiptAmount" style="color: #22c55e;">KES 500.00</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Phone Number:</span>
+                            <strong id="receiptPhone">+254 705 575 437</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Paid To:</span>
+                            <strong>Ali Welekhasia Gospel Ministries</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Purpose:</span>
+                            <strong id="receiptPurpose">Crusade Sound & Evangelism</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Date & Time:</span>
+                            <strong id="receiptDate">Today, Just Now</strong>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Status:</span>
+                            <span class="receipt-status-pill"><i class="fa-solid fa-check"></i> Completed & Verified</span>
+                        </div>
+                    </div>
+
+                    <div class="receipt-actions">
+                        <button type="button" class="btn btn-gold" onclick="copyReceiptRef()">
+                            <i class="fa-solid fa-copy"></i> Copy Reference ID
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="closeMpesaStkModal()">
+                            <i class="fa-solid fa-check"></i> Done
+                        </button>
                     </div>
                 </div>
             </div>
