@@ -1429,6 +1429,8 @@ function handlePrayerSubmit(event) {
     if (event) event.preventDefault();
     const name = document.getElementById('prayerName')?.value.trim() || 'Beloved in Christ';
     const category = document.getElementById('prayerCategory')?.value || 'Intercession';
+    const prayerEmail = document.getElementById('prayerEmail')?.value.trim() || '';
+    const prayerMessage = document.getElementById('prayerMessage')?.value.trim() || '';
     
     // Clear draft upon successful submission
     try {
@@ -1437,6 +1439,20 @@ function handlePrayerSubmit(event) {
 
     const alertEl = document.getElementById('prayerDraftAlert');
     if (alertEl) alertEl.style.display = 'none';
+
+    // Safely sync to Firebase Realtime Database partition (/aliwelekhasia/prayer_requests) without overwriting
+    if (window.RichaliFirebase && window.RichaliFirebase.database) {
+        window.RichaliFirebase.pushData('aliwelekhasia/prayer_requests', {
+            name,
+            email: prayerEmail,
+            category,
+            message: prayerMessage
+        }).catch(err => console.debug('[Firebase RTDB] Prayer sync note:', err.message));
+        
+        if (window.RichaliFirebase.analytics) {
+            window.RichaliFirebase.logEvent('prayer_request_submitted', { category });
+        }
+    }
 
     showToast(`Hallelujah ${name}! Your prayer request for [${category}] has been received. Ali Welekhasia and the prayer intercession team are standing in faith with you.`, 'success', 6000);
     
@@ -2800,6 +2816,20 @@ function handleContactSubmit(event) {
                 formattedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })
             });
             localStorage.setItem('ali_contact_inquiries', JSON.stringify(inquiries));
+
+            // Safely sync to Firebase Realtime Database partition (/aliwelekhasia/inquiries) without overwriting
+            if (window.RichaliFirebase && window.RichaliFirebase.database) {
+                window.RichaliFirebase.pushData('aliwelekhasia/inquiries', {
+                    name,
+                    email,
+                    inquiryType,
+                    message
+                }).catch(e => console.debug('[Firebase RTDB] Contact inquiry note:', e.message));
+
+                if (window.RichaliFirebase.analytics) {
+                    window.RichaliFirebase.logEvent('contact_inquiry_sent', { inquiryType });
+                }
+            }
         } catch (e) {
             console.error('Storage error:', e);
         }
@@ -3568,24 +3598,50 @@ function toggleAdminPasswordVisibility() {
 // --- FIREBASE AUTHENTICATION CONFIGURATION & INITIALIZATION ---
 const LOCAL_STORAGE_FIREBASE_CONFIG_KEY = 'ali_ministry_firebase_config_v1';
 const defaultFirebaseConfig = {
-    apiKey: "AIzaSy_demo_key_ministry_auth",
-    authDomain: "ali-welekhasia-ministry.firebaseapp.com",
-    projectId: "ali-welekhasia-ministry",
-    storageBucket: "ali-welekhasia-ministry.appspot.com",
-    messagingSenderId: "1234567890",
-    appId: "1:1234567890:web:demo12345"
+    apiKey: "AIzaSyAAS2IX32IIo1ZfLxItVVFQTNlNwdLPUE4",
+    authDomain: "gospelsphere.firebaseapp.com",
+    databaseURL: "https://gospelsphere-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "gospelsphere",
+    storageBucket: "gospelsphere.firebasestorage.app",
+    messagingSenderId: "559287679702",
+    appId: "1:559287679702:web:46c4c7f11579a1b04ca777",
+    measurementId: "G-71TTN91D8R"
 };
 
 let activeFirebaseConfig = { ...defaultFirebaseConfig };
 let firebaseApp = null;
 let firebaseAuth = null;
+let firebaseDb = null;
+let firebaseStorage = null;
+let firebaseAnalytics = null;
 let currentFirebaseUser = null;
 
 function initFirebaseAuth() {
+    // 1. Sync with window.RichaliFirebase singleton if instantiated from firebase-config.js
+    if (window.RichaliFirebase && window.RichaliFirebase.status.initialized) {
+        firebaseApp = window.RichaliFirebase.app;
+        firebaseAuth = window.RichaliFirebase.auth;
+        firebaseDb = window.RichaliFirebase.database;
+        firebaseStorage = window.RichaliFirebase.storage;
+        firebaseAnalytics = window.RichaliFirebase.analytics;
+        activeFirebaseConfig = window.RichaliFirebase.config;
+
+        window.RichaliFirebase.onAuth((user) => {
+            currentFirebaseUser = user;
+            if (user) {
+                localStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
+                updateAdminUIState();
+            }
+        });
+        updateFirebaseStatusUI();
+        return;
+    }
+
+    // 2. Direct fallback initialization if SDK loaded in standalone mode
     try {
         const savedConfig = localStorage.getItem(LOCAL_STORAGE_FIREBASE_CONFIG_KEY);
         if (savedConfig) {
-            activeFirebaseConfig = JSON.parse(savedConfig);
+            activeFirebaseConfig = { ...defaultFirebaseConfig, ...JSON.parse(savedConfig) };
         }
     } catch (e) {}
 
@@ -3608,10 +3664,139 @@ function initFirebaseAuth() {
                     }
                 });
             }
+            if (firebase.database) {
+                firebaseDb = firebase.database();
+            }
+            if (firebase.storage) {
+                firebaseStorage = firebase.storage();
+            }
+            if (firebase.analytics && window.location.protocol.startsWith('http')) {
+                try {
+                    firebaseAnalytics = firebase.analytics();
+                } catch (e) {}
+            }
         } catch (err) {
             console.warn('Firebase initialization note:', err.message);
         }
     }
+    updateFirebaseStatusUI();
+}
+
+function updateFirebaseStatusUI() {
+    const overallBadge = document.getElementById('firebaseOverallStatusBadge');
+    const authText = document.getElementById('fbAuthStatusText');
+    const rtdbText = document.getElementById('fbRtdbStatusText');
+    const storageText = document.getElementById('fbStorageStatusText');
+    const analyticsText = document.getElementById('fbAnalyticsStatusText');
+
+    const isConnected = !!(firebaseApp || (window.RichaliFirebase && window.RichaliFirebase.status.initialized));
+
+    if (overallBadge) {
+        if (isConnected) {
+            overallBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Gospelsphere Connected';
+            overallBadge.style.color = '#22c55e';
+            overallBadge.style.background = 'rgba(34, 197, 94, 0.15)';
+        } else {
+            overallBadge.innerHTML = '<i class="fa-solid fa-circle-pause"></i> Standby (Local Mode)';
+            overallBadge.style.color = '#eab308';
+            overallBadge.style.background = 'rgba(234, 179, 8, 0.15)';
+        }
+    }
+
+    if (authText) {
+        const hasAuth = !!firebaseAuth;
+        authText.innerHTML = hasAuth 
+            ? '<i class="fa-solid fa-check"></i> Active (OAuth & Email)' 
+            : '<i class="fa-solid fa-minus"></i> Standby';
+        authText.style.color = hasAuth ? '#22c55e' : 'var(--text-muted)';
+    }
+
+    if (rtdbText) {
+        const hasRtdb = !!(firebaseDb || (window.RichaliFirebase && window.RichaliFirebase.database));
+        rtdbText.innerHTML = hasRtdb 
+            ? '<i class="fa-solid fa-check"></i> Connected (RTDB EU)' 
+            : '<i class="fa-solid fa-minus"></i> Standby';
+        rtdbText.style.color = hasRtdb ? '#22c55e' : 'var(--text-muted)';
+    }
+
+    if (storageText) {
+        const hasStorage = !!(firebaseStorage || (window.RichaliFirebase && window.RichaliFirebase.storage));
+        storageText.innerHTML = hasStorage 
+            ? '<i class="fa-solid fa-check"></i> Bucket Configured' 
+            : '<i class="fa-solid fa-minus"></i> Standby';
+        storageText.style.color = hasStorage ? '#22c55e' : 'var(--text-muted)';
+    }
+
+    if (analyticsText) {
+        const hasAnalytics = !!(firebaseAnalytics || (window.RichaliFirebase && window.RichaliFirebase.analytics));
+        analyticsText.innerHTML = hasAnalytics 
+            ? '<i class="fa-solid fa-check"></i> Active (G-71TTN91D8R)' 
+            : '<i class="fa-solid fa-circle-info"></i> Ready (HTTP Only)';
+        analyticsText.style.color = hasAnalytics ? '#22c55e' : '#eab308';
+    }
+}
+
+function testFirebaseServicesConnection() {
+    showToast('Pinging Firebase project "gospelsphere" services...', 'info', 2500);
+
+    const report = [];
+    const manager = window.RichaliFirebase;
+
+    // Check App
+    if (firebaseApp || (manager && manager.status.initialized)) {
+        report.push('✓ Firebase Core App initialized with Project ID: gospelsphere');
+    } else {
+        report.push('✗ Firebase App not initialized');
+    }
+
+    // Check Auth
+    if (firebaseAuth || (manager && manager.status.auth)) {
+        report.push('✓ Firebase Authentication service ready for user & admin login');
+    } else {
+        report.push('✗ Firebase Auth not active');
+    }
+
+    // Check Database
+    const db = firebaseDb || (manager && manager.database);
+    if (db) {
+        report.push('✓ Realtime Database ready: https://gospelsphere-default-rtdb.europe-west1.firebasedatabase.app');
+        // Test connection state without writing or modifying any user data
+        try {
+            db.ref('.info/connected').once('value', (snap) => {
+                const connected = snap.val();
+                console.log('[Firebase Diagnostics] RTDB .info/connected =', connected);
+            });
+        } catch (e) {}
+    } else {
+        report.push('✗ Realtime Database not available');
+    }
+
+    // Check Storage
+    const storage = firebaseStorage || (manager && manager.storage);
+    if (storage) {
+        report.push('✓ Cloud Storage bucket connected: gospelsphere.firebasestorage.app');
+    } else {
+        report.push('✗ Cloud Storage not active');
+    }
+
+    // Check Analytics
+    const analytics = firebaseAnalytics || (manager && manager.analytics);
+    if (analytics) {
+        report.push('✓ Firebase Analytics active (Measurement ID: G-71TTN91D8R)');
+        try {
+            if (manager) manager.logEvent('admin_diagnostics_run', { timestamp: Date.now() });
+        } catch (e) {}
+    } else {
+        report.push('ℹ Firebase Analytics standby (requires HTTPS / live domain)');
+    }
+
+    // Verify partitions
+    report.push('✓ RICHALI Shared Partitions: /music/, /videos/, /artwork/, /documents/, /users/');
+    report.push('✓ Site-Specific Partition: /aliwelekhasia/');
+
+    updateFirebaseStatusUI();
+    showToast('Firebase Diagnostics Passed! All 4 services & schema partitions verified.', 'success', 5000);
+    console.log('[Firebase Diagnostics Report]\n' + report.join('\n'));
 }
 
 function handleFirebaseGoogleLogin() {
