@@ -3957,7 +3957,7 @@ const defaultBranding = {
 let activeBranding = { ...defaultBranding };
 
 function switchAdminTab(tabName) {
-    const tabs = ['crusades', 'blog', 'songs', 'videos', 'gallery', 'branding', 'testimonies', 'settings', 'images'];
+    const tabs = ['crusades', 'blog', 'songs', 'videos', 'gallery', 'branding', 'testimonies', 'settings', 'images', 'live', 'recordings'];
     tabs.forEach(t => {
         const btn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Admin`);
         const content = document.getElementById(`adminContent${t.charAt(0).toUpperCase() + t.slice(1)}`);
@@ -3976,6 +3976,8 @@ function switchAdminTab(tabName) {
     }
     if (tabName === 'testimonies') renderAdminTestimonialsList();
     if (tabName === 'images') renderAdminImagesList();
+    if (tabName === 'live') initAdminLiveStreamTab();
+    if (tabName === 'recordings') loadAdminCloudflareRecordings();
 }
 
 // 1. CRUSADE EVENT MANAGER
@@ -6568,7 +6570,692 @@ function copyReceiptRef() {
 document.addEventListener('DOMContentLoaded', () => {
     initSiteImages();
     updateAdminUIState();
+    initHomepageLiveBanner();
 });
+
+/* ==========================================================================
+   CLOUDFLARE STREAM LIVE & ADMIN MANAGEMENT MODULE
+   ========================================================================== */
+
+let adminLiveTimerInterval = null;
+let adminLiveStartTime = null;
+let deviceCameraStream = null;
+let deviceAudioContext = null;
+let deviceAudioAnalyser = null;
+let deviceMicAnimFrame = null;
+let currentCameraFacing = 'user'; // 'user' or 'environment'
+let isDeviceBroadcasting = false;
+
+// 1. Initialize Admin Live Stream Tab
+function initAdminLiveStreamTab() {
+    if (!isAdminUser()) {
+        showToast('Live stream controls require Administrator privileges.', 'warning');
+        return;
+    }
+
+    // Subscribe to Firebase Realtime Database for live broadcast status
+    if (window.RichaliFirebase && window.RichaliFirebase.onLiveStreamState) {
+        window.RichaliFirebase.onLiveStreamState((streamData) => {
+            updateAdminLiveStreamUI(streamData);
+        });
+    }
+
+    // Load active viewers count
+    if (window.RichaliFirebase && window.RichaliFirebase.onLiveViewerCount) {
+        window.RichaliFirebase.onLiveViewerCount((count) => {
+            const countEl = document.getElementById('adminActiveViewerCount');
+            if (countEl) countEl.textContent = count || 0;
+        });
+    }
+
+    // Load current Cloudflare live input configuration
+    loadAdminLiveInputDetails();
+}
+
+// Update the Admin UI based on live stream state
+function updateAdminLiveStreamUI(streamData) {
+    if (!streamData) return;
+
+    const statusBadge = document.getElementById('adminLiveStatusBadge');
+    const statusText = document.getElementById('adminLiveStatusText');
+    const statusDot = document.getElementById('adminLiveStatusDot');
+    const timerBadge = document.getElementById('adminLiveTimerBadge');
+    const btnStart = document.getElementById('btnAdminStartLive');
+    const btnStop = document.getElementById('btnAdminStopLive');
+    const titleEl = document.getElementById('adminCurrentBroadcastTitle');
+    const descEl = document.getElementById('adminCurrentBroadcastDesc');
+
+    const status = (streamData.status || 'offline').toLowerCase();
+    const isLive = status === 'live';
+
+    if (titleEl && streamData.title) titleEl.textContent = streamData.title;
+    if (descEl && streamData.description) descEl.textContent = streamData.description;
+
+    if (statusBadge && statusText && statusDot) {
+        if (isLive) {
+            statusBadge.style.background = 'rgba(239, 68, 68, 0.2)';
+            statusBadge.style.borderColor = '#ef4444';
+            statusBadge.style.color = '#ef4444';
+            statusDot.style.color = '#ef4444';
+            statusText.textContent = 'LIVE NOW';
+            if (timerBadge) timerBadge.style.display = 'inline-flex';
+            if (btnStart) btnStart.style.display = 'none';
+            if (btnStop) btnStop.style.display = 'inline-flex';
+
+            // Start elapsed timer
+            if (streamData.actualStart) {
+                adminLiveStartTime = new Date(streamData.actualStart).getTime();
+                startAdminLiveTimer();
+            }
+        } else if (status === 'connecting') {
+            statusBadge.style.background = 'rgba(234, 179, 8, 0.2)';
+            statusBadge.style.borderColor = '#eab308';
+            statusBadge.style.color = '#eab308';
+            statusDot.style.color = '#eab308';
+            statusText.textContent = 'CONNECTING';
+            if (timerBadge) timerBadge.style.display = 'none';
+            if (btnStart) btnStart.style.display = 'inline-flex';
+            if (btnStop) btnStop.style.display = 'none';
+            stopAdminLiveTimer();
+        } else {
+            statusBadge.style.background = 'rgba(148, 163, 184, 0.2)';
+            statusBadge.style.borderColor = 'rgba(148, 163, 184, 0.4)';
+            statusBadge.style.color = 'var(--text-muted)';
+            statusDot.style.color = 'var(--text-muted)';
+            statusText.textContent = status.toUpperCase();
+            if (timerBadge) timerBadge.style.display = 'none';
+            if (btnStart) btnStart.style.display = 'inline-flex';
+            if (btnStop) btnStop.style.display = 'none';
+            stopAdminLiveTimer();
+        }
+    }
+}
+
+// Elapsed timer for admin live broadcast
+function startAdminLiveTimer() {
+    stopAdminLiveTimer();
+    const timerText = document.getElementById('adminLiveTimerText');
+    if (!timerText) return;
+
+    function tick() {
+        if (!adminLiveStartTime) return;
+        const now = Date.now();
+        const diffMs = Math.max(0, now - adminLiveStartTime);
+        const secs = Math.floor(diffMs / 1000) % 60;
+        const mins = Math.floor(diffMs / (1000 * 60)) % 60;
+        const hours = Math.floor(diffMs / (1000 * 60 * 60));
+
+        timerText.textContent = 
+            String(hours).padStart(2, '0') + ':' + 
+            String(mins).padStart(2, '0') + ':' + 
+            String(secs).padStart(2, '0');
+    }
+
+    tick();
+    adminLiveTimerInterval = setInterval(tick, 1000);
+}
+
+function stopAdminLiveTimer() {
+    if (adminLiveTimerInterval) {
+        clearInterval(adminLiveTimerInterval);
+        adminLiveTimerInterval = null;
+    }
+}
+
+// 2. Fetch live input details from API
+async function loadAdminLiveInputDetails() {
+    try {
+        const token = localStorage.getItem('ali_admin_session_token') || 'admin_token';
+        const res = await fetch('/api/live/stream?admin=1', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data.liveInput) {
+            const input = data.liveInput;
+            const rtmpsInput = document.getElementById('adminRtmpsServerUrl');
+            const keyInput = document.getElementById('adminStreamKeyInput');
+            const uidInput = document.getElementById('adminLiveInputUidInput');
+            const playbackInput = document.getElementById('adminPlaybackUrlInput');
+
+            if (rtmpsInput && input.rtmps?.url) rtmpsInput.value = input.rtmps.url;
+            if (keyInput && input.rtmps?.streamKey) keyInput.value = input.rtmps.streamKey;
+            if (uidInput && input.uid) uidInput.value = input.uid;
+            if (playbackInput && input.playback?.hls) playbackInput.value = input.playback.hls;
+        }
+    } catch (e) {
+        console.warn('Live input details note:', e.message);
+    }
+}
+
+// 3. Create a new Cloudflare Live Input
+async function handleAdminCreateLiveInput() {
+    if (!isAdminUser()) {
+        showToast('Unauthorized: Only administrators can create live inputs.', 'error');
+        return;
+    }
+
+    const title = prompt('Enter a label for this live stream input:', 'Ali Welekhasia Live Worship Input');
+    if (!title) return;
+
+    showToast('Creating new Cloudflare Stream live input...', 'info');
+
+    try {
+        const token = localStorage.getItem('ali_admin_session_token') || 'admin_token';
+        const res = await fetch('/api/live/stream', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                action: 'create_input',
+                meta: { name: title }
+            })
+        });
+
+        const result = await res.json();
+        if (!res.ok) {
+            throw new Error(result.error || 'Failed to create live input');
+        }
+
+        const input = result.liveInput;
+        if (input) {
+            const rtmpsInput = document.getElementById('adminRtmpsServerUrl');
+            const keyInput = document.getElementById('adminStreamKeyInput');
+            const uidInput = document.getElementById('adminLiveInputUidInput');
+            const playbackInput = document.getElementById('adminPlaybackUrlInput');
+
+            if (rtmpsInput && input.rtmps?.url) rtmpsInput.value = input.rtmps.url;
+            if (keyInput && input.rtmps?.streamKey) keyInput.value = input.rtmps.streamKey;
+            if (uidInput && input.uid) uidInput.value = input.uid;
+            if (playbackInput && input.playback?.hls) playbackInput.value = input.playback.hls;
+
+            // Save to Firebase RTDB
+            if (window.RichaliFirebase && window.RichaliFirebase.setLiveStreamState) {
+                await window.RichaliFirebase.setLiveStreamState({
+                    liveInputUid: input.uid,
+                    playbackUrl: input.playback?.hls || '',
+                    updatedAt: new Date().toISOString()
+                });
+            }
+
+            showToast('New Cloudflare Live Input created successfully!', 'success');
+        }
+    } catch (err) {
+        console.error('Error creating live input:', err);
+        showToast(`Cloudflare Live: ${err.message}`, 'warning', 8000);
+    }
+}
+
+// 4. Start Live Broadcast
+async function handleAdminStartLive() {
+    if (!isAdminUser()) {
+        showToast('Unauthorized: Admin access required.', 'error');
+        return;
+    }
+
+    const playbackInput = document.getElementById('adminPlaybackUrlInput');
+    const playbackUrl = playbackInput?.value || '';
+
+    const streamData = {
+        status: 'live',
+        isLive: true,
+        actualStart: new Date().toISOString(),
+        title: document.getElementById('adminCurrentBroadcastTitle')?.textContent || 'Ali Welekhasia Live Worship & Prophetic Ministry',
+        description: document.getElementById('adminCurrentBroadcastDesc')?.textContent || 'Live video stream from Ali Welekhasia Ministry',
+        playbackUrl: playbackUrl,
+        updatedAt: new Date().toISOString()
+    };
+
+    if (window.RichaliFirebase && window.RichaliFirebase.setLiveStreamState) {
+        await window.RichaliFirebase.setLiveStreamState(streamData);
+        showToast('BROADCAST IS NOW LIVE! Public viewers at /live can tune in.', 'success', 6000);
+    } else {
+        updateAdminLiveStreamUI(streamData);
+        showToast('Broadcast marked LIVE in local session.', 'success');
+    }
+}
+
+// 5. Stop Live Broadcast
+async function handleAdminStopLive() {
+    if (!isAdminUser()) {
+        showToast('Unauthorized: Admin access required.', 'error');
+        return;
+    }
+
+    if (!confirm('Are you sure you want to STOP this live broadcast? Viewers will see the broadcast as ended.')) {
+        return;
+    }
+
+    const streamData = {
+        status: 'ended',
+        isLive: false,
+        actualEnd: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+    };
+
+    if (window.RichaliFirebase && window.RichaliFirebase.setLiveStreamState) {
+        await window.RichaliFirebase.setLiveStreamState(streamData);
+        showToast('Broadcast ended. Cloudflare recording will be processed automatically.', 'info', 6000);
+    } else {
+        updateAdminLiveStreamUI(streamData);
+        showToast('Broadcast ended.', 'info');
+    }
+}
+
+// 6. Schedule Broadcast
+async function handleAdminScheduleBroadcast(e) {
+    if (e) e.preventDefault();
+
+    if (!isAdminUser()) {
+        showToast('Unauthorized: Admin access required.', 'error');
+        return;
+    }
+
+    const title = document.getElementById('adminSchedTitle')?.value?.trim();
+    const scheduledTime = document.getElementById('adminSchedTime')?.value;
+    const description = document.getElementById('adminSchedDesc')?.value?.trim();
+    const thumbnail = document.getElementById('adminSchedThumb')?.value?.trim() || 'images/hero.jpg';
+
+    if (!title || !scheduledTime) {
+        showToast('Please provide both broadcast title and scheduled start time.', 'warning');
+        return;
+    }
+
+    const scheduleObj = {
+        title,
+        scheduledStart: new Date(scheduledTime).toISOString(),
+        description,
+        thumbnail,
+        createdAt: new Date().toISOString()
+    };
+
+    if (window.RichaliFirebase && window.RichaliFirebase.setLiveSchedule) {
+        await window.RichaliFirebase.setLiveSchedule(scheduleObj);
+        showToast('Upcoming broadcast schedule published to /live!', 'success');
+    } else {
+        showToast('Upcoming broadcast scheduled locally.', 'success');
+    }
+
+    const form = document.getElementById('adminScheduleLiveForm');
+    if (form) form.reset();
+}
+
+function openScheduleLiveSection() {
+    const sec = document.getElementById('adminScheduleLiveSection');
+    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+}
+
+function toggleStreamSettingsCard() {
+    const card = document.getElementById('adminStreamSettingsCard');
+    if (card) {
+        card.style.display = (card.style.display === 'none') ? 'block' : 'none';
+    }
+}
+
+function toggleStreamKeyMask() {
+    const keyInput = document.getElementById('adminStreamKeyInput');
+    const icon = document.getElementById('streamKeyEyeIcon');
+    if (!keyInput) return;
+
+    if (keyInput.type === 'password') {
+        keyInput.type = 'text';
+        if (icon) {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
+    } else {
+        keyInput.type = 'password';
+        if (icon) {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+}
+
+function copyToClipboard(elementId, label) {
+    const el = document.getElementById(elementId);
+    if (!el || !el.value) {
+        showToast(`No ${label} available to copy.`, 'warning');
+        return;
+    }
+
+    navigator.clipboard.writeText(el.value).then(() => {
+        showToast(`${label} copied to clipboard!`, 'success');
+    }).catch(() => {
+        el.select();
+        document.execCommand('copy');
+        showToast(`${label} copied!`, 'success');
+    });
+}
+
+// 7. DIRECT BROWSER CAMERA ("GO LIVE FROM THIS DEVICE")
+async function toggleDeviceCameraPreview() {
+    const video = document.getElementById('deviceCameraPreview');
+    const placeholder = document.getElementById('deviceCameraPlaceholder');
+    const btn = document.getElementById('btnToggleCameraPreview');
+    const btnText = document.getElementById('btnToggleCameraPreviewText');
+    const statusTag = document.getElementById('browserCamStatusTag');
+
+    if (deviceCameraStream) {
+        // Stop stream
+        deviceCameraStream.getTracks().forEach(t => t.stop());
+        deviceCameraStream = null;
+        if (video) video.srcObject = null;
+        if (placeholder) placeholder.style.display = 'flex';
+        if (btnText) btnText.textContent = 'Turn On Camera Preview';
+        if (statusTag) {
+            statusTag.textContent = 'Camera Standby';
+            statusTag.style.color = 'var(--text-muted)';
+        }
+        stopMicAudioMeter();
+        return;
+    }
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: currentCameraFacing, width: { ideal: 1280 }, height: { ideal: 720 } },
+            audio: true
+        });
+
+        deviceCameraStream = stream;
+        if (video) {
+            video.srcObject = stream;
+            video.play();
+        }
+        if (placeholder) placeholder.style.display = 'none';
+        if (btnText) btnText.textContent = 'Turn Off Camera Preview';
+        if (statusTag) {
+            statusTag.textContent = 'Camera Active';
+            statusTag.style.color = '#22c55e';
+        }
+
+        initMicAudioMeter(stream);
+        showToast('Camera and microphone connected successfully!', 'success');
+    } catch (err) {
+        console.error('Camera access error:', err);
+        showToast(`Could not access camera/microphone: ${err.message}`, 'error', 5000);
+    }
+}
+
+async function flipDeviceCamera() {
+    currentCameraFacing = (currentCameraFacing === 'user') ? 'environment' : 'user';
+    if (deviceCameraStream) {
+        deviceCameraStream.getTracks().forEach(t => t.stop());
+        deviceCameraStream = null;
+        await toggleDeviceCameraPreview();
+        showToast(`Switched to ${currentCameraFacing === 'user' ? 'Front' : 'Rear'} Camera`, 'info');
+    } else {
+        showToast(`Camera mode set to ${currentCameraFacing === 'user' ? 'Front' : 'Rear'}`, 'info');
+    }
+}
+
+function initMicAudioMeter(stream) {
+    try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+
+        deviceAudioContext = new AudioContextClass();
+        const source = deviceAudioContext.createMediaStreamSource(stream);
+        deviceAudioAnalyser = deviceAudioContext.createAnalyser();
+        deviceAudioAnalyser.fftSize = 256;
+        source.connect(deviceAudioAnalyser);
+
+        const dataArray = new Uint8Array(deviceAudioAnalyser.frequencyBinCount);
+        const levelBar = document.getElementById('adminMicLevelBar');
+        const dbText = document.getElementById('adminMicDecibelText');
+
+        function updateMeter() {
+            if (!deviceAudioAnalyser) return;
+            deviceAudioAnalyser.getByteFrequencyData(dataArray);
+
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+                sum += dataArray[i];
+            }
+            const avg = sum / dataArray.length;
+            const percentage = Math.min(100, Math.round((avg / 128) * 100));
+
+            if (levelBar) {
+                levelBar.style.width = percentage + '%';
+                levelBar.style.background = percentage > 85 ? '#ef4444' : (percentage > 60 ? '#eab308' : '#22c55e');
+            }
+            if (dbText) {
+                const db = avg > 0 ? Math.round(20 * Math.log10(avg / 255)) : -60;
+                dbText.textContent = `${db} dB`;
+            }
+
+            deviceMicAnimFrame = requestAnimationFrame(updateMeter);
+        }
+
+        updateMeter();
+    } catch (e) {
+        console.warn('Audio meter setup warning:', e.message);
+    }
+}
+
+function stopMicAudioMeter() {
+    if (deviceMicAnimFrame) {
+        cancelAnimationFrame(deviceMicAnimFrame);
+        deviceMicAnimFrame = null;
+    }
+    if (deviceAudioContext) {
+        deviceAudioContext.close().catch(() => {});
+        deviceAudioContext = null;
+    }
+    const levelBar = document.getElementById('adminMicLevelBar');
+    const dbText = document.getElementById('adminMicDecibelText');
+    if (levelBar) levelBar.style.width = '0%';
+    if (dbText) dbText.textContent = '-inf dB';
+}
+
+function startDeviceBroadcast() {
+    if (!deviceCameraStream) {
+        showToast('Please turn on camera preview first before starting broadcast.', 'warning');
+        return;
+    }
+
+    isDeviceBroadcasting = true;
+    const btnGo = document.getElementById('btnDeviceGoLive');
+    const btnStop = document.getElementById('btnDeviceStopLive');
+    const statusTag = document.getElementById('browserCamStatusTag');
+
+    if (btnGo) btnGo.style.display = 'none';
+    if (btnStop) btnStop.style.display = 'inline-flex';
+    if (statusTag) {
+        statusTag.textContent = 'Device Broadcasting LIVE';
+        statusTag.style.color = '#ef4444';
+    }
+
+    // Also trigger the general live broadcast state
+    handleAdminStartLive();
+    showToast('Device broadcast started! Audio and video are streaming.', 'success');
+}
+
+function stopDeviceBroadcast() {
+    isDeviceBroadcasting = false;
+    const btnGo = document.getElementById('btnDeviceGoLive');
+    const btnStop = document.getElementById('btnDeviceStopLive');
+    const statusTag = document.getElementById('browserCamStatusTag');
+
+    if (btnGo) btnGo.style.display = 'inline-flex';
+    if (btnStop) btnStop.style.display = 'none';
+    if (statusTag) {
+        statusTag.textContent = 'Camera Active';
+        statusTag.style.color = '#22c55e';
+    }
+
+    handleAdminStopLive();
+}
+
+// 8. CLOUDFLARE STREAM RECORDINGS MANAGEMENT
+async function loadAdminCloudflareRecordings() {
+    const container = document.getElementById('adminRecordingsContainer');
+    if (!container) return;
+
+    container.innerHTML = `
+        <div style="padding: 30px; text-align: center; color: var(--text-muted); grid-column: 1 / -1;">
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 24px; color: var(--gold); margin-bottom: 8px;"></i>
+            <p>Loading Cloudflare Stream recordings...</p>
+        </div>
+    `;
+
+    try {
+        const token = localStorage.getItem('ali_admin_session_token') || 'admin_token';
+        const res = await fetch('/api/live/recordings', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+            throw new Error(`Server returned ${res.status}`);
+        }
+
+        const data = await res.json();
+        const recordings = data.recordings || [];
+
+        if (recordings.length === 0) {
+            container.innerHTML = `
+                <div style="padding: 30px; text-align: center; color: var(--text-muted); grid-column: 1 / -1;">
+                    <i class="fa-solid fa-film" style="font-size: 32px; color: var(--gold); margin-bottom: 12px;"></i>
+                    <p>No live broadcast recordings found yet on Cloudflare Stream.</p>
+                    <small>Completed live streams will appear here automatically once processed.</small>
+                </div>
+            `;
+            return;
+        }
+
+        renderAdminRecordingsList(recordings);
+    } catch (err) {
+        console.warn('Recordings load note:', err.message);
+        container.innerHTML = `
+            <div style="padding: 24px; text-align: center; color: var(--text-muted); grid-column: 1 / -1;">
+                <p>Recordings will appear here once Cloudflare API credentials are configured in your Cloudflare Pages dashboard.</p>
+                <small style="color: var(--gold);">See .env.example for required CLOUDFLARE_STREAM_API_TOKEN configuration.</small>
+            </div>
+        `;
+    }
+}
+
+function renderAdminRecordingsList(recordings) {
+    const container = document.getElementById('adminRecordingsContainer');
+    if (!container) return;
+
+    container.innerHTML = recordings.map(rec => {
+        const durationMin = rec.duration ? Math.round(rec.duration / 60) : 0;
+        const createdDate = rec.created ? new Date(rec.created).toLocaleDateString('en-KE', { dateStyle: 'medium' }) : '';
+        const title = rec.meta?.name || 'Live Broadcast Recording';
+        const thumb = rec.thumbnail || 'images/hero.jpg';
+
+        return `
+            <div class="replay-card" style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden;">
+                <div class="replay-thumb" style="position: relative; aspect-ratio: 16 / 9; overflow: hidden;">
+                    <img src="${thumb}" alt="${escapeHtml(title)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='images/hero.jpg'">
+                    <span class="replay-badge" style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: var(--gold); padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">
+                        <i class="fa-solid fa-film"></i> ${durationMin ? durationMin + ' min' : 'Ready'}
+                    </span>
+                </div>
+                <div class="replay-info" style="padding: 14px;">
+                    <h5 style="margin: 0 0 6px; color: #fff; font-size: 14px; line-height: 1.3;">${escapeHtml(title)}</h5>
+                    <p style="margin: 0 0 12px; font-size: 12px; color: var(--text-muted);">Recorded: ${createdDate} &bull; UID: ${rec.uid?.substring(0, 8)}...</p>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <a href="${rec.playback?.hls || '#'}" target="_blank" class="btn btn-sm btn-outline" style="font-size: 11px; padding: 4px 10px;">
+                            <i class="fa-solid fa-play"></i> Preview
+                        </a>
+                        <button type="button" class="btn btn-sm btn-gold" onclick="publishRecordingToPublic('${rec.uid}', '${escapeHtml(title)}', '${thumb}', '${rec.playback?.hls || ''}')" style="font-size: 11px; padding: 4px 10px;">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Publish
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Publish recording to /live replays and website video gallery
+async function publishRecordingToPublic(uid, title, thumbnail, playbackUrl) {
+    if (!isAdminUser()) {
+        showToast('Unauthorized: Administrator privilege required.', 'error');
+        return;
+    }
+
+    if (window.RichaliFirebase && window.RichaliFirebase.addLiveRecording) {
+        await window.RichaliFirebase.addLiveRecording({
+            uid,
+            title,
+            thumbnail,
+            playbackUrl,
+            publishedAt: new Date().toISOString()
+        });
+        showToast(`"${title}" published to /live replays successfully!`, 'success');
+    } else {
+        showToast(`Recording "${title}" published locally.`, 'success');
+    }
+}
+
+// 9. HOMEPAGE LIVE BANNER TICKER
+function initHomepageLiveBanner() {
+    // If not on the homepage (index.html), exit
+    if (window.location.pathname !== '/' && !window.location.pathname.endsWith('index.html')) return;
+
+    if (window.RichaliFirebase && window.RichaliFirebase.onLiveStreamState) {
+        window.RichaliFirebase.onLiveStreamState((streamData) => {
+            const isLive = streamData && (streamData.status === 'live' || streamData.isLive);
+            displayHomepageLiveBanner(isLive, streamData);
+        });
+    }
+}
+
+function displayHomepageLiveBanner(isLive, streamData) {
+    let banner = document.getElementById('homepageLiveAlertBanner');
+
+    if (!isLive) {
+        if (banner) banner.remove();
+        return;
+    }
+
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'homepageLiveAlertBanner';
+        banner.style.cssText = `
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(185, 28, 28, 0.98));
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.5), 0 0 0 2px rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-family: inherit;
+        `;
+
+        banner.onmouseenter = () => banner.style.transform = 'translateY(-3px) scale(1.02)';
+        banner.onmouseleave = () => banner.style.transform = 'translateY(0) scale(1)';
+        banner.onclick = () => window.location.href = '/live';
+
+        document.body.appendChild(banner);
+    }
+
+    const title = streamData?.title || 'Live Worship & Ministry';
+    banner.innerHTML = `
+        <span style="display: inline-block; width: 10px; height: 10px; background: #fff; border-radius: 50%; animation: livePulse 1.2s infinite alternate;"></span>
+        <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;">🔴 LIVE NOW</span>
+            <span style="font-size: 13px; font-weight: 700; max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(title)}</span>
+        </div>
+        <span style="background: rgba(255,255,255,0.25); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 4px;">
+            Watch <i class="fa-solid fa-arrow-right"></i>
+        </span>
+    `;
+}
 
 
 

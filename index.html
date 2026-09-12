@@ -142,6 +142,7 @@
         <nav class="nav-menu" id="navMenu">
             <ul>
                 <li><a href="#home" onclick="closeMobileMenu()">Home</a></li>
+                <li id="navLiveLink"><a href="/live" onclick="closeMobileMenu()" style="color: #ef4444 !important; font-weight: 700;"><span style="display:inline-block; width:7px; height:7px; background:#ef4444; border-radius:50%; margin-right:5px; box-shadow:0 0 8px #ef4444;"></span>Live</a></li>
                 <li><a href="#music" onclick="closeMobileMenu()">Music</a></li>
                 <li><a href="#videos" onclick="closeMobileMenu()">Videos</a></li>
                 <li><a href="#blog" onclick="closeMobileMenu()">Devotionals</a></li>
@@ -2383,6 +2384,12 @@
                 <button type="button" class="admin-tab-btn" id="tabImagesAdmin" onclick="switchAdminTab('images')" role="tab" aria-selected="false">
                     <i class="fa-solid fa-images"></i> 9. Edit All Website Images & Assets
                 </button>
+                <button type="button" class="admin-tab-btn" id="tabLiveAdmin" onclick="switchAdminTab('live')" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-tower-broadcast" style="color: #ef4444;"></i> 10. Live Stream
+                </button>
+                <button type="button" class="admin-tab-btn" id="tabRecordingsAdmin" onclick="switchAdminTab('recordings')" role="tab" aria-selected="false">
+                    <i class="fa-solid fa-film" style="color: var(--gold);"></i> 11. Live Recordings
+                </button>
             </div>
 
             <!-- Tab 1: Crusade & Events Manager -->
@@ -3483,6 +3490,254 @@
 
                     <div id="adminImageLibraryGrid" class="image-library-grid">
                         <!-- Dynamic rendered image cards -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 10: Live Stream Control -->
+            <div class="admin-tab-content" id="adminContentLive" style="display: none;">
+                <div class="admin-section-intro">
+                    <h3><i class="fa-solid fa-tower-broadcast" style="color: #ef4444;"></i> Cloudflare Stream Live Control Center</h3>
+                    <p>Manage real-time live broadcasts, start/stop live streams, obtain secure RTMPS broadcaster keys, or stream directly from this device's camera.</p>
+                </div>
+
+                <!-- Requirement 14: Professional Dashboard Status Card -->
+                <div class="admin-sub-card" style="padding: 24px; background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.98)); border: 1px solid var(--gold); border-radius: var(--radius-md); margin-bottom: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 18px; border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 14px;">
+                        <div>
+                            <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Broadcast Status</span>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-top: 4px;">
+                                <span id="adminLiveStatusBadge" class="admin-badge-pill" style="background: rgba(148, 163, 184, 0.2); color: var(--text-muted); font-size: 14px; padding: 6px 16px; border: 1px solid rgba(148, 163, 184, 0.4);">
+                                    <i class="fa-solid fa-circle" id="adminLiveStatusDot"></i> <span id="adminLiveStatusText">OFFLINE</span>
+                                </span>
+                                <span id="adminLiveTimerBadge" style="display: none; font-size: 14px; font-weight: 800; color: #ef4444; background: rgba(239, 68, 68, 0.15); padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(239, 68, 68, 0.3);">
+                                    <i class="fa-regular fa-clock"></i> <span id="adminLiveTimerText">00:00:00</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Live Viewers</span>
+                            <div style="font-size: 20px; font-weight: 800; color: var(--gold-light); display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                                <i class="fa-solid fa-users" style="color: var(--gold);"></i> <span id="adminActiveViewerCount">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 18px;">
+                        <h4 style="margin: 0 0 6px; color: #fff; font-size: 18px;" id="adminCurrentBroadcastTitle">Ali Welekhasia Live Worship & Prophetic Ministry</h4>
+                        <p style="margin: 0; font-size: 13px; color: var(--text-muted);" id="adminCurrentBroadcastDesc">Official live video broadcast to aliwelekhasia.co.ke/live</p>
+                    </div>
+
+                    <!-- Main Action Controls -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                        <button type="button" class="btn btn-gold" id="btnAdminStartLive" onclick="handleAdminStartLive()" style="background: #ef4444; border-color: #ef4444; color: #fff; font-weight: 800; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);">
+                            <i class="fa-solid fa-tower-broadcast"></i> GO LIVE
+                        </button>
+                        <button type="button" class="btn btn-outline" id="btnAdminStopLive" onclick="handleAdminStopLive()" style="display: none; border-color: #ef4444; color: #ef4444;">
+                            <i class="fa-solid fa-stop"></i> STOP LIVE
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="openScheduleLiveSection()">
+                            <i class="fa-solid fa-calendar-plus"></i> SCHEDULE
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="switchAdminTab('recordings')">
+                            <i class="fa-solid fa-film"></i> RECORDINGS
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="toggleStreamSettingsCard()">
+                            <i class="fa-solid fa-gear"></i> STREAM SETTINGS
+                        </button>
+                        <a href="/live" target="_blank" class="btn btn-outline" style="margin-left: auto;">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Public /live Page
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Secure Broadcaster Credentials Box (Only for Authenticated Admin) -->
+                <div class="admin-sub-card" id="adminStreamSettingsCard" style="padding: 20px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                        <h4 style="margin: 0; color: var(--gold); display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-key"></i> Broadcaster Ingestion Credentials (Private)
+                        </h4>
+                        <button type="button" class="btn btn-sm btn-gold" onclick="handleAdminCreateLiveInput()">
+                            <i class="fa-solid fa-plus-circle"></i> Create New Cloudflare Live Input
+                        </button>
+                    </div>
+
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                        Use these credentials in your streaming app (OBS Studio, Larix Broadcaster, Prism Live). <strong>Never share your Stream Key publicly.</strong>
+                    </p>
+
+                    <div class="form-row" style="margin-bottom: 14px;">
+                        <div class="form-group" style="flex: 2;">
+                            <label class="form-label">RTMPS Server Ingest URL</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="adminRtmpsServerUrl" value="rtmps://live.cloudflare.com:443/live/" readonly style="font-family: monospace; font-size: 13px;">
+                                <button type="button" class="btn btn-sm btn-outline" onclick="copyToClipboard('adminRtmpsServerUrl', 'Server URL')">Copy</button>
+                            </div>
+                        </div>
+                        <div class="form-group" style="flex: 3;">
+                            <label class="form-label">Stream Key</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="password" id="adminStreamKeyInput" value="" placeholder="Click 'Create New Live Input' or enter key" style="font-family: monospace; font-size: 13px;">
+                                <button type="button" class="btn btn-sm btn-outline" onclick="toggleStreamKeyMask()"><i class="fa-solid fa-eye" id="streamKeyEyeIcon"></i></button>
+                                <button type="button" class="btn btn-sm btn-outline" onclick="copyToClipboard('adminStreamKeyInput', 'Stream Key')">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label">Cloudflare Live Input UID</label>
+                            <input type="text" id="adminLiveInputUidInput" readonly placeholder="UID will be assigned automatically" style="font-family: monospace; font-size: 12px;">
+                        </div>
+                        <div class="form-group" style="flex: 2;">
+                            <label class="form-label">Live HLS Playback URL</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="adminPlaybackUrlInput" readonly placeholder="https://customer-stream.cloudflare.com/.../manifest/video.m3u8" style="font-family: monospace; font-size: 12px;">
+                                <button type="button" class="btn btn-sm btn-outline" onclick="copyToClipboard('adminPlaybackUrlInput', 'Playback URL')">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requirement 6: Direct Browser Camera Option ("GO LIVE FROM THIS DEVICE") -->
+                <div class="admin-sub-card" style="padding: 20px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+                        <h4 style="margin: 0; color: var(--gold); display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-camera"></i> Direct Browser Camera ("Go Live From This Device")
+                        </h4>
+                        <span id="browserCamStatusTag" class="admin-sub-tag" style="background: rgba(148, 163, 184, 0.15); color: var(--text-muted);">Camera Standby</span>
+                    </div>
+
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                        Broadcast live directly using your smartphone or laptop webcam and microphone without third-party apps.
+                    </p>
+
+                    <!-- Camera Viewport Box -->
+                    <div style="position: relative; width: 100%; max-width: 640px; aspect-ratio: 16 / 9; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 16px; border: 1px solid rgba(212, 175, 55, 0.3);">
+                        <video id="deviceCameraPreview" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover;"></video>
+                        
+                        <div id="deviceCameraPlaceholder" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); background: rgba(2, 6, 23, 0.9);">
+                            <i class="fa-solid fa-video-slash" style="font-size: 36px; margin-bottom: 8px; color: var(--gold);"></i>
+                            <span style="font-size: 13px;">Camera preview offline</span>
+                        </div>
+
+                        <!-- Live LED Audio Meter Overlay -->
+                        <div style="position: absolute; bottom: 12px; left: 12px; right: 12px; display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.7); padding: 6px 12px; border-radius: 6px;">
+                            <i class="fa-solid fa-microphone" style="color: var(--gold); font-size: 12px;"></i>
+                            <div style="flex: 1; height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden;">
+                                <div id="adminMicLevelBar" style="width: 0%; height: 100%; background: #22c55e; transition: width 0.1s ease;"></div>
+                            </div>
+                            <span id="adminMicDecibelText" style="font-size: 10px; color: #fff; font-family: monospace;">-inf dB</span>
+                        </div>
+                    </div>
+
+                    <!-- Device Camera Controls -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                        <button type="button" class="btn btn-sm btn-outline" id="btnToggleCameraPreview" onclick="toggleDeviceCameraPreview()">
+                            <i class="fa-solid fa-video"></i> <span id="btnToggleCameraPreviewText">Turn On Camera Preview</span>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline" onclick="flipDeviceCamera()">
+                            <i class="fa-solid fa-camera-rotate"></i> Flip Front/Rear Camera
+                        </button>
+                        <button type="button" class="btn btn-sm btn-gold" id="btnDeviceGoLive" onclick="startDeviceBroadcast()" style="background: #ef4444; border-color: #ef4444; color: #fff;">
+                            <i class="fa-solid fa-tower-broadcast"></i> Start Device Broadcast
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline" id="btnDeviceStopLive" onclick="stopDeviceBroadcast()" style="display: none; border-color: #ef4444; color: #ef4444;">
+                            <i class="fa-solid fa-stop"></i> Stop Device Broadcast
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Requirement 5: "How to Go Live" Guide (Phone & Studio) -->
+                <div class="admin-sub-card" style="padding: 20px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); margin-bottom: 24px;">
+                    <h4 style="margin: 0 0 12px; color: var(--gold); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-book-open"></i> How to Go Live: Professional Broadcaster Workflow
+                    </h4>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                        <div style="background: rgba(15, 23, 42, 0.6); padding: 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                            <h5 style="color: var(--gold-light); margin: 0 0 8px;"><i class="fa-solid fa-mobile-screen"></i> From Smartphone (Android / iPhone)</h5>
+                            <ol style="margin: 0; padding-left: 18px; font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+                                <li>Download free <strong>Larix Broadcaster</strong> or <strong>Prism Live Studio</strong> from Google Play / App Store.</li>
+                                <li>In Settings &rarr; Connections &rarr; New Connection:</li>
+                                <li>Set URL to: <code>rtmps://live.cloudflare.com:443/live/</code></li>
+                                <li>Paste your secret <strong>Stream Key</strong> from above.</li>
+                                <li>Press the red broadcast button to go live immediately!</li>
+                            </ol>
+                        </div>
+
+                        <div style="background: rgba(15, 23, 42, 0.6); padding: 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                            <h5 style="color: var(--gold-light); margin: 0 0 8px;"><i class="fa-solid fa-desktop"></i> From OBS Studio / Church Sanctuary</h5>
+                            <ol style="margin: 0; padding-left: 18px; font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+                                <li>In OBS Studio, open <strong>Settings &rarr; Stream</strong>.</li>
+                                <li>Service: <strong>Custom...</strong></li>
+                                <li>Server: <code>rtmps://live.cloudflare.com:443/live/</code></li>
+                                <li>Stream Key: Paste your Stream Key.</li>
+                                <li>Recommended Output: 1080p, Bitrate 4500 Kbps, Keyframe Interval: 2s.</li>
+                                <li>Click <strong>Start Streaming</strong>.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requirement 15: Schedule Future Broadcast Form -->
+                <div class="admin-sub-card" id="adminScheduleLiveSection" style="padding: 20px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                    <h4 style="margin: 0 0 14px; color: var(--gold); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-calendar-plus"></i> Schedule Upcoming Broadcast
+                    </h4>
+
+                    <form id="adminScheduleLiveForm" onsubmit="handleAdminScheduleBroadcast(event)">
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 2;">
+                                <label class="form-label">Broadcast Title</label>
+                                <input type="text" id="adminSchedTitle" required placeholder="e.g. Friday All-Night Revival & Worship Altar">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Date & Start Time (EAT)</label>
+                                <input type="datetime-local" id="adminSchedTime" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Description & Scripture Focus</label>
+                            <textarea id="adminSchedDesc" rows="3" placeholder="Share prayer focus, guest ministers, or scripture theme for the upcoming broadcast..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Cover / Thumbnail URL</label>
+                            <input type="text" id="adminSchedThumb" placeholder="images/hero.jpg or URL" value="images/hero.jpg">
+                        </div>
+
+                        <div class="admin-form-actions">
+                            <button type="submit" class="btn btn-gold">
+                                <i class="fa-solid fa-calendar-check"></i> Save & Publish Upcoming Schedule
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tab 11: Live Recordings Manager -->
+            <div class="admin-tab-content" id="adminContentRecordings" style="display: none;">
+                <div class="admin-section-intro">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                        <div>
+                            <h3><i class="fa-solid fa-film" style="color: var(--gold);"></i> Cloudflare Stream Live Recordings</h3>
+                            <p>Automatically recorded broadcasts from Cloudflare Stream. Manage replays, publish them to <code>/live</code> and the website Video gallery.</p>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-gold" onclick="loadAdminCloudflareRecordings()">
+                            <i class="fa-solid fa-rotate-right"></i> Refresh Recordings
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-sub-card" style="padding: 20px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                    <div id="adminRecordingsContainer" class="replays-grid">
+                        <div style="padding: 30px; text-align: center; color: var(--text-muted); grid-column: 1 / -1;">
+                            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 24px; color: var(--gold); margin-bottom: 8px;"></i>
+                            <p>Loading Cloudflare Stream recordings...</p>
+                        </div>
                     </div>
                 </div>
             </div>

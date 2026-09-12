@@ -54,7 +54,12 @@ const RICHALI_SCHEMA = {
         donations: "aliwelekhasia/donations",
         prayerRequests: "aliwelekhasia/prayer_requests",
         siteImages: "aliwelekhasia/site_images",
-        settings: "aliwelekhasia/settings"
+        settings: "aliwelekhasia/settings",
+        liveStream: "aliwelekhasia/live_stream",
+        liveRecordings: "aliwelekhasia/live_recordings",
+        liveSchedule: "aliwelekhasia/live_schedule",
+        liveChat: "aliwelekhasia/live_chat",
+        liveViewers: "aliwelekhasia/live_stream/active_viewers"
     },
     // Firebase Cloud Storage Buckets / Folders
     storage: {
@@ -340,6 +345,100 @@ class RichaliFirebaseManager {
                 console.debug('[RichaliFirebase Analytics Log]:', eventName, params);
             }
         }
+    }
+
+    /**
+     * Subscribe to Live Stream state changes in Realtime Database
+     */
+    onLiveStreamState(callback) {
+        if (!this.database) return;
+        const ref = this.getDbRef(this.schema.aliwelekhasia.liveStream);
+        if (ref) {
+            ref.on('value', (snapshot) => {
+                callback(snapshot.val());
+            });
+        }
+    }
+
+    /**
+     * Update Live Stream state in Realtime Database
+     */
+    async updateLiveStreamState(data) {
+        if (!this.database) return null;
+        const ref = this.getDbRef(this.schema.aliwelekhasia.liveStream);
+        if (!ref) return null;
+        return await ref.update({
+            ...data,
+            _updatedAt: new Date().toISOString()
+        });
+    }
+
+    /**
+     * Register a live viewer with auto-removal on disconnect for true zero-mock viewer counts
+     */
+    registerLiveViewerPresence(onCountChange) {
+        if (!this.database) return () => {};
+        try {
+            const viewersRef = this.getDbRef(this.schema.aliwelekhasia.liveViewers);
+            const connectedRef = this.database.ref('.info/connected');
+
+            let myViewerRef = null;
+
+            connectedRef.on('value', (snap) => {
+                if (snap.val() === true && viewersRef) {
+                    myViewerRef = viewersRef.push();
+                    myViewerRef.onDisconnect().remove();
+                    myViewerRef.set({
+                        joinedAt: firebase.database.ServerValue.TIMESTAMP,
+                        client: navigator.userAgent.substring(0, 40)
+                    });
+                }
+            });
+
+            // Listen for active count
+            if (viewersRef && typeof onCountChange === 'function') {
+                viewersRef.on('value', (snap) => {
+                    const count = snap.numChildren();
+                    onCountChange(count);
+                });
+            }
+
+            return () => {
+                if (myViewerRef) myViewerRef.remove();
+            };
+        } catch (e) {
+            console.warn('[RichaliFirebase] Viewer presence registration notice:', e);
+            return () => {};
+        }
+    }
+
+    /**
+     * Subscribe to Live Chat / Prayer Wall messages
+     */
+    onLiveChat(callback) {
+        if (!this.database) return;
+        const ref = this.getDbRef(this.schema.aliwelekhasia.liveChat);
+        if (ref) {
+            ref.limitToLast(50).on('child_added', (snapshot) => {
+                callback({ id: snapshot.key, ...snapshot.val() });
+            });
+        }
+    }
+
+    /**
+     * Post a Live Chat / Prayer Wall message
+     */
+    async sendLiveChatMessage(author, message, isPrayer = false) {
+        if (!this.database) return null;
+        const ref = this.getDbRef(this.schema.aliwelekhasia.liveChat);
+        if (!ref) return null;
+        return await ref.push({
+            author: author || 'Beloved in Christ',
+            message: message.trim(),
+            isPrayer: !!isPrayer,
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            createdAt: new Date().toISOString()
+        });
     }
 
     /**

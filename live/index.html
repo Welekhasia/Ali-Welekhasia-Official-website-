@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Ali Welekhasia Live | Official Gospel Ministry & Worship Broadcast</title>
+
+    <!-- Theme Preference Initialization -->
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('ali_theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } catch (e) {}
+        })();
+    </script>
+
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Ali Welekhasia Live | Official Gospel Ministry & Worship Broadcast">
+    <meta name="description" content="Watch Ali Welekhasia Live. Join live gospel worship, powerful prayer intercession, crusade livestreams, and uplifting Swahili spiritual ministry.">
+    <meta name="keywords" content="Ali Welekhasia Live, Gospel Live Stream, Swahili Worship Live, Christian Live Broadcast, Kenya Gospel Live, Ali Welekhasia Cloudflare Stream">
+    <meta name="author" content="Ali Welekhasia Music">
+    <meta name="robots" content="index, follow">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://aliwelekhasia.co.ke/live">
+
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="video.other">
+    <meta property="og:url" content="https://aliwelekhasia.co.ke/live">
+    <meta property="og:title" content="🔴 Ali Welekhasia Live | Official Gospel Ministry Broadcast">
+    <meta property="og:description" content="Join Minister Ali Welekhasia live for uplifting Swahili gospel worship, prophetic prayer, and life-changing ministry.">
+    <meta property="og:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+    <meta property="og:site_name" content="Ali Welekhasia Music">
+
+    <!-- Twitter Card -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://aliwelekhasia.co.ke/live">
+    <meta property="twitter:title" content="🔴 Ali Welekhasia Live Worship">
+    <meta property="twitter:description" content="Watch Ali Welekhasia live gospel praise & prayer broadcast.">
+    <meta property="twitter:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+
+    <!-- Structured Data (Schema.org BroadcastEvent) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BroadcastEvent",
+      "name": "Ali Welekhasia Ministry Live Broadcast",
+      "isLiveBroadcast": true,
+      "eventStatus": "https://schema.org/EventScheduled",
+      "description": "Live Swahili gospel worship, crusades, and pastoral prayer broadcast with Minister Ali Welekhasia.",
+      "organizer": {
+        "@type": "Person",
+        "name": "Ali Welekhasia",
+        "url": "https://aliwelekhasia.co.ke"
+      },
+      "video": {
+        "@type": "VideoObject",
+        "name": "Ali Welekhasia Live Stream",
+        "description": "Official Live Video Broadcast via Cloudflare Stream Live",
+        "thumbnailUrl": "https://aliwelekhasia.co.ke/hero.jpg",
+        "uploadDate": "2026-09-12T00:00:00+03:00"
+      }
+    }
+    </script>
+
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Site CSS -->
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- HLS.js for Adaptive Live Stream Playback -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
+
+    <!-- Live Page Custom Styles -->
+    <style>
+        .live-page-body {
+            background-color: var(--bg-darker, #020617);
+            color: var(--text-main, #f8fafc);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Top Header */
+        .live-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(2, 6, 23, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .live-header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: inherit;
+        }
+        .live-header-brand img {
+            height: 38px;
+            width: auto;
+            border-radius: 6px;
+        }
+        .live-brand-title {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .live-brand-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .live-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Live Stage Container */
+        .live-stage-wrap {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 20px 40px;
+            flex: 1;
+        }
+
+        /* Breadcrumb / Top Indicator */
+        .live-channel-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .live-badge-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .live-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        .live-status-pill.is-live {
+            background: #ef4444;
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.6);
+            animation: pulse-red 1.8s infinite;
+        }
+        .live-status-pill.is-offline {
+            background: rgba(148, 163, 184, 0.15);
+            color: var(--text-muted);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+        .live-status-pill.is-connecting {
+            background: #eab308;
+            color: #000;
+            box-shadow: 0 0 12px rgba(234, 179, 8, 0.5);
+        }
+
+        @keyframes pulse-red {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .live-viewers-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gold-light);
+        }
+
+        /* 2-Column Live Studio Layout */
+        .live-grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+            align-items: start;
+        }
+        @media (max-width: 1024px) {
+            .live-grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Player Main Canvas */
+        .live-player-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000000;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(212, 175, 55, 0.15);
+        }
+
+        .live-video-element {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        /* Player Overlays: Offline Screen, Loading, Error, Ended */
+        .player-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(15, 23, 42, 0.96) 0%, rgba(2, 6, 23, 0.98) 100%);
+            z-index: 10;
+            transition: opacity 0.3s ease;
+        }
+        .player-overlay.hidden {
+            display: none !important;
+        }
+
+        .offline-hero-icon {
+            font-size: 48px;
+            color: var(--gold);
+            margin-bottom: 16px;
+            opacity: 0.9;
+        }
+        .offline-title {
+            font-family: 'Cinzel', serif;
+            font-size: 26px;
+            color: #ffffff;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        .offline-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+            max-width: 520px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        /* Custom In-Player Controls */
+        .player-controls-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 14px 18px;
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            z-index: 12;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .live-player-container:hover .player-controls-bar,
+        .live-player-container.touch-active .player-controls-bar {
+            opacity: 1;
+        }
+        .ctrl-btn {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: color 0.2s, transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ctrl-btn:hover, .ctrl-btn:focus-visible {
+            color: var(--gold);
+            transform: scale(1.1);
+            outline: none;
+        }
+        .ctrl-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .ctrl-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .volume-slider-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .volume-range {
+            width: 80px;
+            accent-color: var(--gold);
+            cursor: pointer;
+        }
+        .live-indicator-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .live-indicator-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+            box-shadow: 0 0 6px #ef4444;
+        }
+
+        /* Stream Details Card Below Video */
+        .live-details-card {
+            background: var(--bg-card, #090d16);
+            border: 1px solid var(--border-color, rgba(212, 175, 55, 0.18));
+            border-radius: 12px;
+            padding: 22px;
+            margin-top: 18px;
+        }
+        .live-title-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .stream-title-text {
+            font-family: 'Cinzel', serif;
+            font-size: 22px;
+            color: #ffffff;
+            margin: 0 0 6px;
+        }
+        .stream-desc-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0;
+        }
+        .stream-action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Live Chat & Prayer Wall Sidebar */
+        .live-sidebar {
+            background: var(--bg-card, #090d16);
+            border: 1px solid var(--border-color, rgba(212, 175, 55, 0.18));
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+            overflow: hidden;
+        }
+        .sidebar-header {
+            padding: 14px 18px;
+            background: rgba(15, 23, 42, 0.7);
+            border-bottom: 1px solid var(--border-color, rgba(212, 175, 55, 0.18));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+        .chat-messages-container {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .chat-msg-item {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 13px;
+        }
+        .chat-msg-item.prayer {
+            border-left: 3px solid var(--gold);
+            background: rgba(212, 175, 55, 0.06);
+        }
+        .chat-msg-author {
+            font-weight: 700;
+            color: var(--gold-light);
+            font-size: 12px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .chat-msg-time {
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+        .chat-msg-body {
+            color: var(--text-main, #f8fafc);
+            line-height: 1.4;
+        }
+        .chat-input-area {
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.9);
+            border-top: 1px solid var(--border-color, rgba(212, 175, 55, 0.18));
+        }
+        .chat-input-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .chat-row-inputs {
+            display: flex;
+            gap: 8px;
+        }
+        .chat-author-input {
+            flex: 1;
+            background: var(--bg-surface, #0f172a);
+            border: 1px solid var(--border-color, rgba(212, 175, 55, 0.2));
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+        .chat-msg-input {
+            flex: 2;
+            background: var(--bg-surface, #0f172a);
+            border: 1px solid var(--border-color, rgba(212, 175, 55, 0.2));
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+        .chat-btn-submit {
+            background: var(--gold);
+            color: #000;
+            font-weight: 700;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+            transition: filter 0.2s;
+        }
+        .chat-btn-submit:hover {
+            filter: brightness(1.15);
+        }
+
+        /* Upcoming Schedule Section */
+        .live-section-wrap {
+            margin-top: 40px;
+        }
+        .section-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .live-section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            color: var(--gold);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .schedule-card {
+            background: var(--bg-card, #090d16);
+            border: 1px solid var(--border-color, rgba(212, 175, 55, 0.18));
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .schedule-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--gold);
+        }
+        .schedule-badge {
+            align-self: flex-start;
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .schedule-title {
+            font-family: 'Cinzel', serif;
+            font-size: 17px;
+            color: #fff;
+            margin: 0;
+        }
+        .schedule-time {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Replay Grid */
+        .replays-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .replay-card {
+            background: var(--bg-card, #090d16);
+            border: 1px solid var(--border-color, rgba(212, 175, 55, 0.18));
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .replay-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.5);
+            border-color: var(--gold);
+        }
+        .replay-thumb-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #0f172a;
+        }
+        .replay-thumb-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .replay-play-badge {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.4);
+            transition: background 0.2s;
+        }
+        .replay-card:hover .replay-play-badge {
+            background: rgba(0,0,0,0.2);
+        }
+        .replay-play-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--gold);
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            padding-left: 3px;
+            box-shadow: 0 4px 14px var(--gold-glow);
+        }
+        .replay-tag {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .replay-duration {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .replay-body {
+            padding: 14px;
+        }
+        .replay-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin: 0 0 4px;
+            line-height: 1.4;
+        }
+        .replay-date {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Smart TV & Keyboard Focus Enhancements */
+        *:focus-visible {
+            outline: 2px solid var(--gold) !important;
+            outline-offset: 3px;
+        }
+    </style>
+</head>
+<body class="live-page-body">
+
+    <!-- Top Navigation Header -->
+    <header class="live-header">
+        <a href="/" class="live-header-brand" title="Return to Ali Welekhasia Official Home">
+            <img src="../logo.png" alt="Ali Welekhasia Ministry Logo" onerror="this.src='../images/hero.jpg'">
+            <div>
+                <span class="live-brand-title">Ali Welekhasia</span>
+                <span class="live-brand-subtitle">Official Live Stream</span>
+            </div>
+        </a>
+
+        <div class="live-nav-actions">
+            <a href="/" class="btn btn-sm btn-outline">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+            <a href="/#music" class="btn btn-sm btn-outline">
+                <i class="fa-solid fa-music"></i> Music
+            </a>
+            <a href="/#prayer" class="btn btn-sm btn-gold">
+                <i class="fa-solid fa-hands-praying"></i> Submit Prayer
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Live Stage Area -->
+    <main class="live-stage-wrap">
+        <!-- Live Status Bar -->
+        <div class="live-channel-bar">
+            <div class="live-badge-group">
+                <span id="liveStatusBadge" class="live-status-pill is-offline">
+                    <i class="fa-solid fa-circle"></i>
+                    <span id="liveStatusText">Currently Offline</span>
+                </span>
+                <span id="liveViewersBadge" class="live-viewers-count">
+                    <i class="fa-solid fa-users"></i>
+                    <span id="liveViewersCount">0</span> Viewers
+                </span>
+                <span id="liveTimerBadge" class="live-viewers-count" style="display: none;">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="liveTimerValue">00:00:00</span>
+                </span>
+            </div>
+
+            <div class="stream-action-buttons">
+                <button type="button" class="btn btn-sm btn-outline" onclick="shareLiveStream()" title="Share live stream link">
+                    <i class="fa-solid fa-share-nodes"></i> Share Live
+                </button>
+                <button type="button" class="btn btn-sm btn-outline" onclick="togglePlayerFullscreen()" title="Full screen video">
+                    <i class="fa-solid fa-expand"></i> Fullscreen
+                </button>
+            </div>
+        </div>
+
+        <!-- 2-Column Live Player & Chat Layout -->
+        <div class="live-grid-layout">
+            <!-- Left Column: Video Player & Details -->
+            <div>
+                <div class="live-player-container" id="livePlayerContainer">
+                    <!-- HTML5 Video Tag for HLS/Stream -->
+                    <video id="liveVideoPlayer" class="live-video-element" playsinline webkit-playsinline></video>
+
+                    <!-- Overlay 1: Offline State Screen -->
+                    <div id="offlineOverlay" class="player-overlay">
+                        <i class="fa-solid fa-tower-broadcast offline-hero-icon"></i>
+                        <h2 class="offline-title">ALI WELEKHASIA LIVE</h2>
+                        <p class="offline-sub">Ali Welekhasia is currently offline. Please check back soon for our upcoming live praise, worship night, and prophetic prayer service.</p>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+                            <button type="button" class="btn btn-gold" onclick="scrollToUpcomingSchedule()">
+                                <i class="fa-regular fa-calendar-check"></i> View Upcoming Schedule
+                            </button>
+                            <a href="/#prayer" class="btn btn-outline">
+                                <i class="fa-solid fa-envelope-open-text"></i> Leave Prayer Request
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Overlay 2: Connecting State Screen -->
+                    <div id="connectingOverlay" class="player-overlay hidden">
+                        <i class="fa-solid fa-circle-notch fa-spin offline-hero-icon" style="color: #eab308;"></i>
+                        <h2 class="offline-title" style="color: #eab308;">Connecting to Live Broadcast...</h2>
+                        <p class="offline-sub">Acquiring low-latency video feed from Cloudflare Stream Live.</p>
+                    </div>
+
+                    <!-- Overlay 3: Stream Ended / Processing Replay Screen -->
+                    <div id="endedOverlay" class="player-overlay hidden">
+                        <i class="fa-solid fa-circle-check offline-hero-icon" style="color: #22c55e;"></i>
+                        <h2 class="offline-title">Broadcast Concluded</h2>
+                        <p class="offline-sub" id="endedOverlayMsg">Your live broadcast has ended. The replay is being processed and will be available shortly.</p>
+                        <button type="button" class="btn btn-gold" onclick="loadRecentReplays()">
+                            <i class="fa-solid fa-play"></i> Watch Recent Replays
+                        </button>
+                    </div>
+
+                    <!-- Overlay 4: Network Error Screen -->
+                    <div id="errorOverlay" class="player-overlay hidden">
+                        <i class="fa-solid fa-triangle-exclamation offline-hero-icon" style="color: #ef4444;"></i>
+                        <h2 class="offline-title" style="color: #ef4444;">Connection Interrupted</h2>
+                        <p class="offline-sub">We're having trouble connecting to the live broadcast. Attempting automatic reconnection...</p>
+                        <button type="button" class="btn btn-sm btn-gold" onclick="retryLiveConnection()">
+                            <i class="fa-solid fa-rotate-right"></i> Retry Connection
+                        </button>
+                    </div>
+
+                    <!-- Player Floating Controls Bar -->
+                    <div class="player-controls-bar" id="playerControlsBar">
+                        <div class="ctrl-left">
+                            <button type="button" class="ctrl-btn" id="playPauseBtn" onclick="togglePlayPause()" aria-label="Play or Pause">
+                                <i class="fa-solid fa-play" id="playPauseIcon"></i>
+                            </button>
+
+                            <div class="volume-slider-wrap">
+                                <button type="button" class="ctrl-btn" id="muteBtn" onclick="toggleMute()" aria-label="Mute or Unmute">
+                                    <i class="fa-solid fa-volume-high" id="muteIcon"></i>
+                                </button>
+                                <input type="range" class="volume-range" id="volumeSlider" min="0" max="1" step="0.05" value="1" oninput="setVideoVolume(this.value)" aria-label="Volume slider">
+                            </div>
+
+                            <div class="live-indicator-tag">
+                                <span class="live-indicator-dot"></span>
+                                <span id="liveCtrlBadge">LIVE</span>
+                            </div>
+                        </div>
+
+                        <div class="ctrl-right">
+                            <button type="button" class="ctrl-btn" onclick="retryLiveConnection()" title="Refresh Feed" aria-label="Refresh Feed">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                            <button type="button" class="ctrl-btn" onclick="togglePlayerFullscreen()" title="Fullscreen" aria-label="Fullscreen">
+                                <i class="fa-solid fa-expand"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stream Metadata Card -->
+                <div class="live-details-card">
+                    <div class="live-title-row">
+                        <div>
+                            <h1 class="stream-title-text" id="streamTitleDisplay">Ali Welekhasia Live Worship & Word</h1>
+                            <p class="stream-desc-text" id="streamDescDisplay">Proclaiming the Gospel of Jesus Christ through Anointed Worship, Gospel Music, and Prophetic Prayer Outreach.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Live Chat & Prayer Wall -->
+            <aside class="live-sidebar">
+                <div class="sidebar-header">
+                    <h3 class="sidebar-title">
+                        <i class="fa-solid fa-comments"></i> Live Chat & Prayer Wall
+                    </h3>
+                    <span style="font-size: 11px; color: var(--gold-light);">
+                        <i class="fa-solid fa-heart" style="color: #ef4444;"></i> Fellowship
+                    </span>
+                </div>
+
+                <div class="chat-messages-container" id="liveChatMessages">
+                    <div class="chat-msg-item prayer">
+                        <div class="chat-msg-author">
+                            <span><i class="fa-solid fa-cross"></i> Ali Welekhasia Ministry</span>
+                            <span class="chat-msg-time">Official</span>
+                        </div>
+                        <div class="chat-msg-body">
+                            Welcome to the live broadcast! Join us in praising the Lord Jesus Christ. Post your prayer points and praise reports below.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <form class="chat-input-form" onsubmit="handleLiveChatSubmit(event)">
+                        <div class="chat-row-inputs">
+                            <input type="text" id="chatAuthorInput" class="chat-author-input" placeholder="Your Name" required maxlength="30">
+                            <input type="text" id="chatMessageInput" class="chat-msg-input" placeholder="Type prayer or message..." required maxlength="250">
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                                <input type="checkbox" id="chatIsPrayerCheck" style="accent-color: var(--gold);"> Tag as Prayer Request
+                            </label>
+                            <button type="submit" class="chat-btn-submit">
+                                <i class="fa-solid fa-paper-plane"></i> Send
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Upcoming Live Broadcasts Section -->
+        <section class="live-section-wrap" id="upcomingScheduleSection">
+            <div class="section-header-row">
+                <h2 class="live-section-title">
+                    <i class="fa-solid fa-calendar-days"></i> Upcoming Live Broadcasts
+                </h2>
+                <button type="button" class="btn btn-sm btn-outline" onclick="subscribeLiveReminders()">
+                    <i class="fa-regular fa-bell"></i> Set Broadcast Reminder
+                </button>
+            </div>
+
+            <div class="schedule-grid" id="upcomingScheduleGrid">
+                <!-- Fallback card when no scheduled event -->
+                <div class="schedule-card">
+                    <span class="schedule-badge">Weekly Altar</span>
+                    <h3 class="schedule-title">Friday Worship Night & Prophetic Intercession</h3>
+                    <div class="schedule-time">
+                        <i class="fa-regular fa-clock"></i> Every Friday, 8:00 PM EAT (GMT+3)
+                    </div>
+                    <p style="font-size: 13px; color: var(--text-muted); margin: 0;">
+                        Live praise and deep communion in God's presence with Minister Ali Welekhasia.
+                    </p>
+                    <button type="button" class="btn btn-sm btn-gold" style="align-self: flex-start;" onclick="addToGoogleCalendar('Friday Worship Night', 'Join Ali Welekhasia for Live Swahili Worship', '2026-09-18T20:00:00')">
+                        <i class="fa-solid fa-calendar-plus"></i> Add to Calendar
+                    </button>
+                </div>
+
+                <div class="schedule-card">
+                    <span class="schedule-badge">Sunday Service</span>
+                    <h3 class="schedule-title">Sunday Revival & Word Impartation</h3>
+                    <div class="schedule-time">
+                        <i class="fa-regular fa-clock"></i> Every Sunday, 10:00 AM EAT (GMT+3)
+                    </div>
+                    <p style="font-size: 13px; color: var(--text-muted); margin: 0;">
+                        Experiencing the transformative power of God's Word and acoustic gospel worship.
+                    </p>
+                    <button type="button" class="btn btn-sm btn-gold" style="align-self: flex-start;" onclick="addToGoogleCalendar('Sunday Revival Broadcast', 'Sunday Live Service with Ali Welekhasia', '2026-09-20T10:00:00')">
+                        <i class="fa-solid fa-calendar-plus"></i> Add to Calendar
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Previous Live Broadcast Replays -->
+        <section class="live-section-wrap" id="liveReplaysSection">
+            <div class="section-header-row">
+                <h2 class="live-section-title">
+                    <i class="fa-solid fa-film"></i> Live Broadcast Replays
+                </h2>
+                <a href="/#videos" class="btn btn-sm btn-outline">
+                    <i class="fa-solid fa-video"></i> Full Video Archive
+                </a>
+            </div>
+
+            <div class="replays-grid" id="liveReplaysGrid">
+                <!-- Dynamic or curated replays -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="border-top: 1px solid rgba(212, 175, 55, 0.2); padding: 30px 20px; text-align: center; font-size: 13px; color: var(--text-muted);">
+        <p style="margin: 0 0 6px;">&copy; 2026 Ali Welekhasia Music Ministry. All Rights Reserved.</p>
+        <p style="margin: 0; font-size: 11px;">Powered by Cloudflare Stream Live & Gospelsphere Infrastructure.</p>
+    </footer>
+
+    <!-- Firebase SDK (v10.8.0 Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+
+    <!-- Live Client Application Logic -->
+    <script>
+        // State variables
+        let hlsInstance = null;
+        let activePlaybackUrl = null;
+        let isBroadcasting = false;
+        let liveStartTime = null;
+        let liveTimerInterval = null;
+        let viewerUnsubscribe = null;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 5;
+
+        const videoEl = document.getElementById('liveVideoPlayer');
+        const containerEl = document.getElementById('livePlayerContainer');
+
+        // Initialize on DOM ready
+        document.addEventListener('DOMContentLoaded', () => {
+            initLivePresence();
+            initLiveStateListener();
+            initLiveChatListener();
+            pollCloudflareLiveStatus();
+            loadRecentReplays();
+
+            // Keyboard navigation for TV and Desktop
+            document.addEventListener('keydown', handleKeyNavigation);
+
+            // Hide controls on mobile after 3 seconds of inactivity
+            let hideTimeout = null;
+            containerEl.addEventListener('mousemove', showControls);
+            containerEl.addEventListener('touchstart', showControls);
+
+            function showControls() {
+                containerEl.classList.add('touch-active');
+                clearTimeout(hideTimeout);
+                hideTimeout = setTimeout(() => {
+                    containerEl.classList.remove('touch-active');
+                }, 3500);
+            }
+        });
+
+        // 1. PRESENCE TRACKING: Zero-mock real-time viewer count
+        function initLivePresence() {
+            if (window.RichaliFirebase && typeof window.RichaliFirebase.registerLiveViewerPresence === 'function') {
+                viewerUnsubscribe = window.RichaliFirebase.registerLiveViewerPresence((count) => {
+                    const countEl = document.getElementById('liveViewersCount');
+                    if (countEl) countEl.innerText = count || 1;
+                });
+            }
+        }
+
+        // 2. FIREBASE REALTIME STATE LISTENER
+        function initLiveStateListener() {
+            if (window.RichaliFirebase && typeof window.RichaliFirebase.onLiveStreamState === 'function') {
+                window.RichaliFirebase.onLiveStreamState((streamData) => {
+                    if (streamData) {
+                        applyLiveStreamState(streamData);
+                    }
+                });
+            }
+        }
+
+        // 3. CLOUDFLARE STREAM API POLLING
+        async function pollCloudflareLiveStatus() {
+            try {
+                const res = await fetch('/api/live/stream');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.publicData) {
+                        applyLiveStreamState(data.publicData);
+                    }
+                }
+            } catch (err) {
+                console.debug('[Cloudflare Live Poll Note]:', err.message);
+            }
+        }
+
+        // Apply stream state
+        function applyLiveStreamState(data) {
+            const status = (data.status || 'offline').toLowerCase();
+            const badge = document.getElementById('liveStatusBadge');
+            const badgeText = document.getElementById('liveStatusText');
+            const titleEl = document.getElementById('streamTitleDisplay');
+            const descEl = document.getElementById('streamDescDisplay');
+
+            if (data.title && titleEl) titleEl.innerText = data.title;
+            if (data.description && descEl) descEl.innerText = data.description;
+
+            // Update status UI
+            if (status === 'live') {
+                isBroadcasting = true;
+                badge.className = 'live-status-pill is-live';
+                badgeText.innerHTML = '<i class="fa-solid fa-circle"></i> LIVE NOW';
+                document.getElementById('liveTimerBadge').style.display = 'inline-flex';
+
+                if (data.actualStart && !liveStartTime) {
+                    liveStartTime = new Date(data.actualStart).getTime();
+                    startLiveTimer();
+                }
+
+                // If playback URL changed or video is not playing
+                const newPlaybackUrl = data.playbackUrl || (data.uid ? `https://customer-stream.cloudflare.com/${data.uid}/manifest/video.m3u8` : null);
+                if (newPlaybackUrl && newPlaybackUrl !== activePlaybackUrl) {
+                    attachHlsStream(newPlaybackUrl);
+                }
+                showPlayerOverlay(null); // hide overlays, show video
+            } else if (status === 'connecting') {
+                badge.className = 'live-status-pill is-connecting';
+                badgeText.innerText = 'Connecting...';
+                showPlayerOverlay('connecting');
+            } else if (status === 'ended' || status === 'processing') {
+                isBroadcasting = false;
+                badge.className = 'live-status-pill is-offline';
+                badgeText.innerText = 'Broadcast Concluded';
+                stopLiveTimer();
+                showPlayerOverlay('ended');
+            } else {
+                // Offline
+                isBroadcasting = false;
+                badge.className = 'live-status-pill is-offline';
+                badgeText.innerText = 'Currently Offline';
+                stopLiveTimer();
+                showPlayerOverlay('offline');
+            }
+        }
+
+        // 4. ATTACH HLS STREAM (Production player with adaptive streaming & reconnection)
+        function attachHlsStream(streamUrl) {
+            activePlaybackUrl = streamUrl;
+
+            if (Hls.isSupported()) {
+                if (hlsInstance) {
+                    hlsInstance.destroy();
+                }
+
+                hlsInstance = new Hls({
+                    enableWorker: true,
+                    lowLatencyMode: true,
+                    backBufferLength: 60,
+                    manifestLoadingMaxRetry: 4,
+                    levelLoadingMaxRetry: 4
+                });
+
+                hlsInstance.loadSource(streamUrl);
+                hlsInstance.attachMedia(videoEl);
+
+                hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+                    videoEl.play().catch(() => {
+                        // Autoplay with sound might be blocked, mute and retry
+                        videoEl.muted = true;
+                        updateMuteUI();
+                        videoEl.play().catch(e => console.warn('Autoplay prevented:', e));
+                    });
+                });
+
+                hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+                    if (data.fatal) {
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                handleNetworkError();
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                hlsInstance.recoverMediaError();
+                                break;
+                            default:
+                                hlsInstance.destroy();
+                                showPlayerOverlay('error');
+                                break;
+                        }
+                    }
+                });
+            } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+                // Native Safari / iOS / Smart TV playback
+                videoEl.src = streamUrl;
+                videoEl.addEventListener('loadedmetadata', () => {
+                    videoEl.play().catch(() => {
+                        videoEl.muted = true;
+                        updateMuteUI();
+                        videoEl.play();
+                    });
+                });
+                videoEl.addEventListener('error', handleNetworkError);
+            }
+        }
+
+        function handleNetworkError() {
+            reconnectAttempts++;
+            if (reconnectAttempts <= MAX_RECONNECT_ATTEMPTS) {
+                showPlayerOverlay('connecting');
+                setTimeout(() => {
+                    if (hlsInstance) {
+                        hlsInstance.startLoad();
+                    } else if (activePlaybackUrl) {
+                        attachHlsStream(activePlaybackUrl);
+                    }
+                }, 2000 * reconnectAttempts);
+            } else {
+                showPlayerOverlay('error');
+            }
+        }
+
+        function retryLiveConnection() {
+            reconnectAttempts = 0;
+            showPlayerOverlay('connecting');
+            pollCloudflareLiveStatus();
+            if (activePlaybackUrl) {
+                attachHlsStream(activePlaybackUrl);
+            }
+        }
+
+        // Show/Hide Overlays
+        function showPlayerOverlay(type) {
+            const overlays = ['offline', 'connecting', 'ended', 'error'];
+            overlays.forEach(id => {
+                const el = document.getElementById(id + 'Overlay');
+                if (el) {
+                    if (id === type) {
+                        el.classList.remove('hidden');
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                }
+            });
+        }
+
+        // Controls
+        function togglePlayPause() {
+            const icon = document.getElementById('playPauseIcon');
+            if (videoEl.paused) {
+                videoEl.play();
+                if (icon) icon.className = 'fa-solid fa-pause';
+            } else {
+                videoEl.pause();
+                if (icon) icon.className = 'fa-solid fa-play';
+            }
+        }
+
+        function toggleMute() {
+            videoEl.muted = !videoEl.muted;
+            updateMuteUI();
+        }
+
+        function updateMuteUI() {
+            const icon = document.getElementById('muteIcon');
+            const slider = document.getElementById('volumeSlider');
+            if (icon) {
+                icon.className = videoEl.muted || videoEl.volume === 0 ? 'fa-solid fa-volume-xmark' : 'fa-solid fa-volume-high';
+            }
+            if (slider) {
+                slider.value = videoEl.muted ? 0 : videoEl.volume;
+            }
+        }
+
+        function setVideoVolume(val) {
+            videoEl.volume = parseFloat(val);
+            videoEl.muted = (videoEl.volume === 0);
+            updateMuteUI();
+        }
+
+        function togglePlayerFullscreen() {
+            if (!document.fullscreenElement) {
+                if (containerEl.requestFullscreen) {
+                    containerEl.requestFullscreen();
+                } else if (containerEl.webkitRequestFullscreen) {
+                    containerEl.webkitRequestFullscreen();
+                } else if (videoEl.webkitEnterFullscreen) {
+                    videoEl.webkitEnterFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Keyboard navigation for TV remotes and desktop
+        function handleKeyNavigation(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            switch (e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    togglePlayPause();
+                    break;
+                case 'KeyM':
+                    toggleMute();
+                    break;
+                case 'KeyF':
+                    togglePlayerFullscreen();
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    setVideoVolume(Math.min(1, videoEl.volume + 0.1));
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    setVideoVolume(Math.max(0, videoEl.volume - 0.1));
+                    break;
+            }
+        }
+
+        // Timer
+        function startLiveTimer() {
+            clearInterval(liveTimerInterval);
+            liveTimerInterval = setInterval(() => {
+                if (!liveStartTime) return;
+                const elapsed = Math.floor((Date.now() - liveStartTime) / 1000);
+                const h = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+                const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+                const s = String(elapsed % 60).padStart(2, '0');
+                const timerEl = document.getElementById('liveTimerValue');
+                if (timerEl) timerEl.innerText = `${h}:${m}:${s}`;
+            }, 1000);
+        }
+
+        function stopLiveTimer() {
+            clearInterval(liveTimerInterval);
+            document.getElementById('liveTimerBadge').style.display = 'none';
+        }
+
+        // 5. LIVE CHAT & PRAYER WALL
+        function initLiveChatListener() {
+            if (window.RichaliFirebase && typeof window.RichaliFirebase.onLiveChat === 'function') {
+                window.RichaliFirebase.onLiveChat((msg) => {
+                    appendChatMessage(msg);
+                });
+            }
+        }
+
+        function appendChatMessage(msg) {
+            const container = document.getElementById('liveChatMessages');
+            if (!container) return;
+
+            const div = document.createElement('div');
+            div.className = `chat-msg-item ${msg.isPrayer ? 'prayer' : ''}`;
+            const timeStr = msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Now';
+
+            div.innerHTML = `
+                <div class="chat-msg-author">
+                    <span>${msg.isPrayer ? '<i class="fa-solid fa-hands-praying" style="color:var(--gold);"></i> ' : ''}${escapeText(msg.author)}</span>
+                    <span class="chat-msg-time">${timeStr}</span>
+                </div>
+                <div class="chat-msg-body">${escapeText(msg.message)}</div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function handleLiveChatSubmit(e) {
+            e.preventDefault();
+            const authorInput = document.getElementById('chatAuthorInput');
+            const msgInput = document.getElementById('chatMessageInput');
+            const isPrayerCheck = document.getElementById('chatIsPrayerCheck');
+
+            const author = authorInput.value.trim();
+            const message = msgInput.value.trim();
+            const isPrayer = isPrayerCheck ? isPrayerCheck.checked : false;
+
+            if (!author || !message) return;
+
+            if (window.RichaliFirebase && typeof window.RichaliFirebase.sendLiveChatMessage === 'function') {
+                await window.RichaliFirebase.sendLiveChatMessage(author, message, isPrayer);
+            } else {
+                appendChatMessage({ author, message, isPrayer, createdAt: new Date().toISOString() });
+            }
+
+            msgInput.value = '';
+        }
+
+        function escapeText(str) {
+            return String(str || '').replace(/[&<>"']/g, m => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[m]);
+        }
+
+        // 6. SHARE LIVE STREAM
+        function shareLiveStream() {
+            const shareData = {
+                title: '🔴 Ali Welekhasia Live Worship',
+                text: 'Join Minister Ali Welekhasia live right now for gospel worship and prayer!',
+                url: 'https://aliwelekhasia.co.ke/live'
+            };
+
+            if (navigator.share) {
+                navigator.share(shareData).catch(e => console.debug('Share dismissed:', e));
+            } else {
+                navigator.clipboard.writeText('https://aliwelekhasia.co.ke/live')
+                    .then(() => alert('Live Stream link copied to clipboard: https://aliwelekhasia.co.ke/live'))
+                    .catch(() => prompt('Copy live stream URL:', 'https://aliwelekhasia.co.ke/live'));
+            }
+        }
+
+        // 7. CALENDAR & REMINDER
+        function addToGoogleCalendar(title, details, startTimeIso) {
+            const dt = startTimeIso.replace(/[-:]/g, '');
+            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&details=${encodeURIComponent(details)}&location=https://aliwelekhasia.co.ke/live&dates=${dt}/${dt}`;
+            window.open(url, '_blank');
+        }
+
+        function subscribeLiveReminders() {
+            const email = prompt('Enter your email to receive notification when Minister Ali Welekhasia goes LIVE:');
+            if (email && email.includes('@')) {
+                if (window.RichaliFirebase && window.RichaliFirebase.database) {
+                    window.RichaliFirebase.pushData('aliwelekhasia/live_reminders', { email });
+                }
+                alert(`Praise God! You are subscribed to live broadcast alerts at: ${email}`);
+            }
+        }
+
+        function scrollToUpcomingSchedule() {
+            document.getElementById('upcomingScheduleSection')?.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 8. LOAD RECENT REPLAYS
+        async function loadRecentReplays() {
+            const grid = document.getElementById('liveReplaysGrid');
+            if (!grid) return;
+
+            try {
+                const res = await fetch('/api/live/recordings');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.recordings && data.recordings.length > 0) {
+                        grid.innerHTML = '';
+                        data.recordings.forEach(rec => {
+                            const card = document.createElement('div');
+                            card.className = 'replay-card';
+                            card.onclick = () => attachHlsStream(rec.playback.hls);
+                            card.innerHTML = `
+                                <div class="replay-thumb-wrap">
+                                    <img src="${rec.thumbnail || '../hero.jpg'}" alt="${escapeText(rec.title)}" class="replay-thumb-img">
+                                    <div class="replay-play-badge">
+                                        <div class="replay-play-icon"><i class="fa-solid fa-play"></i></div>
+                                    </div>
+                                    <span class="replay-tag">LIVE REPLAY</span>
+                                    <span class="replay-duration">${formatDuration(rec.duration)}</span>
+                                </div>
+                                <div class="replay-body">
+                                    <h4 class="replay-title">${escapeText(rec.title)}</h4>
+                                    <span class="replay-date">${new Date(rec.created).toLocaleDateString()}</span>
+                                </div>
+                            `;
+                            grid.appendChild(card);
+                        });
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.debug('Cloudflare recordings note:', e);
+            }
+
+            // Fallback sample catalog replays from existing music/sermon videos
+            grid.innerHTML = `
+                <div class="replay-card" onclick="window.location.href='/#videos'">
+                    <div class="replay-thumb-wrap">
+                        <img src="../images/hero.jpg" alt="Eldoret Crusade" class="replay-thumb-img">
+                        <div class="replay-play-badge"><div class="replay-play-icon"><i class="fa-solid fa-play"></i></div></div>
+                        <span class="replay-tag">LIVE REPLAY</span>
+                        <span class="replay-duration">1:18:42</span>
+                    </div>
+                    <div class="replay-body">
+                        <h4 class="replay-title">Eldoret Sports Grounds Revival Crusade & Worship Night</h4>
+                        <span class="replay-date">Recent Broadcast</span>
+                    </div>
+                </div>
+                <div class="replay-card" onclick="window.location.href='/#videos'">
+                    <div class="replay-thumb-wrap">
+                        <img src="../hero.jpg" alt="Mombasa Revival" class="replay-thumb-img">
+                        <div class="replay-play-badge"><div class="replay-play-icon"><i class="fa-solid fa-play"></i></div></div>
+                        <span class="replay-tag">LIVE REPLAY</span>
+                        <span class="replay-duration">54:10</span>
+                    </div>
+                    <div class="replay-body">
+                        <h4 class="replay-title">Nakuru Prophetic Worship & Deliverance Service</h4>
+                        <span class="replay-date">Recent Broadcast</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatDuration(sec) {
+            if (!sec) return 'Live';
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `${m}:${String(s).padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>

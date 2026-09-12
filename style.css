@@ -6517,6 +6517,30 @@ a.contact-method-val:hover {
     flex: 1;
 }
 
+/* Live Stream Pulsing & Animations */
+@keyframes livePulse {
+    0% {
+        transform: scale(0.92);
+        opacity: 0.7;
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+    70% {
+        transform: scale(1.05);
+        opacity: 1;
+        box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+    }
+    100% {
+        transform: scale(0.92);
+        opacity: 0.7;
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+.live-dot-pulse {
+    animation: livePulse 1.6s infinite ease-in-out;
+}
+
+
 
 
 
