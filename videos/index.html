@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gospel Videos & Ministrations | Ali Welekhasia Music</title>
+    <meta name="description" content="Watch official gospel music videos, worship broadcasts, and prophetic crusades by Minister Ali Welekhasia.">
+    <link rel="icon" type="image/jpeg" href="../hero.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Firebase SDK v10 Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+
+    <style>
+        .videos-page-hero {
+            padding: 120px 20px 40px;
+            background: linear-gradient(180deg, #070b14 0%, #0d1527 100%);
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .videos-page-hero h1 {
+            font-size: 36px;
+            color: #fff;
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+        }
+        .videos-page-hero p {
+            color: #d4af37;
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .videos-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .public-videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 26px;
+        }
+
+        .video-card-item {
+            background: #0e1626;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.25s, border-color 0.25s;
+        }
+        .video-card-item:hover {
+            transform: translateY(-4px);
+            border-color: #d4af37;
+        }
+        .video-thumb-container {
+            width: 100%;
+            height: 200px;
+            position: relative;
+            background: #000;
+        }
+        .video-thumb-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-play-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .video-play-overlay:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .video-play-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #d4af37;
+            color: #070b14;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            padding-left: 4px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+        .video-info-box {
+            padding: 18px;
+        }
+        .video-info-box h3 {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+        .video-info-box p {
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body style="background-color: #070b14; color: #fff;">
+
+    <!-- Navigation Header -->
+    <header class="main-header" style="position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding: 15px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <a href="../" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff;">
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #d4af37, #b89628); display: flex; align-items: center; justify-content: center; color: #070b14; font-size: 18px; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
+            <span style="font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700;">ALI WELEKHASIA</span>
+        </a>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <a href="../" style="color: #94a3b8; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-arrow-left"></i> Home</a>
+            <a href="../lyrics" style="color: #94a3b8; text-decoration: none; font-size: 14px;">Lyrics</a>
+            <a href="../live" style="color: #ef4444; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-tower-broadcast"></i> Live Stream</a>
+            <a href="../admin" style="background: rgba(212, 175, 55, 0.15); border: 1px solid #d4af37; color: #d4af37; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;"><i class="fa-solid fa-lock"></i> Admin CMS</a>
+        </div>
+    </header>
+
+    <div class="videos-page-hero">
+        <h1>Gospel Videos & Ministrations</h1>
+        <p>Experience anointed gospel worship visuals, studio recordings, and crusade video archives.</p>
+    </div>
+
+    <div class="videos-container">
+        <div id="publicVideosGrid" class="public-videos-grid">
+            <p style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;">Loading video catalogue...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPublicVideos();
+        });
+
+        function loadPublicVideos() {
+            if (window.RichaliFirebase && window.RichaliFirebase.database) {
+                const schema = window.RichaliFirebase.schema.aliwelekhasia;
+                window.RichaliFirebase.getDbRef(schema.videos).once('value', (snap) => {
+                    const data = snap.val() || {};
+                    const published = Object.values(data).filter(v => v.status === 'PUBLISHED' || !v.status);
+                    renderVideos(published);
+                });
+            } else {
+                renderDefaultVideosFallback();
+            }
+        }
+
+        function renderDefaultVideosFallback() {
+            const fallback = [
+                {
+                    title: "NI WEWE (Official Music Video)",
+                    category: "Music Video",
+                    youtubeUrl: "https://youtu.be/BLkpibP7XAU",
+                    youtubeId: "BLkpibP7XAU",
+                    description: "A deep song of praise and thanksgiving, acknowledging the supreme hand of God in our lives."
+                },
+                {
+                    title: "BADO (Official Video)",
+                    category: "Prophetic Praise",
+                    youtubeUrl: "https://youtu.be/TQxObs0FZ3w",
+                    youtubeId: "TQxObs0FZ3w",
+                    description: "Prophetic praise declaring that God is not yet finished with you."
+                }
+            ];
+            renderVideos(fallback);
+        }
+
+        function renderVideos(videos) {
+            const container = document.getElementById('publicVideosGrid');
+            if (videos.length === 0) {
+                container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">No videos published yet.</p>`;
+                return;
+            }
+
+            container.innerHTML = videos.map(v => `
+                <div class="video-card-item">
+                    <div class="video-thumb-container">
+                        <img src="${v.thumbnailUrl || (v.youtubeId ? `https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg` : '../images/hero.jpg')}" alt="${v.title}" onerror="this.src='../images/hero.jpg'">
+                        <a href="${v.youtubeUrl || '#'}" target="_blank" class="video-play-overlay">
+                            <div class="video-play-btn"><i class="fa-solid fa-play"></i></div>
+                        </a>
+                    </div>
+                    <div class="video-info-box">
+                        <h3>${v.title}</h3>
+                        <p>${v.description || ''}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

@@ -3885,6 +3885,7 @@ function verifyLocalCredentialsFallback(user, pass, remember) {
         } else {
             sessionStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
         }
+        localStorage.setItem('ali_admin_session_token', pass);
         updateAdminUIState();
         closeAdminLoginModal();
         openAdminDashboardModal();
@@ -6586,6 +6587,10 @@ let deviceMicAnimFrame = null;
 let currentCameraFacing = 'user'; // 'user' or 'environment'
 let isDeviceBroadcasting = false;
 
+function isAdminUser() {
+    return isUserAdminAuthenticated();
+}
+
 // 1. Initialize Admin Live Stream Tab
 function initAdminLiveStreamTab() {
     if (!isAdminUser()) {
@@ -7256,6 +7261,65 @@ function displayHomepageLiveBanner(isLive, streamData) {
         </span>
     `;
 }
+
+// --- CMS REALTIME DATABASE AUTO-SYNC FOR PUBLIC WEBSITE ---
+function initPublicCmsSync() {
+    if (!window.RichaliFirebase || !window.RichaliFirebase.database) return;
+    const schema = window.RichaliFirebase.schema?.aliwelekhasia;
+    if (!schema) return;
+
+    // Listen to published songs & lyrics
+    const songsRef = window.RichaliFirebase.getDbRef(schema.songs);
+    if (songsRef) {
+        songsRef.on('value', (snap) => {
+            const dbSongs = snap.val() || {};
+            Object.values(dbSongs).forEach(song => {
+                if (song && (song.status === 'PUBLISHED' || !song.status) && song.title) {
+                    const key = song.title.toUpperCase();
+                    if (!songDatabase[key]) {
+                        songDatabase[key] = {
+                            title: song.title,
+                            artist: song.artist || 'Ali Welekhasia',
+                            key: song.key ? `Key of ${song.key}` : 'Worship',
+                            snippet: song.description || `${song.title} by Ali Welekhasia`,
+                            youtubeUrl: song.youtubeUrl || '',
+                            audioUrl: song.audioUrl || '',
+                            thumbnail: song.artworkUrl || 'images/hero.jpg',
+                            lyrics: '',
+                            chords: '',
+                            translation: ''
+                        };
+                    }
+                }
+            });
+        });
+    }
+
+    // Listen to published lyrics
+    const lyricsRef = window.RichaliFirebase.getDbRef(schema.lyrics);
+    if (lyricsRef) {
+        lyricsRef.on('value', (snap) => {
+            const dbLyrics = snap.val() || {};
+            Object.values(dbLyrics).forEach(item => {
+                if (item && item.songTitle && item.sections) {
+                    const key = item.songTitle.toUpperCase();
+                    if (songDatabase[key]) {
+                        const formattedLyrics = item.sections.map(s => `[${s.title || s.type}]\n${s.text || ''}`).join('\n\n');
+                        songDatabase[key].lyrics = formattedLyrics;
+                    }
+                }
+            });
+        });
+    }
+}
+
+// Automatically trigger sync when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPublicCmsSync);
+} else {
+    initPublicCmsSync();
+}
+
 
 
 

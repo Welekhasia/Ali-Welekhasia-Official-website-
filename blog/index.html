@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devotionals & Ministry Articles | Ali Welekhasia Music</title>
+    <meta name="description" content="Prophetic devotionals, teachings on worship, and spiritual articles by Minister Ali Welekhasia.">
+    <link rel="icon" type="image/jpeg" href="../hero.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Firebase SDK v10 Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+
+    <style>
+        .blog-page-hero {
+            padding: 120px 20px 40px;
+            background: linear-gradient(180deg, #070b14 0%, #0d1527 100%);
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .blog-page-hero h1 {
+            font-size: 36px;
+            color: #fff;
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+        }
+        .blog-page-hero p {
+            color: #d4af37;
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .blog-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .article-card {
+            background: #0e1626;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .article-card:hover {
+            transform: translateY(-2px);
+            border-color: #d4af37;
+        }
+        .article-card .tag-pill {
+            background: rgba(212, 175, 55, 0.15);
+            color: #fbbf24;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+        .article-card h2 {
+            font-size: 22px;
+            color: #fff;
+            margin-bottom: 8px;
+            font-family: 'Cinzel', serif;
+        }
+        .scripture-anchor {
+            color: #d4af37;
+            font-style: italic;
+            font-size: 14.5px;
+            margin-bottom: 14px;
+            display: block;
+        }
+        .article-excerpt {
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+        .article-author-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #64748b;
+            font-size: 13px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body style="background-color: #070b14; color: #fff;">
+
+    <!-- Navigation Header -->
+    <header class="main-header" style="position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding: 15px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <a href="../" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff;">
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #d4af37, #b89628); display: flex; align-items: center; justify-content: center; color: #070b14; font-size: 18px; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
+            <span style="font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700;">ALI WELEKHASIA</span>
+        </a>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <a href="../" style="color: #94a3b8; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-arrow-left"></i> Home</a>
+            <a href="../lyrics" style="color: #94a3b8; text-decoration: none; font-size: 14px;">Lyrics</a>
+            <a href="../live" style="color: #ef4444; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-tower-broadcast"></i> Live Stream</a>
+            <a href="../admin" style="background: rgba(212, 175, 55, 0.15); border: 1px solid #d4af37; color: #d4af37; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;"><i class="fa-solid fa-lock"></i> Admin CMS</a>
+        </div>
+    </header>
+
+    <div class="blog-page-hero">
+        <h1>Devotionals & Prophetic Reflections</h1>
+        <p>Words of faith, worship revelation, and spiritual encouragement from Minister Ali Welekhasia.</p>
+    </div>
+
+    <div class="blog-container">
+        <div id="publicBlogList">
+            <p style="text-align: center; color: #64748b; padding: 40px;">Loading devotionals...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPublicBlog();
+        });
+
+        function loadPublicBlog() {
+            if (window.RichaliFirebase && window.RichaliFirebase.database) {
+                const schema = window.RichaliFirebase.schema.aliwelekhasia;
+                window.RichaliFirebase.getDbRef(schema.blog).once('value', (snap) => {
+                    const data = snap.val() || {};
+                    const published = Object.values(data).filter(p => p.status === 'PUBLISHED' || !p.status);
+                    renderArticles(published);
+                });
+            } else {
+                renderDefaultBlogFallback();
+            }
+        }
+
+        function renderDefaultBlogFallback() {
+            const fallback = [
+                {
+                    title: "The Mystery of True Worship in Spirit and in Truth",
+                    category: "Worship Revelation",
+                    scripture: "John 4:23-24",
+                    excerpt: "Worship is not merely an artistic sequence or melody; it is the total surrender of the human will to the divine sovereignty of Jesus Christ.",
+                    content: "When we worship from the depth of a transformed heart, the atmosphere shifts and burdens are dissolved by the presence of the Holy Spirit.",
+                    author: "Evangelist Ali Welekhasia",
+                    date: "October 2026"
+                },
+                {
+                    title: "BADO: God is Not Finished With Your Life",
+                    category: "Prophetic Word",
+                    scripture: "Philippians 1:6",
+                    excerpt: "Being confident of this very thing, that He who began a good work in you will carry it on to completion until the day of Jesus Christ.",
+                    content: "No matter the delay or physical obstacles you encounter, the covenant of God stands firm. He is still working behind the scenes for your victory.",
+                    author: "Evangelist Ali Welekhasia",
+                    date: "October 2026"
+                }
+            ];
+            renderArticles(fallback);
+        }
+
+        function renderArticles(articles) {
+            const container = document.getElementById('publicBlogList');
+            if (articles.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: #94a3b8; padding: 40px;">No devotional articles published yet.</p>`;
+                return;
+            }
+
+            container.innerHTML = articles.map(a => `
+                <article class="article-card">
+                    <span class="tag-pill">${a.category || 'Devotional'}</span>
+                    <h2>${a.title}</h2>
+                    ${a.scripture ? `<span class="scripture-anchor"><i class="fa-solid fa-bible"></i> ${a.scripture}</span>` : ''}
+                    <div class="article-excerpt">${a.content || a.excerpt || ''}</div>
+                    <div class="article-author-row">
+                        <span>By ${a.author || 'Ali Welekhasia'}</span>
+                        <span>${a.date || 'Published'}</span>
+                    </div>
+                </article>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

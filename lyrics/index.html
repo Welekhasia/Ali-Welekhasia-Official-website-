@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gospel Song Lyrics | Ali Welekhasia Music</title>
+    <meta name="description" content="Official gospel song lyrics, verses, and choruses by Minister Ali Welekhasia. Anointed Swahili & Luhya worship.">
+    <link rel="icon" type="image/jpeg" href="../hero.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Firebase SDK v10 Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+
+    <style>
+        .public-page-header {
+            padding: 120px 20px 40px;
+            background: linear-gradient(180deg, #070b14 0%, #0d1527 100%);
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .public-page-header h1 {
+            font-size: 36px;
+            color: #fff;
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+        }
+        .public-page-header p {
+            color: #d4af37;
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .lyrics-directory-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 30px;
+        }
+
+        .song-selector-sidebar {
+            background: #0e1626;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            height: fit-content;
+        }
+        .song-selector-sidebar h3 {
+            color: #fff;
+            font-size: 18px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .lyrics-song-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: #94a3b8;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 6px;
+        }
+        .lyrics-song-item:hover, .lyrics-song-item.active {
+            background: rgba(212, 175, 55, 0.15);
+            color: #fbbf24;
+            border-left: 3px solid #d4af37;
+        }
+        .lyrics-song-item img {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        .lyrics-view-panel {
+            background: #0e1626;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 36px;
+        }
+        .lyrics-header-box {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .lyrics-header-thumb {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid #d4af37;
+        }
+        .lyrics-header-info h2 {
+            font-size: 28px;
+            color: #fff;
+            margin-bottom: 4px;
+            font-family: 'Cinzel', serif;
+        }
+        .lyrics-header-info .artist-name {
+            color: #d4af37;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .lyrics-meta-pill {
+            background: rgba(212, 175, 55, 0.1);
+            color: #d4af37;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 8px;
+            display: inline-block;
+        }
+
+        .lyrics-section-block {
+            margin-bottom: 30px;
+        }
+        .section-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-lines {
+            font-size: 16px;
+            line-height: 1.9;
+            color: #f1f5f9;
+            white-space: pre-line;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .btn-copy-lyrics {
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-copy-lyrics:hover {
+            background: #d4af37;
+            color: #070b14;
+        }
+
+        @media (max-width: 860px) {
+            .lyrics-directory-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body style="background-color: #070b14; color: #fff;">
+
+    <!-- Navigation Header -->
+    <header class="main-header" style="position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding: 15px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <a href="../" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff;">
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #d4af37, #b89628); display: flex; align-items: center; justify-content: center; color: #070b14; font-size: 18px; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
+            <span style="font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700; letter-spacing: 0.5px;">ALI WELEKHASIA</span>
+        </a>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <a href="../" style="color: #94a3b8; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-arrow-left"></i> Home</a>
+            <a href="../live" style="color: #ef4444; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-tower-broadcast"></i> Live Stream</a>
+            <a href="../admin" style="background: rgba(212, 175, 55, 0.15); border: 1px solid #d4af37; color: #d4af37; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;"><i class="fa-solid fa-lock"></i> Admin CMS</a>
+        </div>
+    </header>
+
+    <div class="public-page-header">
+        <h1>Gospel Song Lyrics</h1>
+        <p>Anointed worship melodies, prayer confessions, and praise lyrics to glorify Jesus Christ.</p>
+    </div>
+
+    <div class="lyrics-directory-container">
+        <!-- Sidebar: Song List -->
+        <aside class="song-selector-sidebar">
+            <h3><i class="fa-solid fa-music" style="color: #d4af37;"></i> Songs Catalogue</h3>
+            <div id="lyricsSongList">
+                <p style="color: #64748b; font-size: 13px; text-align: center; padding: 20px;">Loading song catalogue...</p>
+            </div>
+        </aside>
+
+        <!-- Main View: Lyrics Display -->
+        <main class="lyrics-view-panel">
+            <div id="lyricsContentArea">
+                <!-- Header with cover, title, artist, audio player, copy button -->
+                <div class="lyrics-header-box">
+                    <img id="activeSongArtwork" src="../images/hero.jpg" class="lyrics-header-thumb" alt="Song Artwork" onerror="this.src='../images/hero.jpg'">
+                    <div class="lyrics-header-info" style="flex: 1;">
+                        <h2 id="activeSongTitle">ZAWADI</h2>
+                        <div class="artist-name" id="activeSongArtist">Ali Welekhasia</div>
+                        <div class="lyrics-meta-pill" id="activeSongMeta">Swahili Worship Ballad</div>
+                    </div>
+                    <div>
+                        <button class="btn-copy-lyrics" onclick="copyActiveSongLyrics()">
+                            <i class="fa-regular fa-copy"></i> Copy Lyrics
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Audio player if present -->
+                <div id="audioPlayerContainer" style="display: none; margin-bottom: 24px;">
+                    <audio id="publicAudioPlayer" controls style="width: 100%; border-radius: 8px;"></audio>
+                </div>
+
+                <!-- Lyrics Sections -->
+                <div id="lyricsRenderedSections">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const PublicLyrics = {
+            songs: {},
+            lyrics: {},
+            activeSongId: null
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initPublicLyrics();
+        });
+
+        function initPublicLyrics() {
+            // Check query param e.g. /lyrics?song=song_zawadi
+            const params = new URLSearchParams(window.location.search);
+            const querySong = params.get('song');
+
+            if (window.RichaliFirebase && window.RichaliFirebase.database) {
+                const schema = window.RichaliFirebase.schema.aliwelekhasia;
+                
+                // Fetch Songs
+                window.RichaliFirebase.getDbRef(schema.songs).once('value', (snap) => {
+                    PublicLyrics.songs = snap.val() || {};
+                    
+                    // Fetch Lyrics
+                    window.RichaliFirebase.getDbRef(schema.lyrics).once('value', (lyricsSnap) => {
+                        PublicLyrics.lyrics = lyricsSnap.val() || {};
+                        renderSongSelectorList(querySong);
+                    });
+                });
+            } else {
+                // Curated fallback
+                PublicLyrics.songs = {
+                    "song_zawadi": { id: "song_zawadi", title: "ZAWADI", artist: "Ali Welekhasia", artworkUrl: "../images/hero.jpg", genre: "Worship Ballad", status: "PUBLISHED" },
+                    "song_ni_wewe": { id: "song_ni_wewe", title: "NI WEWE", artist: "Ali Welekhasia", artworkUrl: "https://img.youtube.com/vi/BLkpibP7XAU/hqdefault.jpg", genre: "Worship Anthem", status: "PUBLISHED" },
+                    "song_bado": { id: "song_bado", title: "BADO", artist: "Ali Welekhasia", artworkUrl: "https://img.youtube.com/vi/TQxObs0FZ3w/hqdefault.jpg", genre: "Prophetic Praise", status: "PUBLISHED" }
+                };
+                renderSongSelectorList(querySong);
+            }
+        }
+
+        function renderSongSelectorList(selectedSongId) {
+            const listContainer = document.getElementById('lyricsSongList');
+            const songs = Object.values(PublicLyrics.songs).filter(s => s.status === 'PUBLISHED' || !s.status);
+
+            if (songs.length === 0) {
+                listContainer.innerHTML = `<p style="color: #64748b; font-size: 13px;">No published songs found.</p>`;
+                return;
+            }
+
+            listContainer.innerHTML = songs.map(s => `
+                <div class="lyrics-song-item ${selectedSongId === s.id ? 'active' : ''}" onclick="selectSong('${s.id}')">
+                    <img src="${s.artworkUrl || '../images/hero.jpg'}" alt="${s.title}" onerror="this.src='../images/hero.jpg'">
+                    <div>
+                        <div style="font-weight: 600; color: #fff; font-size: 14px;">${s.title}</div>
+                        <div style="font-size: 11.5px; color: #94a3b8;">${s.genre || 'Gospel'}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Select default song
+            const targetId = selectedSongId && PublicLyrics.songs[selectedSongId] 
+                ? selectedSongId 
+                : songs[0].id;
+            selectSong(targetId);
+        }
+
+        function selectSong(songId) {
+            PublicLyrics.activeSongId = songId;
+            const song = PublicLyrics.songs[songId];
+            if (!song) return;
+
+            // Highlight sidebar item
+            document.querySelectorAll('.lyrics-song-item').forEach(item => item.classList.remove('active'));
+
+            document.getElementById('activeSongTitle').innerText = song.title;
+            document.getElementById('activeSongArtist').innerText = song.artist || 'Ali Welekhasia';
+            document.getElementById('activeSongMeta').innerText = `${song.genre || 'Worship'} • ${song.album || 'Single'}`;
+            if (song.artworkUrl) document.getElementById('activeSongArtwork').src = song.artworkUrl;
+
+            // Audio Player
+            const playerBox = document.getElementById('audioPlayerContainer');
+            const player = document.getElementById('publicAudioPlayer');
+            if (song.audioUrl) {
+                player.src = song.audioUrl;
+                playerBox.style.display = 'block';
+            } else {
+                playerBox.style.display = 'none';
+            }
+
+            // Render lyrics sections
+            const lyricsData = PublicLyrics.lyrics[songId];
+            const sectionsContainer = document.getElementById('lyricsRenderedSections');
+
+            if (lyricsData && lyricsData.sections && lyricsData.sections.length > 0) {
+                sectionsContainer.innerHTML = lyricsData.sections.map(sec => `
+                    <div class="lyrics-section-block">
+                        <div class="section-label"><i class="fa-solid fa-bookmark"></i> ${sec.title || sec.type}</div>
+                        <div class="section-lines">${sec.text || ''}</div>
+                    </div>
+                `).join('');
+            } else {
+                // Fallback default message
+                sectionsContainer.innerHTML = `
+                    <div class="lyrics-section-block">
+                        <div class="section-label"><i class="fa-solid fa-music"></i> Verse 1</div>
+                        <div class="section-lines">Hallelujah, utukufu na heshima ni Zako Bwana.\nUinuliwe daima, milele na milele.\nWastahili sifa za moyo wangu.</div>
+                    </div>
+                    <div class="lyrics-section-block">
+                        <div class="section-label"><i class="fa-solid fa-star"></i> Chorus</div>
+                        <div class="section-lines">Ni Wewe, ni Wewe Bwana,\nWa ajabu, wa rehema,\nHakuna mwingine kama Wewe,\nYesu wangu, Mwokozi wangu.</div>
+                    </div>
+                `;
+            }
+        }
+
+        function copyActiveSongLyrics() {
+            const title = document.getElementById('activeSongTitle').innerText;
+            const lines = document.getElementById('lyricsRenderedSections').innerText;
+            const full = `${title} - Ali Welekhasia\n\n${lines}\n\n© Ali Welekhasia Gospel Music`;
+
+            navigator.clipboard.writeText(full).then(() => {
+                alert('Lyrics copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>

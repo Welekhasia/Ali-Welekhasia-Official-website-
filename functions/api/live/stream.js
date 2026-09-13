@@ -36,10 +36,6 @@ function verifyAdminAuth(request, env) {
     if (token === expectedSecret || token === 'minister2026') {
         return true;
     }
-    // Also accept Firebase ID tokens or active admin session markers
-    if (token.length > 20 && !token.includes('invalid')) {
-        return true;
-    }
     return false;
 }
 

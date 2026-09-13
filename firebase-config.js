@@ -48,11 +48,18 @@ const RICHALI_SCHEMA = {
         crusades: "aliwelekhasia/crusades",
         devotionals: "aliwelekhasia/devotionals",
         songs: "aliwelekhasia/songs",
+        lyrics: "aliwelekhasia/lyrics",
+        albums: "aliwelekhasia/albums",
         videos: "aliwelekhasia/videos",
         gallery: "aliwelekhasia/gallery",
+        events: "aliwelekhasia/events",
+        blog: "aliwelekhasia/blog",
         testimonies: "aliwelekhasia/testimonies",
         donations: "aliwelekhasia/donations",
         prayerRequests: "aliwelekhasia/prayer_requests",
+        media: "aliwelekhasia/media",
+        users: "aliwelekhasia/users",
+        auditLogs: "aliwelekhasia/audit_logs",
         siteImages: "aliwelekhasia/site_images",
         settings: "aliwelekhasia/settings",
         liveStream: "aliwelekhasia/live_stream",
@@ -281,6 +288,28 @@ class RichaliFirebaseManager {
     }
 
     /**
+     * Update data at a specific path
+     */
+    async updateData(path, data) {
+        const ref = this.getDbRef(path);
+        if (!ref) return null;
+        return await ref.update({
+            ...data,
+            _updatedAt: new Date().toISOString(),
+            _site: 'aliwelekhasia.co.ke'
+        });
+    }
+
+    /**
+     * Remove data at a specific path
+     */
+    async removeData(path) {
+        const ref = this.getDbRef(path);
+        if (!ref) return null;
+        return await ref.remove();
+    }
+
+    /**
      * Get a Cloud Storage reference
      * Example: RichaliFirebase.getStorageRef('artwork/album_art.jpg')
      */
@@ -293,15 +322,16 @@ class RichaliFirebaseManager {
     }
 
     /**
-     * Upload a file or blob to Firebase Storage in a partitioned folder
+     * Upload a file or blob to Firebase Storage with explicit progress callback
      */
-    async uploadFile(path, fileOrBlob, metadata = {}) {
+    async uploadFileWithProgress(path, fileOrBlob, onProgress = null, metadata = {}) {
         const ref = this.getStorageRef(path);
-        if (!ref) throw new Error('Firebase Storage is not initialized.');
+        if (!ref) throw new Error('Firebase Storage is not initialized or configured in this project.');
         
         const uploadTask = ref.put(fileOrBlob, {
             customMetadata: {
                 uploadedFrom: 'aliwelekhasia.co.ke',
+                uploadedAt: new Date().toISOString(),
                 ...metadata
             }
         });
@@ -310,9 +340,12 @@ class RichaliFirebaseManager {
             uploadTask.on(
                 'state_changed',
                 (snapshot) => {
-                    // Upload progress
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log(`[RichaliFirebase] Upload progress: ${Math.round(progress)}%`);
+                    const progress = snapshot.totalBytes > 0 
+                        ? (snapshot.bytesTransferred / snapshot.totalBytes) * 100 
+                        : 0;
+                    if (typeof onProgress === 'function') {
+                        onProgress(Math.round(progress), snapshot);
+                    }
                 },
                 (error) => {
                     console.error('[RichaliFirebase] Storage upload error:', error);
@@ -324,11 +357,45 @@ class RichaliFirebaseManager {
                         downloadUrl,
                         path,
                         name: ref.name,
-                        fullPath: ref.fullPath
+                        fullPath: ref.fullPath,
+                        size: fileOrBlob.size || 0,
+                        type: fileOrBlob.type || ''
                     });
                 }
             );
         });
+    }
+
+    /**
+     * Upload a file or blob to Firebase Storage in a partitioned folder
+     */
+    async uploadFile(path, fileOrBlob, metadata = {}) {
+        return this.uploadFileWithProgress(path, fileOrBlob, null, metadata);
+    }
+
+    /**
+     * Record an audit log entry in Realtime Database
+     */
+    async logAudit(action, resource, resourceId = null, details = {}) {
+        try {
+            const user = this.currentUser;
+            const logEntry = {
+                timestamp: firebase.database.ServerValue ? firebase.database.ServerValue.TIMESTAMP : Date.now(),
+                isoDate: new Date().toISOString(),
+                userId: user ? user.uid : 'admin_session',
+                userEmail: user ? user.email : (localStorage.getItem('ali_admin_user_email') || 'ali.werekhasia01@gmail.com'),
+                action,
+                resource,
+                resourceId: resourceId || null,
+                details: details || {}
+            };
+            const ref = this.getDbRef(this.schema.aliwelekhasia.auditLogs);
+            if (ref) {
+                await ref.push(logEntry);
+            }
+        } catch (e) {
+            console.warn('[RichaliFirebase] Audit log notice:', e);
+        }
     }
 
     /**

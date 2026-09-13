@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revival Crusades & Events | Ali Welekhasia Music</title>
+    <meta name="description" content="Upcoming gospel crusades, revival meetings, and worship nights with Minister Ali Welekhasia.">
+    <link rel="icon" type="image/jpeg" href="../hero.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Firebase SDK v10 Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+
+    <style>
+        .events-page-hero {
+            padding: 120px 20px 40px;
+            background: linear-gradient(180deg, #070b14 0%, #0d1527 100%);
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .events-page-hero h1 {
+            font-size: 36px;
+            color: #fff;
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+        }
+        .events-page-hero p {
+            color: #d4af37;
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .events-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .event-listing-card {
+            background: #0e1626;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            margin-bottom: 20px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .event-listing-card:hover {
+            transform: translateY(-3px);
+            border-color: #d4af37;
+        }
+        .event-date-badge {
+            min-width: 90px;
+            padding: 14px;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid #d4af37;
+            border-radius: 10px;
+            text-align: center;
+            color: #fbbf24;
+        }
+        .event-date-badge .day {
+            font-size: 26px;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .event-date-badge .month {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .event-details-area {
+            flex: 1;
+        }
+        .event-details-area h3 {
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .event-meta-row {
+            display: flex;
+            gap: 16px;
+            color: #94a3b8;
+            font-size: 13.5px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .event-meta-row span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .event-meta-row span i {
+            color: #d4af37;
+        }
+
+        @media (max-width: 650px) {
+            .event-listing-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body style="background-color: #070b14; color: #fff;">
+
+    <!-- Navigation Header -->
+    <header class="main-header" style="position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding: 15px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <a href="../" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff;">
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #d4af37, #b89628); display: flex; align-items: center; justify-content: center; color: #070b14; font-size: 18px; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
+            <span style="font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700;">ALI WELEKHASIA</span>
+        </a>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <a href="../" style="color: #94a3b8; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-arrow-left"></i> Home</a>
+            <a href="../lyrics" style="color: #94a3b8; text-decoration: none; font-size: 14px;">Lyrics</a>
+            <a href="../live" style="color: #ef4444; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-tower-broadcast"></i> Live Stream</a>
+            <a href="../admin" style="background: rgba(212, 175, 55, 0.15); border: 1px solid #d4af37; color: #d4af37; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;"><i class="fa-solid fa-lock"></i> Admin CMS</a>
+        </div>
+    </header>
+
+    <div class="events-page-hero">
+        <h1>Revival Crusades & Events</h1>
+        <p>Join Minister Ali Welekhasia live in open-air crusades, worship nights, and prophetic revival conferences.</p>
+    </div>
+
+    <div class="events-container">
+        <div id="publicEventsList">
+            <p style="text-align: center; color: #64748b; padding: 40px;">Loading upcoming crusades...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPublicEvents();
+        });
+
+        function loadPublicEvents() {
+            if (window.RichaliFirebase && window.RichaliFirebase.database) {
+                const schema = window.RichaliFirebase.schema.aliwelekhasia;
+                window.RichaliFirebase.getDbRef(schema.events).once('value', (snap) => {
+                    const data = snap.val() || {};
+                    const published = Object.values(data).filter(e => e.status === 'PUBLISHED' || !e.status);
+                    renderEvents(published);
+                });
+            } else {
+                renderDefaultEventsFallback();
+            }
+        }
+
+        function renderDefaultEventsFallback() {
+            const fallback = [
+                {
+                    title: "Eldoret Prophetic Worship & Healing Crusade",
+                    date: "2026-10-15",
+                    time: "4:00 PM - 9:00 PM EAT",
+                    venue: "Eldoret 64 Stadium Grounds",
+                    location: "Eldoret, Kenya",
+                    description: "Three consecutive days of deep praise, divine healing, and the tangible power of God."
+                },
+                {
+                    title: "Nairobi All-Night Worship Vigil",
+                    date: "2026-11-20",
+                    time: "8:00 PM - 5:00 AM EAT",
+                    venue: "KICC Plenary Hall",
+                    location: "Nairobi, Kenya",
+                    description: "Lifting incense of prayer and pure gospel worship over Kenya and East Africa."
+                }
+            ];
+            renderEvents(fallback);
+        }
+
+        function renderEvents(events) {
+            const container = document.getElementById('publicEventsList');
+            if (events.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: #94a3b8; padding: 40px;">No upcoming crusade dates announced. Check back soon!</p>`;
+                return;
+            }
+
+            container.innerHTML = events.map(e => {
+                const eventDate = e.date ? new Date(e.date) : new Date();
+                const day = eventDate.getDate() || '15';
+                const month = eventDate.toLocaleDateString('en-US', { month: 'short' }) || 'OCT';
+
+                return `
+                    <div class="event-listing-card">
+                        <div class="event-date-badge">
+                            <div class="day">${day}</div>
+                            <div class="month">${month}</div>
+                        </div>
+                        <div class="event-details-area">
+                            <h3>${e.title}</h3>
+                            <div class="event-meta-row">
+                                <span><i class="fa-regular fa-clock"></i> ${e.time || 'Evening'}</span>
+                                <span><i class="fa-solid fa-location-dot"></i> ${e.venue || 'TBA'}, ${e.location || 'Kenya'}</span>
+                            </div>
+                            <p style="color: #cbd5e1; font-size: 14px; line-height: 1.5;">${e.description || ''}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>

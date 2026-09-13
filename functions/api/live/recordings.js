@@ -25,7 +25,7 @@ function verifyAdminAuth(request, env) {
     if (!authHeader.startsWith('Bearer ')) return false;
     const token = authHeader.replace('Bearer ', '').trim();
     const expectedSecret = env.ADMIN_API_SECRET || env.ADMIN_SECRET || 'ali-welekhasia-admin-auth-2026';
-    return (token === expectedSecret || token === 'minister2026' || token.length > 20);
+    return (token === expectedSecret || token === 'minister2026');
 }
 
 export async function onRequestOptions() {

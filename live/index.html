@@ -1273,17 +1273,27 @@
             container.scrollTop = container.scrollHeight;
         }
 
+        let lastChatSubmitTime = 0;
+
         async function handleLiveChatSubmit(e) {
             e.preventDefault();
             const authorInput = document.getElementById('chatAuthorInput');
             const msgInput = document.getElementById('chatMessageInput');
             const isPrayerCheck = document.getElementById('chatIsPrayerCheck');
 
-            const author = authorInput.value.trim();
-            const message = msgInput.value.trim();
+            const author = authorInput.value.trim().substring(0, 40);
+            const message = msgInput.value.trim().substring(0, 300);
             const isPrayer = isPrayerCheck ? isPrayerCheck.checked : false;
 
             if (!author || !message) return;
+
+            // Anti-spam throttle: 3 seconds between posts
+            const now = Date.now();
+            if (now - lastChatSubmitTime < 3000) {
+                alert('Please wait a few seconds before sending another message.');
+                return;
+            }
+            lastChatSubmitTime = now;
 
             if (window.RichaliFirebase && typeof window.RichaliFirebase.sendLiveChatMessage === 'function') {
                 await window.RichaliFirebase.sendLiveChatMessage(author, message, isPrayer);

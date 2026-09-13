@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin CMS Dashboard | Ali Welekhasia Music</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/jpeg" href="../hero.jpg">
+    <!-- FontAwesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Admin Styling -->
+    <link rel="stylesheet" href="admin.css">
+
+    <!-- Firebase SDK v10 Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+</head>
+<body class="admin-body">
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="adminLoginScreen" class="admin-login-screen">
+        <div class="admin-login-card">
+            <div class="login-brand-logo">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+            <h2 style="color: #fff; font-size: 22px; font-weight: 700; margin-bottom: 6px;">Ministry CMS Portal</h2>
+            <p style="color: var(--adm-text-muted); font-size: 13.5px; margin-bottom: 24px;">Ali Welekhasia Gospel Music Platform</p>
+
+            <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+                <div class="adm-form-group" style="text-align: left; margin-bottom: 16px;">
+                    <label for="loginEmail">Admin Email / Username</label>
+                    <input type="text" id="loginEmail" class="adm-form-control" placeholder="ali.werekhasia01@gmail.com" required autocomplete="username">
+                </div>
+                <div class="adm-form-group" style="text-align: left; margin-bottom: 16px;">
+                    <label for="loginPassword">Secure Password</label>
+                    <input type="password" id="loginPassword" class="adm-form-control" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 13px;">
+                    <label style="display: flex; align-items: center; gap: 8px; color: var(--adm-text-muted); cursor: pointer;">
+                        <input type="checkbox" id="loginRemember" checked> Keep me signed in
+                    </label>
+                    <a href="../" style="color: var(--adm-gold); text-decoration: none;">Return to Website</a>
+                </div>
+                <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px;">
+                    <i class="fa-solid fa-right-to-bracket"></i> Sign In to CMS
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. ADMIN MAIN APPLICATION -->
+    <div id="adminDashboardApp" class="admin-wrapper" style="display: none;">
+        
+        <!-- Mobile Sidebar Backdrop -->
+        <div id="sidebarBackdrop" class="sidebar-backdrop" onclick="closeMobileSidebar()"></div>
+
+        <!-- SIDEBAR -->
+        <aside id="adminSidebar" class="admin-sidebar">
+            <div class="sidebar-header">
+                <a href="#overview" class="brand-logo-area">
+                    <div class="brand-icon"><i class="fa-solid fa-crown"></i></div>
+                    <div class="brand-text">
+                        <h2>ALI WELEKHASIA</h2>
+                        <span>Music CMS</span>
+                    </div>
+                </a>
+                <button class="sidebar-close-btn" onclick="closeMobileSidebar()" aria-label="Close Sidebar">&times;</button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">Core Management</div>
+                <button type="button" class="nav-item-btn active" data-tab="overview" onclick="switchTab('overview')">
+                    <i class="fa-solid fa-gauge-high"></i> Overview
+                </button>
+                <button type="button" class="nav-item-btn" data-tab="songs" onclick="switchTab('songs')">
+                    <i class="fa-solid fa-music"></i> Songs
+                </button>
+                <button type="button" class="nav-item-btn" data-tab="lyrics" onclick="switchTab('lyrics')">
+                    <i class="fa-solid fa-file-lines"></i> Lyrics Editor
+                </button>
+                <button type="button" class="nav-item-btn" data-tab="gallery" onclick="switchTab('gallery')">
+                    <i class="fa-solid fa-images"></i> Pictures / Gallery
+                </button>
+                <button type="button" class="nav-item-btn" data-tab="videos" onclick="switchTab('videos')">
+                    <i class="fa-solid fa-video"></i> Videos
+                </button>
+                <button type="button" class="nav-item-btn" data-tab="events" onclick="switchTab('events')">
+                    <i class="fa-solid fa-calendar-days"></i> Events & Crusades
+                </button>
+                <button type="button" class="nav-item-btn" data-tab="blog" onclick="switchTab('blog')">
+                    <i class="fa-solid fa-book-bible"></i> Blog / Devotionals
+                </button>
+                
+                <div class="nav-section-title">Ministry & Community</div>
+                <button type="button" class="nav-item-btn" data-tab="prayers" onclick="switchTab('prayers')">
+                    <i class="fa-solid fa-hands-praying"></i> Prayer Requests
+                </button>
+                <button type="button" class="nav-item-btn" data-tab="testimonials" onclick="switchTab('testimonials')">
+                    <i class="fa-solid fa-quote-left"></i> Testimonials
+                </button>
+                <button type="button" class="nav-item-btn" data-tab="live" onclick="switchTab('live')">
+                    <i class="fa-solid fa-tower-broadcast"></i> Live Streaming
+                </button>
+                <button type="button" class="nav-item-btn" data-tab="media" onclick="switchTab('media')">
+                    <i class="fa-solid fa-photo-film"></i> Media Library
+                </button>
+
+                <div class="nav-section-title">System & Governance</div>
+                <button type="button" class="nav-item-btn" data-tab="users" onclick="switchTab('users')">
+                    <i class="fa-solid fa-users-gear"></i> Users & Roles
+                </button>
+                <button type="button" class="nav-item-btn" data-tab="audit-logs" onclick="switchTab('audit-logs')">
+                    <i class="fa-solid fa-clipboard-list"></i> Audit Logs
+                </button>
+                <button type="button" class="nav-item-btn" data-tab="settings" onclick="switchTab('settings')">
+                    <i class="fa-solid fa-sliders"></i> Site Settings
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-snippet">
+                    <div class="user-avatar-circle">AW</div>
+                    <div class="user-details">
+                        <div class="user-name" id="sidebarUserEmail">ali.werekhasia01@gmail.com</div>
+                        <span class="user-role-badge" id="sidebarUserRole">SUPER ADMIN</span>
+                    </div>
+                </div>
+                <div class="sidebar-actions-row">
+                    <a href="../" target="_blank" class="btn-sidebar-sub" title="View Public Website">
+                        <i class="fa-solid fa-globe"></i> Website
+                    </a>
+                    <button type="button" class="btn-sidebar-sub" onclick="handleAdminLogout()" title="Sign Out">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN AREA -->
+        <main class="admin-main">
+            <!-- Topbar -->
+            <header class="admin-topbar">
+                <div class="topbar-left">
+                    <button type="button" class="menu-toggle-btn" onclick="toggleMobileSidebar()" aria-label="Toggle Sidebar Navigation">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="page-breadcrumb">
+                        <span>CMS</span> / <div id="topbarBreadcrumbText">Dashboard</div>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="system-status-pill">
+                        <div class="dot"></div> Firebase Online
+                    </div>
+                    <button type="button" class="btn btn-sm btn-gold" onclick="openAddSongModal()">
+                        <i class="fa-solid fa-plus"></i> + Add Song
+                    </button>
+                    <a href="../" class="btn-topbar-action" title="Open Public Website">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Public Site
+                    </a>
+                </div>
+            </header>
+
+            <!-- 3. CONTENT VIEWS (15 Tabs) -->
+            <div class="admin-content-view">
+                
+                <!-- TAB 1: OVERVIEW -->
+                <section id="tabView_overview" class="tab-view-container">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-gauge-high"></i> Ministry Platform Overview</h1>
+                            <p>Real-time database statistics and publication status across all digital ministry content.</p>
+                        </div>
+                    </div>
+
+                    <!-- Metric Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-music"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-label">Total Songs</div>
+                                <div class="stat-value" id="statTotalSongs">0</div>
+                                <div class="stat-sub"><span id="statPublishedSongs">0</span> published • <span id="statDraftSongs">0</span> draft</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-images"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-label">Pictures / Gallery</div>
+                                <div class="stat-value" id="statTotalPictures">0</div>
+                                <div class="stat-sub">Ministry & Crusade Photos</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-video"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-label">Videos</div>
+                                <div class="stat-value" id="statTotalVideos">0</div>
+                                <div class="stat-sub">Music & Worship Sermons</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-label">Upcoming Events</div>
+                                <div class="stat-value" id="statUpcomingEvents">0</div>
+                                <div class="stat-sub">Crusades & Revival Dates</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-book-bible"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-label">Devotionals</div>
+                                <div class="stat-value" id="statTotalBlog">0</div>
+                                <div class="stat-sub">Published Ministry Words</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-hands-praying"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-label">Prayer Requests</div>
+                                <div class="stat-value" id="statPendingPrayers">0</div>
+                                <div class="stat-sub">Awaiting Pastor Impartation</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Songs Table -->
+                    <div class="admin-card">
+                        <div class="card-header-bar">
+                            <h3><i class="fa-solid fa-clock-rotate-left"></i> Recently Added Gospel Songs</h3>
+                            <button type="button" class="btn btn-sm btn-outline" onclick="switchTab('songs')">View All Songs</button>
+                        </div>
+                        <div class="card-body" style="padding: 0;">
+                            <div class="table-responsive-container">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Song Title</th>
+                                            <th>Genre</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="overviewRecentSongsTable">
+                                        <!-- Rendered by admin.js -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 2: SONGS MANAGEMENT -->
+                <section id="tabView_songs" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-music"></i> Songs Catalogue Management</h1>
+                            <p>Manage audio releases, cover artwork, streaming platform links, and publishing statuses.</p>
+                        </div>
+                        <div class="header-actions">
+                            <button type="button" class="btn btn-gold" onclick="openAddSongModal()">
+                                <i class="fa-solid fa-plus"></i> + Add New Song
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="admin-toolbar">
+                        <div class="toolbar-left">
+                            <div class="search-input-wrap">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="songsSearchInput" placeholder="Search song title or artist..." oninput="renderSongsTable()">
+                            </div>
+                            <select id="songsStatusFilter" class="filter-select" onchange="renderSongsTable()">
+                                <option value="ALL">All Statuses</option>
+                                <option value="PUBLISHED">Published Only</option>
+                                <option value="DRAFT">Drafts Only</option>
+                                <option value="ARCHIVED">Archived</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Song Title & Artist</th>
+                                    <th>Album</th>
+                                    <th>Genre</th>
+                                    <th>Key</th>
+                                    <th>Status</th>
+                                    <th>Media</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="songsTableBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB 3: PROFESSIONAL LYRICS EDITOR -->
+                <section id="tabView_lyrics" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-file-lines"></i> Professional Lyrics Editor</h1>
+                            <p>Build structured section-by-section lyrics (Verse, Chorus, Bridge) with preserved line formatting.</p>
+                        </div>
+                        <div class="header-actions">
+                            <button type="button" class="btn btn-outline" onclick="saveLyrics('DRAFT')">
+                                <i class="fa-solid fa-file-arrow-down"></i> Save Draft
+                            </button>
+                            <button type="button" class="btn btn-gold" onclick="saveLyrics('PUBLISHED')">
+                                <i class="fa-solid fa-check"></i> Publish Lyrics
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <div class="card-header-bar">
+                            <div style="display: flex; align-items: center; gap: 14px; flex: 1; flex-wrap: wrap;">
+                                <label for="lyricsSongSelector" style="font-weight: 600; color: #fff; font-size: 14px;">Select Song:</label>
+                                <select id="lyricsSongSelector" class="filter-select" style="min-width: 260px;" onchange="onLyricsSongSelectChanged()">
+                                    <!-- Populated dynamically -->
+                                </select>
+                                <span id="lyricsLastSavedStamp" style="font-size: 12px; color: var(--adm-text-subtle); margin-left: auto;"></span>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div id="lyricsSectionsContainer">
+                                <!-- Rendered section cards -->
+                            </div>
+
+                            <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; padding-top: 16px; border-top: 1px solid var(--adm-border-subtle);">
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="addLyricsSection('VERSE')">
+                                    <i class="fa-solid fa-plus"></i> Add Verse
+                                </button>
+                                <button type="button" class="btn btn-gold btn-sm" onclick="addLyricsSection('CHORUS')">
+                                    <i class="fa-solid fa-plus"></i> Add Chorus
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="addLyricsSection('PRE-CHORUS')">
+                                    <i class="fa-solid fa-plus"></i> Add Pre-Chorus
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="addLyricsSection('BRIDGE')">
+                                    <i class="fa-solid fa-plus"></i> Add Bridge
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="addLyricsSection('INTRO')">
+                                    <i class="fa-solid fa-plus"></i> Add Intro
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="addLyricsSection('OUTRO')">
+                                    <i class="fa-solid fa-plus"></i> Add Outro
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 4: GALLERY CMS -->
+                <section id="tabView_gallery" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-images"></i> Pictures & Gallery Management</h1>
+                            <p>Upload and organize high-resolution crusade and ministry photo albums.</p>
+                        </div>
+                        <div class="header-actions">
+                            <button type="button" class="btn btn-gold" onclick="openUploadPictureModal()">
+                                <i class="fa-solid fa-upload"></i> + Upload Pictures
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="admin-toolbar">
+                        <select id="galleryCategoryFilter" class="filter-select" onchange="renderGalleryGrid()">
+                            <option value="ALL">All Categories</option>
+                            <option value="Ministry">Ministry & Worship</option>
+                            <option value="Crusades">Crusades & Outreaches</option>
+                            <option value="Church">Church & Fellowship</option>
+                            <option value="Studio">Studio & Behind The Scenes</option>
+                        </select>
+                    </div>
+
+                    <div id="galleryGridContainer" class="media-library-grid">
+                        <!-- Populated dynamically -->
+                    </div>
+                </section>
+
+                <!-- TAB 5: VIDEOS CMS -->
+                <section id="tabView_videos" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-video"></i> Video Library CMS</h1>
+                            <p>Embed official gospel music videos, crusade broadcasts, and sermon impartations.</p>
+                        </div>
+                        <div class="header-actions">
+                            <button type="button" class="btn btn-gold" onclick="openAddVideoModal()">
+                                <i class="fa-solid fa-plus"></i> + Add Video
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="videosGridContainer" class="media-library-grid">
+                        <!-- Populated dynamically -->
+                    </div>
+                </section>
+
+                <!-- TAB 6: EVENTS CMS -->
+                <section id="tabView_events" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-calendar-days"></i> Events & Crusades Management</h1>
+                            <p>Publish upcoming gospel revivals, praise nights, and ministry conferences.</p>
+                        </div>
+                        <div class="header-actions">
+                            <button type="button" class="btn btn-gold" onclick="openAddEventModal()">
+                                <i class="fa-solid fa-plus"></i> + Add Event
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Event Title</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="eventsTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB 7: BLOG / DEVOTIONALS -->
+                <section id="tabView_blog" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-book-bible"></i> Devotionals & Articles</h1>
+                            <p>Author and publish spiritual reflections, prophetic sermons, and Bible studies.</p>
+                        </div>
+                        <div class="header-actions">
+                            <button type="button" class="btn btn-gold" onclick="openAddBlogModal()">
+                                <i class="fa-solid fa-plus"></i> + New Devotional
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Article Title & Scripture</th>
+                                    <th>Category</th>
+                                    <th>Author</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="blogTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB 8: PRAYER REQUESTS -->
+                <section id="tabView_prayers" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-hands-praying"></i> Prayer Requests Registry</h1>
+                            <p>Confidential prayer needs submitted by believers. Contact info is protected for pastoral use only.</p>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Believer Name & Contact</th>
+                                    <th>Prayer Need</th>
+                                    <th>Submitted Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="prayersTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB 9: TESTIMONIALS -->
+                <section id="tabView_testimonials" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-quote-left"></i> Testimonials & Praise Reports</h1>
+                            <p>Verify and feature miracles, praise testimonies, and healing reports from the ministry.</p>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Name & Location</th>
+                                    <th>Testimony</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="testimonialsTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB 10: LIVE STREAMING -->
+                <section id="tabView_live" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-tower-broadcast" style="color: #ef4444;"></i> Cloudflare Live Broadcast Control</h1>
+                            <p>Monitor live streams, broadcaster ingest endpoints, and real-time church attendance.</p>
+                        </div>
+                        <div class="header-actions">
+                            <a href="../live" target="_blank" class="btn btn-gold">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Public /live Page
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <div class="card-header-bar">
+                            <h3><i class="fa-solid fa-signal"></i> Ingest & Live Channel Status</h3>
+                            <span id="liveControlStatus" style="font-size: 13px; font-weight: 600;">Checking status...</span>
+                        </div>
+                        <div class="card-body">
+                            <p style="color: var(--adm-text-muted); font-size: 13.5px; margin-bottom: 18px;">
+                                Cloudflare Stream Live handles global multi-bitrate delivery. To broadcast using OBS Studio or Larix Broadcaster, configure your streaming client with the secure endpoint:
+                            </p>
+                            <div style="background: var(--adm-bg); padding: 14px; border-radius: var(--adm-radius-sm); border: 1px solid var(--adm-border-subtle); font-family: monospace; font-size: 13px; color: var(--adm-gold);">
+                                RTMPS Server: rtmps://live.cloudflare.com:443/live/
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 11: MEDIA LIBRARY -->
+                <section id="tabView_media" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-photo-film"></i> Media Asset Library</h1>
+                            <p>Stored images, audio tracks, and ministry artwork assets.</p>
+                        </div>
+                    </div>
+
+                    <div id="mediaLibraryGrid" class="media-library-grid">
+                        <!-- Populated dynamically -->
+                    </div>
+                </section>
+
+                <!-- TAB 12: USERS & ROLES -->
+                <section id="tabView_users" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-users-gear"></i> User Management & Permissions</h1>
+                            <p>Manage administrative roles (SUPER ADMIN, ADMIN, ARTIST, USER) for the ecosystem.</p>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>User & Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Access Level</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB 13: AUDIT LOGS -->
+                <section id="tabView_audit-logs" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-clipboard-list"></i> System Audit Trail</h1>
+                            <p>Real-time database log of all publication events, status changes, and administrator actions.</p>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Action</th>
+                                    <th>Resource</th>
+                                    <th>User Email</th>
+                                    <th>Payload / Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditLogsTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB 14: SETTINGS -->
+                <section id="tabView_settings" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-sliders"></i> Site Settings & Configurations</h1>
+                            <p>Configure general ministry metadata, M-PESA donation numbers, and social channels.</p>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <div class="card-header-bar">
+                            <h3><i class="fa-solid fa-globe"></i> General & Giving Configuration</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="settingsForm" onsubmit="handleSaveSettings(event)">
+                                <div class="adm-form-grid">
+                                    <div class="adm-form-group">
+                                        <label for="setting_siteTitle">Website Brand Title</label>
+                                        <input type="text" id="setting_siteTitle" class="adm-form-control">
+                                    </div>
+                                    <div class="adm-form-group">
+                                        <label for="setting_tagline">Ministry Tagline</label>
+                                        <input type="text" id="setting_tagline" class="adm-form-control">
+                                    </div>
+                                    <div class="adm-form-group full-width">
+                                        <label for="setting_ministerBio">Minister Profile Bio</label>
+                                        <textarea id="setting_ministerBio" class="adm-form-control"></textarea>
+                                    </div>
+                                    <div class="adm-form-group">
+                                        <label for="setting_youtube">YouTube Channel URL</label>
+                                        <input type="url" id="setting_youtube" class="adm-form-control">
+                                    </div>
+                                    <div class="adm-form-group">
+                                        <label for="setting_spotify">Spotify Artist URL</label>
+                                        <input type="url" id="setting_spotify" class="adm-form-control">
+                                    </div>
+                                    <div class="adm-form-group">
+                                        <label for="setting_contactEmail">Contact Email</label>
+                                        <input type="email" id="setting_contactEmail" class="adm-form-control">
+                                    </div>
+                                    <div class="adm-form-group">
+                                        <label for="setting_contactPhone">Contact Phone / WhatsApp</label>
+                                        <input type="text" id="setting_contactPhone" class="adm-form-control">
+                                    </div>
+                                    <div class="adm-form-group">
+                                        <label for="setting_mpesaTill">M-PESA Buy Goods Till Number</label>
+                                        <input type="text" id="setting_mpesaTill" class="adm-form-control">
+                                    </div>
+                                </div>
+                                <div style="margin-top: 24px; text-align: right;">
+                                    <button type="submit" class="btn btn-gold">
+                                        <i class="fa-solid fa-floppy-disk"></i> Save Site Settings
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- 4. MODALS -->
+    <!-- SONG ADD/EDIT MODAL -->
+    <div id="songModal" class="adm-modal-overlay">
+        <div class="adm-modal-container large">
+            <div class="adm-modal-header">
+                <h3 id="songModalTitle"><i class="fa-solid fa-music"></i> Add Gospel Song</h3>
+                <button type="button" class="adm-modal-close" onclick="closeModal('songModal')">&times;</button>
+            </div>
+            <form id="songForm" onsubmit="handleSongFormSubmit(event)">
+                <div class="adm-modal-body">
+                    <input type="hidden" id="songModalId">
+                    <div class="adm-form-grid">
+                        <div class="adm-form-group">
+                            <label for="songInput_title">Song Title *</label>
+                            <input type="text" id="songInput_title" class="adm-form-control" placeholder="e.g. NACHENDA MUSHIALO" required>
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="songInput_artist">Primary Artist</label>
+                            <input type="text" id="songInput_artist" class="adm-form-control" value="Ali Welekhasia">
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="songInput_feat">Featured Artist(s)</label>
+                            <input type="text" id="songInput_feat" class="adm-form-control" placeholder="e.g. Mercy Lukio">
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="songInput_album">Album / EP Name</label>
+                            <input type="text" id="songInput_album" class="adm-form-control" placeholder="e.g. Utukufu Album">
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="songInput_genre">Genre / Style</label>
+                            <select id="songInput_genre" class="adm-form-control">
+                                <option value="Worship">Swahili Worship</option>
+                                <option value="Luhya Worship">Luhya Worship</option>
+                                <option value="Praise">Praise & Thanksgiving</option>
+                                <option value="Prophetic">Prophetic Word</option>
+                                <option value="Acoustic">Acoustic Hymn</option>
+                            </select>
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="songInput_language">Language</label>
+                            <input type="text" id="songInput_language" class="adm-form-control" value="Swahili">
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="songInput_key">Musical Key</label>
+                            <input type="text" id="songInput_key" class="adm-form-control" placeholder="e.g. D Major">
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="songInput_bpm">Tempo (BPM)</label>
+                            <input type="number" id="songInput_bpm" class="adm-form-control" placeholder="e.g. 76">
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="songInput_releaseDate">Release Date</label>
+                            <input type="date" id="songInput_releaseDate" class="adm-form-control">
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="songInput_status">Publication Status</label>
+                            <select id="songInput_status" class="adm-form-control">
+                                <option value="PUBLISHED">PUBLISHED (Live on Website)</option>
+                                <option value="DRAFT">DRAFT (Hidden from Public)</option>
+                                <option value="ARCHIVED">ARCHIVED</option>
+                            </select>
+                        </div>
+                        <div class="adm-form-group full-width">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #fff;">
+                                <input type="checkbox" id="songInput_featured"> Feature this song prominently on public homepage
+                            </label>
+                        </div>
+
+                        <!-- Cover Artwork Section -->
+                        <div class="adm-form-group full-width">
+                            <label>Song Cover Artwork</label>
+                            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                                <img id="songArtPreview" src="images/hero.jpg" class="table-thumb" style="width: 70px; height: 70px;" alt="Cover Preview">
+                                <div style="flex: 1; min-width: 240px;">
+                                    <input type="text" id="songInput_artworkUrl" class="adm-form-control" placeholder="Image URL or upload from device below">
+                                    <div style="margin-top: 6px;">
+                                        <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('fileUploadArtwork').click()">
+                                            <i class="fa-solid fa-cloud-arrow-up"></i> Upload Image File
+                                        </button>
+                                        <input type="file" id="fileUploadArtwork" accept="image/*" style="display: none;" onchange="handleArtworkFileUpload(event)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Audio Master Section -->
+                        <div class="adm-form-group full-width">
+                            <label>Audio File Master (MP3 / WAV / M4A)</label>
+                            <input type="text" id="songInput_audioUrl" class="adm-form-control" placeholder="Direct audio URL or upload file below">
+                            <div style="margin-top: 8px;">
+                                <button type="button" class="btn btn-sm btn-gold" onclick="document.getElementById('fileUploadAudio').click()">
+                                    <i class="fa-solid fa-file-audio"></i> Select Audio File
+                                </button>
+                                <input type="file" id="fileUploadAudio" accept="audio/*,.mp3,.wav,.m4a" style="display: none;" onchange="handleAudioFileUpload(event)">
+                            </div>
+                            <!-- Progress Bar -->
+                            <div id="audioUploadProgress" class="upload-progress-bar" style="display: none;">
+                                <div id="audioUploadProgressFill" class="upload-progress-fill"></div>
+                            </div>
+                            <!-- Audio Preview Player -->
+                            <audio id="songAudioPlayer" controls style="display: none; width: 100%; margin-top: 10px;"></audio>
+                        </div>
+
+                        <!-- Streaming Platform Links -->
+                        <div class="adm-form-group full-width">
+                            <label for="songInput_youtubeUrl">YouTube Video / Audio Link</label>
+                            <input type="url" id="songInput_youtubeUrl" class="adm-form-control" placeholder="https://youtu.be/...">
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="songInput_spotifyUrl">Spotify Track Link</label>
+                            <input type="url" id="songInput_spotifyUrl" class="adm-form-control" placeholder="https://open.spotify.com/track/...">
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="songInput_boomplayUrl">Boomplay Link</label>
+                            <input type="url" id="songInput_boomplayUrl" class="adm-form-control" placeholder="https://www.boomplay.com/...">
+                        </div>
+                        <div class="adm-form-group full-width">
+                            <label for="songInput_description">Song Description & Ministry Theme</label>
+                            <textarea id="songInput_description" class="adm-form-control" placeholder="Spiritual background, inspiration, or biblical context..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('songModal')">Cancel</button>
+                    <button type="submit" class="btn btn-gold"><i class="fa-solid fa-floppy-disk"></i> Save Song</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PICTURE UPLOAD MODAL -->
+    <div id="pictureModal" class="adm-modal-overlay">
+        <div class="adm-modal-container">
+            <div class="adm-modal-header">
+                <h3><i class="fa-solid fa-image"></i> Picture Details</h3>
+                <button type="button" class="adm-modal-close" onclick="closeModal('pictureModal')">&times;</button>
+            </div>
+            <form id="pictureForm" onsubmit="handlePictureFormSubmit(event)">
+                <div class="adm-modal-body">
+                    <input type="hidden" id="pictureModalId">
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="pictureInput_title">Picture Title</label>
+                        <input type="text" id="pictureInput_title" class="adm-form-control" required placeholder="e.g. Eldoret Revival Praise">
+                    </div>
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="pictureInput_category">Category</label>
+                        <select id="pictureInput_category" class="adm-form-control">
+                            <option value="Ministry">Ministry</option>
+                            <option value="Crusades">Crusades</option>
+                            <option value="Church">Church</option>
+                            <option value="Studio">Studio</option>
+                        </select>
+                    </div>
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="pictureInput_imageUrl">Image URL</label>
+                        <input type="text" id="pictureInput_imageUrl" class="adm-form-control" placeholder="https://..." required>
+                    </div>
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="pictureInput_caption">Caption</label>
+                        <textarea id="pictureInput_caption" class="adm-form-control" placeholder="Photo caption or description..."></textarea>
+                    </div>
+                    <div class="adm-form-group">
+                        <label for="pictureInput_status">Status</label>
+                        <select id="pictureInput_status" class="adm-form-control">
+                            <option value="PUBLISHED">PUBLISHED</option>
+                            <option value="DRAFT">DRAFT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('pictureModal')">Cancel</button>
+                    <button type="submit" class="btn btn-gold">Save Picture</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- VIDEO MODAL -->
+    <div id="videoModal" class="adm-modal-overlay">
+        <div class="adm-modal-container">
+            <div class="adm-modal-header">
+                <h3><i class="fa-solid fa-video"></i> Video Details</h3>
+                <button type="button" class="adm-modal-close" onclick="closeModal('videoModal')">&times;</button>
+            </div>
+            <form id="videoForm" onsubmit="handleVideoFormSubmit(event)">
+                <div class="adm-modal-body">
+                    <input type="hidden" id="videoModalId">
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="videoInput_title">Video Title *</label>
+                        <input type="text" id="videoInput_title" class="adm-form-control" required placeholder="e.g. NI WEWE Live In Concert">
+                    </div>
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="videoInput_youtubeUrl">YouTube Video URL *</label>
+                        <input type="url" id="videoInput_youtubeUrl" class="adm-form-control" required placeholder="https://www.youtube.com/watch?v=...">
+                    </div>
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="videoInput_category">Category</label>
+                        <select id="videoInput_category" class="adm-form-control">
+                            <option value="Music Videos">Music Videos</option>
+                            <option value="Worship">Worship</option>
+                            <option value="Sermons">Sermons</option>
+                            <option value="Ministry">Ministry</option>
+                        </select>
+                    </div>
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="videoInput_description">Description</label>
+                        <textarea id="videoInput_description" class="adm-form-control"></textarea>
+                    </div>
+                    <div class="adm-form-group">
+                        <label for="videoInput_status">Status</label>
+                        <select id="videoInput_status" class="adm-form-control">
+                            <option value="PUBLISHED">PUBLISHED</option>
+                            <option value="DRAFT">DRAFT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('videoModal')">Cancel</button>
+                    <button type="submit" class="btn btn-gold">Save Video</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EVENT MODAL -->
+    <div id="eventModal" class="adm-modal-overlay">
+        <div class="adm-modal-container">
+            <div class="adm-modal-header">
+                <h3><i class="fa-solid fa-calendar-plus"></i> Crusade / Ministry Event</h3>
+                <button type="button" class="adm-modal-close" onclick="closeModal('eventModal')">&times;</button>
+            </div>
+            <form id="eventForm" onsubmit="handleEventFormSubmit(event)">
+                <div class="adm-modal-body">
+                    <input type="hidden" id="eventModalId">
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="eventInput_title">Event Title *</label>
+                        <input type="text" id="eventInput_title" class="adm-form-control" required placeholder="e.g. Eldoret Mega Revival Crusade">
+                    </div>
+                    <div class="adm-form-grid" style="margin-bottom: 14px;">
+                        <div class="adm-form-group">
+                            <label for="eventInput_date">Date</label>
+                            <input type="date" id="eventInput_date" class="adm-form-control">
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="eventInput_time">Time</label>
+                            <input type="text" id="eventInput_time" class="adm-form-control" placeholder="e.g. 5:00 PM - 9:00 PM EAT">
+                        </div>
+                    </div>
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="eventInput_venue">Venue & Grounds</label>
+                        <input type="text" id="eventInput_venue" class="adm-form-control" placeholder="e.g. Eldoret Sports Club Grounds">
+                    </div>
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="eventInput_location">City / County</label>
+                        <input type="text" id="eventInput_location" class="adm-form-control" placeholder="e.g. Uasin Gishu, Kenya">
+                    </div>
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="eventInput_description">Event Description</label>
+                        <textarea id="eventInput_description" class="adm-form-control"></textarea>
+                    </div>
+                    <div class="adm-form-group">
+                        <label for="eventInput_status">Status</label>
+                        <select id="eventInput_status" class="adm-form-control">
+                            <option value="PUBLISHED">PUBLISHED</option>
+                            <option value="DRAFT">DRAFT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('eventModal')">Cancel</button>
+                    <button type="submit" class="btn btn-gold">Save Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- BLOG MODAL -->
+    <div id="blogModal" class="adm-modal-overlay">
+        <div class="adm-modal-container large">
+            <div class="adm-modal-header">
+                <h3><i class="fa-solid fa-book-bible"></i> Devotional Article</h3>
+                <button type="button" class="adm-modal-close" onclick="closeModal('blogModal')">&times;</button>
+            </div>
+            <form id="blogForm" onsubmit="handleBlogFormSubmit(event)">
+                <div class="adm-modal-body">
+                    <input type="hidden" id="blogModalId">
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="blogInput_title">Article Title *</label>
+                        <input type="text" id="blogInput_title" class="adm-form-control" required placeholder="e.g. The Power of Heartfelt Worship">
+                    </div>
+                    <div class="adm-form-grid" style="margin-bottom: 14px;">
+                        <div class="adm-form-group">
+                            <label for="blogInput_category">Category</label>
+                            <select id="blogInput_category" class="adm-form-control">
+                                <option value="Devotional">Daily Devotional</option>
+                                <option value="Worship">Worship Insight</option>
+                                <option value="Prophetic">Prophetic Word</option>
+                                <option value="Evangelism">Evangelism & Revival</option>
+                            </select>
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="blogInput_scripture">Scripture Anchor</label>
+                            <input type="text" id="blogInput_scripture" class="adm-form-control" placeholder="e.g. John 4:23-24">
+                        </div>
+                    </div>
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="blogInput_excerpt">Summary / Excerpt</label>
+                        <textarea id="blogInput_excerpt" class="adm-form-control" style="min-height: 60px;" placeholder="Brief overview for readers..."></textarea>
+                    </div>
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="blogInput_content">Full Word / Reflection</label>
+                        <textarea id="blogInput_content" class="adm-form-control" style="min-height: 180px;" placeholder="Full spiritual message and closing prayer..."></textarea>
+                    </div>
+                    <div class="adm-form-group">
+                        <label for="blogInput_status">Status</label>
+                        <select id="blogInput_status" class="adm-form-control">
+                            <option value="PUBLISHED">PUBLISHED</option>
+                            <option value="DRAFT">DRAFT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('blogModal')">Cancel</button>
+                    <button type="submit" class="btn btn-gold">Publish Devotional</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin JS Engine -->
+    <script src="admin.js"></script>
+</body>
+</html>

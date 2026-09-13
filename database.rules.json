@@ -1,0 +1,111 @@
+{
+  "rules": {
+    "aliwelekhasia": {
+      "songs": {
+        ".read": true,
+        ".write": "auth != null",
+        ".indexOn": ["status", "featured", "title", "createdAt"]
+      },
+      "lyrics": {
+        ".read": true,
+        ".write": "auth != null",
+        ".indexOn": ["status", "songId", "slug"]
+      },
+      "gallery": {
+        ".read": true,
+        ".write": "auth != null",
+        ".indexOn": ["status", "category", "featured", "createdAt"]
+      },
+      "albums": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "videos": {
+        ".read": true,
+        ".write": "auth != null",
+        ".indexOn": ["status", "category", "featured", "createdAt"]
+      },
+      "events": {
+        ".read": true,
+        ".write": "auth != null",
+        ".indexOn": ["status", "startDate", "featured"]
+      },
+      "blog": {
+        ".read": true,
+        ".write": "auth != null",
+        ".indexOn": ["status", "slug", "category", "createdAt"]
+      },
+      "testimonials": {
+        ".read": true,
+        ".write": "auth != null",
+        ".indexOn": ["status", "featured"]
+      },
+      "prayer_requests": {
+        ".read": "auth != null",
+        "$prayer_id": {
+          ".write": "!data.exists() || auth != null",
+          ".validate": "newData.hasChildren(['name', 'request'])"
+        }
+      },
+      "media": {
+        ".read": true,
+        ".write": "auth != null",
+        ".indexOn": ["type", "createdAt"]
+      },
+      "users": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      },
+      "audit_logs": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".indexOn": ["timestamp", "action", "userId"]
+      },
+      "settings": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "site_images": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "live_stream": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "live_stream_state": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "live_viewers": {
+        ".read": true,
+        "$viewer_id": {
+          ".write": true,
+          ".validate": "newData.hasChildren(['joinedAt'])"
+        }
+      },
+      "live_chat": {
+        ".read": true,
+        "$message_id": {
+          ".write": "!data.exists() || auth != null",
+          ".validate": "newData.hasChildren(['author', 'message']) && newData.child('message').val().length <= 300 && newData.child('author').val().length <= 40"
+        }
+      },
+      "live_schedule": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "live_recordings": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "live_reminders": {
+        ".read": "auth != null",
+        "$reminder_id": {
+          ".write": true,
+          ".validate": "newData.hasChildren(['email']) && newData.child('email').val().contains('@')"
+        }
+      }
+    }
+  }
+}
