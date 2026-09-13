@@ -147,24 +147,27 @@ async function handleAdminLogin(event) {
     }
 }
 
-function storeSession(email, role, remember, passToken) {
+function storeSession(email, role, remember) {
     const storage = remember ? localStorage : sessionStorage;
     storage.setItem('ali_admin_session_auth', 'true');
-    localStorage.setItem('ali_admin_user_email', email);
-    localStorage.setItem('ali_admin_user_role', role);
-    if (passToken) {
-        localStorage.setItem('ali_admin_session_token', passToken);
-    }
+    storage.setItem('ali_admin_user_email', email);
+    storage.setItem('ali_admin_user_role', role);
 }
 
 function handleAdminLogout() {
     if (confirm('Are you sure you want to sign out of the Admin CMS?')) {
         localStorage.removeItem('ali_admin_session_auth');
+        localStorage.removeItem('ali_admin_user_email');
+        localStorage.removeItem('ali_admin_user_role');
+        localStorage.removeItem('ali_admin_session_token');
         sessionStorage.removeItem('ali_admin_session_auth');
+        sessionStorage.removeItem('ali_admin_user_email');
+        sessionStorage.removeItem('ali_admin_user_role');
         if (window.RichaliFirebase) {
             window.RichaliFirebase.signOut();
         }
         AdminState.isAuthenticated = false;
+        AdminState.currentUser = null;
         showLoginScreen(true);
         showAdminToast('Signed out successfully.', 'info');
     }
@@ -339,6 +342,35 @@ function attachDatabaseListeners() {
         settingsRef.on('value', (snap) => {
             AdminState.settings = snap.val() || {};
             if (AdminState.currentTab === 'settings') loadSiteSettings();
+        });
+    }
+
+    // 11. Users & RBAC
+    const usersRef = window.RichaliFirebase.getDbRef(schema.users);
+    if (usersRef) {
+        usersRef.on('value', (snap) => {
+            AdminState.users = snap.val() || {};
+            if (AdminState.currentTab === 'users') renderUsersTable();
+        });
+    }
+
+    // 12. Live Stream State & Real-Time Viewers
+    const liveStreamRef = window.RichaliFirebase.getDbRef(schema.liveStream);
+    if (liveStreamRef) {
+        liveStreamRef.on('value', (snap) => {
+            AdminState.liveStream = snap.val() || {};
+            if (AdminState.currentTab === 'live') renderLiveStreamPanel();
+        });
+    }
+
+    const viewersRef = window.RichaliFirebase.getDbRef(schema.liveViewers);
+    if (viewersRef) {
+        viewersRef.on('value', (snap) => {
+            const viewers = snap.val() || {};
+            const count = Object.keys(viewers).length;
+            AdminState.liveViewers = count;
+            const countEl = document.getElementById('adminLiveViewersCount');
+            if (countEl) countEl.innerText = count;
         });
     }
 }
@@ -715,21 +747,20 @@ async function handleArtworkFileUpload(event) {
         showAdminToast('Please select a valid image file (JPG, PNG, WebP).', 'warning');
         return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-        showAdminToast('Image size exceeds 10MB limit.', 'warning');
+    if (file.size > 15 * 1024 * 1024) {
+        showAdminToast('Image size exceeds 15MB limit.', 'warning');
         return;
     }
 
     const artPreview = document.getElementById('songArtPreview');
     const artUrlInput = document.getElementById('songInput_artworkUrl');
 
-    // Local object URL preview immediately
+    // Show temporary local preview for immediate visual feedback
     const tempUrl = URL.createObjectURL(file);
     if (artPreview) artPreview.src = tempUrl;
 
     if (!window.RichaliFirebase || !window.RichaliFirebase.storage) {
-        showAdminToast('Storage notice: Firebase Storage not initialized. Using local preview.', 'warning');
-        if (artUrlInput) artUrlInput.value = tempUrl;
+        showAdminToast('Firebase Storage is not initialized. Please enter a direct image URL.', 'error');
         return;
     }
 
@@ -739,10 +770,10 @@ async function handleArtworkFileUpload(event) {
         const result = await window.RichaliFirebase.uploadFile(path, file);
         if (artUrlInput) artUrlInput.value = result.downloadUrl;
         if (artPreview) artPreview.src = result.downloadUrl;
-        showAdminToast('Artwork uploaded to Cloud Storage!', 'success');
+        showAdminToast('Artwork uploaded to Cloud Storage successfully!', 'success');
     } catch (err) {
         console.error('Artwork upload error:', err);
-        showAdminToast(`Artwork upload notice: ${err.message}. If Firebase Storage is not provisioned in console, you may paste a direct URL.`, 'warning');
+        showAdminToast(`Storage upload failed: ${err.message}. You can paste a direct image URL into the field.`, 'error');
     }
 }
 
@@ -750,8 +781,15 @@ async function handleAudioFileUpload(event) {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    // Validate audio mime and extension
     if (!file.type.startsWith('audio/') && !file.name.match(/\.(mp3|wav|m4a|aac|flac|ogg)$/i)) {
-        showAdminToast('Please select a valid audio file (MP3, WAV, M4A, FLAC).', 'warning');
+        showAdminToast('Please select a valid audio file (MP3, WAV, M4A, FLAC, AAC).', 'warning');
+        return;
+    }
+
+    // Enforce 50MB audio size limit
+    if (file.size > 50 * 1024 * 1024) {
+        showAdminToast('Audio file exceeds the 50MB maximum limit.', 'warning');
         return;
     }
 
@@ -763,7 +801,7 @@ async function handleAudioFileUpload(event) {
     if (progressBar) progressBar.style.display = 'block';
     if (progressFill) progressFill.style.width = '0%';
 
-    // Local preview immediately
+    // Local preview for immediate playback test
     const tempAudioUrl = URL.createObjectURL(file);
     if (audioPlayer) {
         audioPlayer.src = tempAudioUrl;
@@ -771,13 +809,13 @@ async function handleAudioFileUpload(event) {
     }
 
     if (!window.RichaliFirebase || !window.RichaliFirebase.storage) {
-        showAdminToast('Firebase Storage bucket not configured. Preview active.', 'warning');
-        if (audioUrlInput) audioUrlInput.value = tempAudioUrl;
+        showAdminToast('Firebase Storage service is not ready. Please paste a direct CDN audio link or check Storage bucket setup.', 'error');
         if (progressBar) progressBar.style.display = 'none';
         return;
     }
 
     try {
+        showAdminToast(`Uploading master audio (${(file.size / (1024 * 1024)).toFixed(1)} MB) to Cloud Storage...`, 'info');
         const path = `aliwelekhasia/music/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
         const result = await window.RichaliFirebase.uploadFileWithProgress(path, file, (progress) => {
             if (progressFill) progressFill.style.width = `${progress}%`;
@@ -786,11 +824,11 @@ async function handleAudioFileUpload(event) {
         if (audioUrlInput) audioUrlInput.value = result.downloadUrl;
         if (audioPlayer) audioPlayer.src = result.downloadUrl;
         if (progressBar) progressBar.style.display = 'none';
-        showAdminToast('Audio master file uploaded and attached!', 'success');
+        showAdminToast('Audio master file uploaded and attached successfully!', 'success');
     } catch (err) {
         console.error('Audio upload error:', err);
         if (progressBar) progressBar.style.display = 'none';
-        showAdminToast(`Audio upload notice: ${err.message}. You can also provide a direct CDN audio link.`, 'warning');
+        showAdminToast(`Audio upload error: ${err.message}. You can paste a direct audio streaming link into the Audio URL field.`, 'error');
     }
 }
 
@@ -1027,6 +1065,43 @@ function openUploadPictureModal(itemId = null) {
 
 function editGalleryItem(id) {
     openUploadPictureModal(id);
+}
+
+async function handleGalleryImageUpload(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+        showAdminToast('Please select a valid image file (JPG, PNG, WebP).', 'warning');
+        return;
+    }
+
+    if (file.size > 15 * 1024 * 1024) {
+        showAdminToast('Image size exceeds 15MB limit.', 'warning');
+        return;
+    }
+
+    const preview = document.getElementById('picturePreviewImg');
+    const urlInput = document.getElementById('pictureInput_imageUrl');
+    const tempUrl = URL.createObjectURL(file);
+    if (preview) preview.src = tempUrl;
+
+    if (!window.RichaliFirebase || !window.RichaliFirebase.storage) {
+        showAdminToast('Firebase Storage is not initialized. Please enter a direct image URL.', 'error');
+        return;
+    }
+
+    try {
+        showAdminToast('Uploading photo to Firebase Storage...', 'info');
+        const path = `aliwelekhasia/gallery/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+        const result = await window.RichaliFirebase.uploadFile(path, file);
+        if (urlInput) urlInput.value = result.downloadUrl;
+        if (preview) preview.src = result.downloadUrl;
+        showAdminToast('Gallery photo uploaded to Cloud Storage successfully!', 'success');
+    } catch (err) {
+        console.error('Gallery image upload error:', err);
+        showAdminToast(`Storage upload failed: ${err.message}`, 'error');
+    }
 }
 
 async function handlePictureFormSubmit(event) {
@@ -1570,7 +1645,10 @@ function renderUsersTable() {
     const tbody = document.getElementById('usersTableBody');
     if (!tbody) return;
 
-    tbody.innerHTML = `
+    const userEntries = Object.entries(AdminState.users || {});
+    
+    // Always guarantee Minister Ali Welekhasia is represented as the protected root Super Admin
+    let html = `
         <tr>
             <td>
                 <div class="table-title-cell">
@@ -1583,30 +1661,200 @@ function renderUsersTable() {
             </td>
             <td><span class="user-role-badge">SUPER ADMIN</span></td>
             <td><span style="color: #10b981;"><i class="fa-solid fa-circle-check"></i> Active</span></td>
-            <td>Primary Ministry Head</td>
-            <td><span style="color: var(--adm-text-subtle); font-size: 12px;">Protected Root</span></td>
-        </tr>
-        <tr>
-            <td>
-                <div class="table-title-cell">
-                    <div class="user-avatar-circle" style="border-color: #3b82f6; color: #3b82f6;">AD</div>
-                    <div>
-                        <div class="title-text">Richali Ecosystem Admin</div>
-                        <div class="sub-text">admin@aliwelekhasia.co.ke</div>
-                    </div>
-                </div>
-            </td>
-            <td><span class="user-role-badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">ADMIN</span></td>
-            <td><span style="color: #10b981;"><i class="fa-solid fa-circle-check"></i> Active</span></td>
-            <td>CMS Content Manager</td>
-            <td>
-                <button class="btn btn-sm btn-outline" onclick="showAdminToast('User permissions verified.', 'info')">Manage</button>
-            </td>
+            <td>Full Ministry & CMS Authority</td>
+            <td><span style="color: var(--adm-text-subtle); font-size: 12px; font-weight: 600;"><i class="fa-solid fa-shield-halved"></i> Root Protected</span></td>
         </tr>
     `;
+
+    userEntries.forEach(([uid, u]) => {
+        if (!u) return;
+        if (u.email && u.email.toLowerCase() === 'ali.werekhasia01@gmail.com') return; // Handled above
+
+        const initials = (u.displayName || u.email || 'US').substring(0, 2).toUpperCase();
+        const role = u.role || 'USER';
+        const isSuspended = u.status === 'SUSPENDED';
+
+        let badgeStyle = 'background: rgba(212, 175, 55, 0.15); color: #d4af37;';
+        if (role === 'ADMIN') badgeStyle = 'background: rgba(59, 130, 246, 0.15); color: #60a5fa;';
+        if (role === 'ARTIST') badgeStyle = 'background: rgba(168, 85, 247, 0.15); color: #c084fc;';
+        if (role === 'USER') badgeStyle = 'background: rgba(100, 116, 139, 0.15); color: #94a3b8;';
+
+        const accessDesc = {
+            'SUPER_ADMIN': 'Full System & User Management',
+            'ADMIN': 'Content, Media & Events Management',
+            'ARTIST': 'Music, Lyrics & Gallery Contributor',
+            'USER': 'Public Portal & Prayer Requests'
+        }[role] || 'Standard Access';
+
+        html += `
+            <tr>
+                <td>
+                    <div class="table-title-cell">
+                        <div class="user-avatar-circle" style="border-color: #64748b; color: #94a3b8;">${escapeHtml(initials)}</div>
+                        <div>
+                            <div class="title-text">${escapeHtml(u.displayName || u.email || 'User')}</div>
+                            <div class="sub-text">${escapeHtml(u.email || uid)}</div>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="user-role-badge" style="${badgeStyle}">${escapeHtml(role)}</span></td>
+                <td>
+                    ${isSuspended 
+                        ? '<span style="color: #ef4444;"><i class="fa-solid fa-ban"></i> Suspended</span>' 
+                        : '<span style="color: #10b981;"><i class="fa-solid fa-circle-check"></i> Active</span>'}
+                </td>
+                <td>${escapeHtml(accessDesc)}</td>
+                <td>
+                    <div class="table-action-btns">
+                        <button class="btn-action-icon edit" onclick="openUserModal('${escapeHtml(uid)}')" title="Edit Role">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button class="btn-action-icon delete" onclick="deleteUserRole('${escapeHtml(uid)}', '${escapeHtml(u.email || uid)}')" title="Delete User">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+
+    tbody.innerHTML = html;
+}
+
+function openUserModal(uid = null) {
+    const currentRole = AdminState.currentUser?.role || localStorage.getItem('ali_admin_user_role');
+    if (currentRole !== 'SUPER_ADMIN') {
+        showAdminToast('Security Restriction: Only SUPER_ADMIN accounts can modify system permissions.', 'error');
+        return;
+    }
+
+    const modal = document.getElementById('userModal');
+    const form = document.getElementById('userRoleForm');
+    if (form) form.reset();
+
+    const titleElem = document.getElementById('userModalTitle');
+    const uidInput = document.getElementById('userInput_uid');
+    const emailInput = document.getElementById('userInput_email');
+    const nameInput = document.getElementById('userInput_displayName');
+    const roleSelect = document.getElementById('userInput_role');
+    const statusSelect = document.getElementById('userInput_status');
+
+    if (uid && AdminState.users && AdminState.users[uid]) {
+        const u = AdminState.users[uid];
+        if (titleElem) titleElem.innerHTML = '<i class="fa-solid fa-user-pen"></i> Edit User Access Role';
+        if (uidInput) uidInput.value = uid;
+        if (emailInput) {
+            emailInput.value = u.email || '';
+            emailInput.readOnly = true;
+        }
+        if (nameInput) nameInput.value = u.displayName || '';
+        if (roleSelect) roleSelect.value = u.role || 'USER';
+        if (statusSelect) statusSelect.value = u.status || 'ACTIVE';
+    } else {
+        if (titleElem) titleElem.innerHTML = '<i class="fa-solid fa-user-shield"></i> Assign User Role';
+        if (uidInput) uidInput.value = '';
+        if (emailInput) {
+            emailInput.value = '';
+            emailInput.readOnly = false;
+        }
+        if (nameInput) nameInput.value = '';
+        if (roleSelect) roleSelect.value = 'ADMIN';
+        if (statusSelect) statusSelect.value = 'ACTIVE';
+    }
+
+    if (modal) modal.classList.add('active');
+}
+
+async function handleSaveUserRole(event) {
+    if (event) event.preventDefault();
+
+    const currentRole = AdminState.currentUser?.role || localStorage.getItem('ali_admin_user_role');
+    if (currentRole !== 'SUPER_ADMIN') {
+        showAdminToast('Unauthorized: Only SUPER_ADMIN can assign or update user roles.', 'error');
+        return;
+    }
+
+    const uidInput = document.getElementById('userInput_uid');
+    const email = document.getElementById('userInput_email')?.value.trim();
+    const displayName = document.getElementById('userInput_displayName')?.value.trim();
+    const role = document.getElementById('userInput_role')?.value;
+    const status = document.getElementById('userInput_status')?.value;
+
+    if (!email) {
+        showAdminToast('Email address is required.', 'warning');
+        return;
+    }
+
+    // Prohibit tampering with root administrator account
+    if (email.toLowerCase() === 'ali.werekhasia01@gmail.com') {
+        showAdminToast('The root minister account is permanently secured and immutable.', 'warning');
+        closeModal('userModal');
+        return;
+    }
+
+    const uid = uidInput?.value || email.replace(/[^a-zA-Z0-9]/g, '_');
+    const schema = window.RichaliFirebase.schema.aliwelekhasia;
+
+    const payload = {
+        uid,
+        email,
+        displayName: displayName || email.split('@')[0],
+        role: role || 'USER',
+        status: status || 'ACTIVE',
+        updatedAt: new Date().toISOString()
+    };
+
+    try {
+        await window.RichaliFirebase.saveData(`${schema.users}/${uid}`, payload);
+        AdminState.users[uid] = payload;
+        logAuditEvent('UPDATE_USER_ROLE', `Assigned ${role} role to ${email}`, 'users');
+        showAdminToast(`Permissions updated for ${email} (${role}).`, 'success');
+        closeModal('userModal');
+        renderUsersTable();
+    } catch (err) {
+        console.error('Error saving user role:', err);
+        showAdminToast(`Failed to update permissions: ${err.message}`, 'error');
+    }
+}
+
+async function deleteUserRole(uid, email) {
+    const currentRole = AdminState.currentUser?.role || localStorage.getItem('ali_admin_user_role');
+    if (currentRole !== 'SUPER_ADMIN') {
+        showAdminToast('Unauthorized: Only SUPER_ADMIN can revoke permissions.', 'error');
+        return;
+    }
+
+    if (email.toLowerCase() === 'ali.werekhasia01@gmail.com') {
+        showAdminToast('Cannot remove root administrator account.', 'error');
+        return;
+    }
+
+    if (!confirm(`Are you sure you want to revoke all access permissions for ${email}?`)) return;
+
+    const schema = window.RichaliFirebase.schema.aliwelekhasia;
+    try {
+        await window.RichaliFirebase.removeData(`${schema.users}/${uid}`);
+        delete AdminState.users[uid];
+        logAuditEvent('REVOKE_USER_ROLE', `Revoked permissions for ${email}`, 'users');
+        showAdminToast(`Permissions revoked for ${email}.`, 'info');
+        renderUsersTable();
+    } catch (err) {
+        console.error('Error removing user:', err);
+        showAdminToast(`Failed to revoke permissions: ${err.message}`, 'error');
+    }
 }
 
 // --- AUDIT LOGS (/admin/audit-logs) ---
+async function logAuditEvent(action, details, resource = 'system') {
+    try {
+        if (window.RichaliFirebase && window.RichaliFirebase.logAudit) {
+            await window.RichaliFirebase.logAudit(action, resource, null, { note: details });
+        }
+    } catch (err) {
+        console.warn('logAuditEvent notice:', err);
+    }
+}
+
 function renderAuditLogs() {
     const tbody = document.getElementById('auditLogsTableBody');
     if (!tbody) return;
@@ -1670,22 +1918,164 @@ async function handleSaveSettings(event) {
 
 // --- LIVE STREAM TAB INTEGRATION ---
 function initLiveStreamTab() {
-    // Check if Cloudflare live stream functions exist
-    const statusText = document.getElementById('liveControlStatus');
-    if (statusText) statusText.innerText = 'Connecting to Cloudflare Stream Live engine...';
+    renderLiveStreamPanel();
+}
 
-    fetch('/functions/api/live/status')
-        .then(r => r.json())
-        .then(data => {
-            if (statusText) {
-                statusText.innerHTML = data.isLive 
-                    ? '<span style="color: #ef4444;"><i class="fa-solid fa-tower-broadcast"></i> BROADCAST IS LIVE</span>' 
-                    : '<span style="color: #10b981;"><i class="fa-solid fa-check"></i> System Ready (Broadcaster Offline)</span>';
-            }
-        })
-        .catch(() => {
-            if (statusText) statusText.innerText = 'Cloudflare Live stream functions standby.';
-        });
+function renderLiveStreamPanel() {
+    const ls = AdminState.liveStream || {};
+    const status = (ls.status || 'offline').toLowerCase();
+
+    // Update status indicators
+    const stateDisplay = document.getElementById('adminLiveStateDisplay');
+    if (stateDisplay) {
+        if (status === 'live') {
+            stateDisplay.innerHTML = '<i class="fa-solid fa-circle" style="color: #ef4444; font-size: 14px;"></i> LIVE NOW';
+            stateDisplay.style.color = '#ef4444';
+        } else if (status === 'connecting') {
+            stateDisplay.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color: #f59e0b; font-size: 14px;"></i> CONNECTING';
+            stateDisplay.style.color = '#f59e0b';
+        } else if (status === 'ended') {
+            stateDisplay.innerHTML = '<i class="fa-solid fa-flag-checkered" style="color: #94a3b8; font-size: 14px;"></i> ENDED';
+            stateDisplay.style.color = '#94a3b8';
+        } else {
+            stateDisplay.innerHTML = '<i class="fa-solid fa-power-off" style="color: #64748b; font-size: 14px;"></i> OFFLINE';
+            stateDisplay.style.color = '#64748b';
+        }
+    }
+
+    const viewersCount = document.getElementById('adminLiveViewersCount');
+    if (viewersCount) {
+        viewersCount.innerText = AdminState.liveViewers || (status === 'live' ? 1 : 0);
+    }
+
+    const chatState = document.getElementById('adminLiveChatState');
+    if (chatState) {
+        const isChatEnabled = ls.chatEnabled !== false;
+        chatState.innerHTML = isChatEnabled ? '<span style="color: #10b981;">Enabled</span>' : '<span style="color: #ef4444;">Disabled</span>';
+    }
+
+    // Populate inputs if user is not actively editing
+    const statusSelect = document.getElementById('liveInput_status');
+    if (statusSelect && document.activeElement !== statusSelect) {
+        statusSelect.value = status;
+    }
+
+    const titleInput = document.getElementById('liveInput_title');
+    if (titleInput && document.activeElement !== titleInput) {
+        titleInput.value = ls.title || 'Ali Welekhasia Live | Prophetic Gospel Worship Broadcast';
+    }
+
+    const descInput = document.getElementById('liveInput_description');
+    if (descInput && document.activeElement !== descInput) {
+        descInput.value = ls.description || 'Join Minister Ali Welekhasia live for uplifting Swahili worship and prayer intercession.';
+    }
+
+    const schedInput = document.getElementById('liveInput_scheduledStart');
+    if (schedInput && document.activeElement !== schedInput) {
+        schedInput.value = ls.scheduledStart ? ls.scheduledStart.substring(0, 16) : '';
+    }
+
+    const playbackInput = document.getElementById('liveInput_playbackUrl');
+    if (playbackInput && document.activeElement !== playbackInput) {
+        playbackInput.value = ls.playbackUrl || '';
+    }
+
+    const uidInput = document.getElementById('liveInput_cloudflareUid');
+    if (uidInput && document.activeElement !== uidInput) {
+        uidInput.value = ls.uid || '';
+    }
+
+    const chatCheckbox = document.getElementById('liveInput_chatEnabled');
+    if (chatCheckbox) {
+        chatCheckbox.checked = ls.chatEnabled !== false;
+    }
+
+    const recCheckbox = document.getElementById('liveInput_recordingsEnabled');
+    if (recCheckbox) {
+        recCheckbox.checked = ls.recordingsEnabled !== false;
+    }
+}
+
+function onLiveStatusDropdownChange(val) {
+    const stateDisplay = document.getElementById('adminLiveStateDisplay');
+    if (stateDisplay) {
+        stateDisplay.innerText = val.toUpperCase();
+    }
+}
+
+async function quickTransitionLiveState(newStatus) {
+    try {
+        const update = {
+            status: newStatus,
+            updatedAt: new Date().toISOString()
+        };
+        if (newStatus === 'live') {
+            update.actualStart = new Date().toISOString();
+        } else if (newStatus === 'ended') {
+            update.endedAt = new Date().toISOString();
+        }
+
+        if (window.RichaliFirebase && typeof window.RichaliFirebase.updateLiveStreamState === 'function') {
+            await window.RichaliFirebase.updateLiveStreamState(update);
+            await window.RichaliFirebase.logAudit('UPDATE_LIVESTREAM_STATUS', 'live', null, { newStatus });
+        } else {
+            AdminState.liveStream = { ...(AdminState.liveStream || {}), ...update };
+        }
+
+        const statusSelect = document.getElementById('liveInput_status');
+        if (statusSelect) statusSelect.value = newStatus;
+
+        renderLiveStreamPanel();
+        showAdminToast(`Live stream status changed to: ${newStatus.toUpperCase()}`, 'success');
+    } catch (err) {
+        console.error('Failed to transition live stream status:', err);
+        showAdminToast(`Transition failed: ${err.message}`, 'error');
+    }
+}
+
+async function handleSaveLiveStreamConfig(event) {
+    if (event) event.preventDefault();
+
+    const status = document.getElementById('liveInput_status')?.value || 'offline';
+    const title = document.getElementById('liveInput_title')?.value.trim();
+    const description = document.getElementById('liveInput_description')?.value.trim();
+    const scheduledStart = document.getElementById('liveInput_scheduledStart')?.value || '';
+    const playbackUrl = document.getElementById('liveInput_playbackUrl')?.value.trim() || '';
+    const uid = document.getElementById('liveInput_cloudflareUid')?.value.trim() || '';
+    const chatEnabled = document.getElementById('liveInput_chatEnabled')?.checked ?? true;
+    const recordingsEnabled = document.getElementById('liveInput_recordingsEnabled')?.checked ?? true;
+
+    if (!title) {
+        showAdminToast('Broadcast title is required.', 'warning');
+        return;
+    }
+
+    const payload = {
+        status,
+        title,
+        description,
+        scheduledStart,
+        playbackUrl,
+        uid,
+        chatEnabled,
+        recordingsEnabled,
+        updatedAt: new Date().toISOString()
+    };
+
+    try {
+        if (window.RichaliFirebase && typeof window.RichaliFirebase.updateLiveStreamState === 'function') {
+            await window.RichaliFirebase.updateLiveStreamState(payload);
+            await window.RichaliFirebase.logAudit('UPDATE_LIVESTREAM_CONFIG', 'live', null, { status, title });
+        } else {
+            AdminState.liveStream = payload;
+        }
+
+        showAdminToast('Live stream settings updated and propagated to /live in real time!', 'success');
+        renderLiveStreamPanel();
+    } catch (err) {
+        console.error('Error saving live stream config:', err);
+        showAdminToast(`Failed to save settings: ${err.message}`, 'error');
+    }
 }
 
 // --- TOAST NOTIFICATION UTILITIES ---

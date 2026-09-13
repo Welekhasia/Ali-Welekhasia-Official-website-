@@ -5,9 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Revival Crusades & Events | Ali Welekhasia Music</title>
     <meta name="description" content="Upcoming gospel crusades, revival meetings, and worship nights with Minister Ali Welekhasia.">
+    <link rel="canonical" href="https://aliwelekhasia.co.ke/events/">
     <link rel="icon" type="image/jpeg" href="../hero.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
+
+    <!-- Open Graph / Social SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Revival Crusades & Events | Ali Welekhasia Music">
+    <meta property="og:description" content="Upcoming gospel crusades, revival meetings, and worship nights with Minister Ali Welekhasia.">
+    <meta property="og:url" content="https://aliwelekhasia.co.ke/events/">
+    <meta property="og:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Revival Crusades & Events | Ali Welekhasia Music">
+    <meta property="twitter:description" content="Upcoming gospel crusades, revival meetings, and worship nights with Minister Ali Welekhasia.">
+    <meta property="twitter:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+
+    <!-- Schema.org JSON-LD Structured Data for Events Schedule -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EventSeries",
+      "name": "Ali Welekhasia Gospel Crusades & Worship Nights",
+      "description": "Live revival worship, prophetic prayer gatherings, and gospel crusades led by Evangelist Ali Welekhasia.",
+      "organizer": {
+        "@type": "Person",
+        "name": "Ali Welekhasia",
+        "url": "https://aliwelekhasia.co.ke"
+      }
+    }
+    </script>
 
     <!-- Firebase SDK v10 Compat -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -118,12 +146,16 @@
             <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #d4af37, #b89628); display: flex; align-items: center; justify-content: center; color: #070b14; font-size: 18px; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
             <span style="font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700;">ALI WELEKHASIA</span>
         </a>
-        <div style="display: flex; align-items: center; gap: 16px;">
-            <a href="../" style="color: #94a3b8; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-arrow-left"></i> Home</a>
-            <a href="../lyrics" style="color: #94a3b8; text-decoration: none; font-size: 14px;">Lyrics</a>
-            <a href="../live" style="color: #ef4444; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-tower-broadcast"></i> Live Stream</a>
-            <a href="../admin" style="background: rgba(212, 175, 55, 0.15); border: 1px solid #d4af37; color: #d4af37; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;"><i class="fa-solid fa-lock"></i> Admin CMS</a>
-        </div>
+        <nav style="display: flex; gap: 20px; align-items: center;">
+            <a href="../" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Home</a>
+            <a href="/music/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Music</a>
+            <a href="/lyrics/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Lyrics</a>
+            <a href="/videos/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Videos</a>
+            <a href="/gallery/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Gallery</a>
+            <a href="/events/" style="color: #d4af37; text-decoration: none; font-size: 14px; font-weight: 600;">Crusades</a>
+            <a href="/blog/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Devotionals</a>
+            <a href="/live" style="color: #ef4444; text-decoration: none; font-size: 14px; font-weight: 700;"><i class="fa-solid fa-circle" style="font-size: 8px; margin-right: 4px;"></i>Live</a>
+        </nav>
     </header>
 
     <div class="events-page-hero">
@@ -143,44 +175,77 @@
         });
 
         function loadPublicEvents() {
-            if (window.RichaliFirebase && window.RichaliFirebase.database) {
-                const schema = window.RichaliFirebase.schema.aliwelekhasia;
-                window.RichaliFirebase.getDbRef(schema.events).once('value', (snap) => {
-                    const data = snap.val() || {};
-                    const published = Object.values(data).filter(e => e.status === 'PUBLISHED' || !e.status);
-                    renderEvents(published);
-                });
-            } else {
-                renderDefaultEventsFallback();
+            const container = document.getElementById('publicEventsList');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; color: #94a3b8;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 32px; color: #d4af37; margin-bottom: 16px;"></i>
+                    <p style="font-size: 15px; color: #fff; font-weight: 600;">Connecting to Ministry Calendar...</p>
+                    <p style="font-size: 13px;">Retrieving scheduled events and revival crusades from Firebase.</p>
+                </div>
+            `;
+
+            if (!window.RichaliFirebase || !window.RichaliFirebase.database) {
+                renderEventsError('Firebase database connection is unavailable.');
+                return;
             }
+
+            const schema = window.RichaliFirebase.schema.aliwelekhasia;
+            const eventsRef = window.RichaliFirebase.getDbRef(schema.events);
+
+            if (!eventsRef) {
+                renderEventsError('Database reference for events could not be resolved.');
+                return;
+            }
+
+            eventsRef.once('value')
+                .then((snap) => {
+                    const data = snap.val();
+                    if (!data || Object.keys(data).length === 0) {
+                        renderEventsEmpty('No upcoming crusades or events scheduled at this time.');
+                    } else {
+                        const published = Object.values(data).filter(e => e.status === 'PUBLISHED' || !e.status);
+                        if (published.length === 0) {
+                            renderEventsEmpty('No upcoming events are currently published.');
+                        } else {
+                            renderEvents(published);
+                        }
+                    }
+                })
+                .catch((err) => {
+                    console.error('Firebase Events Read Error:', err);
+                    renderEventsError(err.message || 'Permission denied or network offline.');
+                });
         }
 
-        function renderDefaultEventsFallback() {
-            const fallback = [
-                {
-                    title: "Eldoret Prophetic Worship & Healing Crusade",
-                    date: "2026-10-15",
-                    time: "4:00 PM - 9:00 PM EAT",
-                    venue: "Eldoret 64 Stadium Grounds",
-                    location: "Eldoret, Kenya",
-                    description: "Three consecutive days of deep praise, divine healing, and the tangible power of God."
-                },
-                {
-                    title: "Nairobi All-Night Worship Vigil",
-                    date: "2026-11-20",
-                    time: "8:00 PM - 5:00 AM EAT",
-                    venue: "KICC Plenary Hall",
-                    location: "Nairobi, Kenya",
-                    description: "Lifting incense of prayer and pure gospel worship over Kenya and East Africa."
-                }
-            ];
-            renderEvents(fallback);
+        function renderEventsEmpty(msg) {
+            const container = document.getElementById('publicEventsList');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; background: #0e1626; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
+                    <i class="fa-regular fa-calendar-xmark" style="font-size: 40px; color: #d4af37; margin-bottom: 16px; display: block;"></i>
+                    <h3 style="color: #fff; font-size: 18px; margin-bottom: 8px;">No Scheduled Events</h3>
+                    <p style="color: #94a3b8; font-size: 14px; max-width: 440px; margin: 0 auto;">${escapeHtml(msg)}</p>
+                </div>
+            `;
+        }
+
+        function renderEventsError(msg) {
+            const container = document.getElementById('publicEventsList');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px;">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: #ef4444; margin-bottom: 16px; display: block;"></i>
+                    <h3 style="color: #fff; font-size: 18px; margin-bottom: 8px;">Unable to Load Ministry Events</h3>
+                    <p style="color: #f87171; font-size: 14px; max-width: 480px; margin: 0 auto 20px;">${escapeHtml(msg)}</p>
+                    <button onclick="loadPublicEvents()" style="background: #d4af37; color: #070b14; border: none; padding: 10px 22px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        <i class="fa-solid fa-rotate-right"></i> Retry Connection
+                    </button>
+                </div>
+            `;
         }
 
         function renderEvents(events) {
             const container = document.getElementById('publicEventsList');
             if (events.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: #94a3b8; padding: 40px;">No upcoming crusade dates announced. Check back soon!</p>`;
+                renderEventsEmpty('No events found.');
                 return;
             }
 
@@ -196,16 +261,21 @@
                             <div class="month">${month}</div>
                         </div>
                         <div class="event-details-area">
-                            <h3>${e.title}</h3>
+                            <h3>${escapeHtml(e.title || 'Ministry Crusade')}</h3>
                             <div class="event-meta-row">
-                                <span><i class="fa-regular fa-clock"></i> ${e.time || 'Evening'}</span>
-                                <span><i class="fa-solid fa-location-dot"></i> ${e.venue || 'TBA'}, ${e.location || 'Kenya'}</span>
+                                <span><i class="fa-regular fa-clock"></i> ${escapeHtml(e.time || 'Evening')}</span>
+                                <span><i class="fa-solid fa-location-dot"></i> ${escapeHtml(e.venue || 'TBA')}, ${escapeHtml(e.location || 'Kenya')}</span>
                             </div>
-                            <p style="color: #cbd5e1; font-size: 14px; line-height: 1.5;">${e.description || ''}</p>
+                            <p style="color: #cbd5e1; font-size: 14px; line-height: 1.5;">${escapeHtml(e.description || '')}</p>
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
         }
     </script>
 </body>

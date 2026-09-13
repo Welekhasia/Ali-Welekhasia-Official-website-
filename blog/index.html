@@ -5,9 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Devotionals & Ministry Articles | Ali Welekhasia Music</title>
     <meta name="description" content="Prophetic devotionals, teachings on worship, and spiritual articles by Minister Ali Welekhasia.">
+    <link rel="canonical" href="https://aliwelekhasia.co.ke/blog/">
     <link rel="icon" type="image/jpeg" href="../hero.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
+
+    <!-- Open Graph / Social SEO -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Devotionals & Ministry Articles | Ali Welekhasia Music">
+    <meta property="og:description" content="Prophetic devotionals, teachings on worship, and spiritual articles by Minister Ali Welekhasia.">
+    <meta property="og:url" content="https://aliwelekhasia.co.ke/blog/">
+    <meta property="og:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Devotionals & Ministry Articles | Ali Welekhasia Music">
+    <meta property="twitter:description" content="Prophetic devotionals, teachings on worship, and spiritual articles by Minister Ali Welekhasia.">
+    <meta property="twitter:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+
+    <!-- Schema.org JSON-LD Structured Data for Ministry Blog & Devotions -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      "name": "Ali Welekhasia Ministry Devotionals & Articles",
+      "description": "Prophetic teachings, Biblical devotionals, and worship exhortations by Evangelist Ali Welekhasia.",
+      "author": {
+        "@type": "Person",
+        "name": "Ali Welekhasia",
+        "url": "https://aliwelekhasia.co.ke"
+      }
+    }
+    </script>
 
     <!-- Firebase SDK v10 Compat -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -102,12 +130,16 @@
             <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #d4af37, #b89628); display: flex; align-items: center; justify-content: center; color: #070b14; font-size: 18px; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
             <span style="font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700;">ALI WELEKHASIA</span>
         </a>
-        <div style="display: flex; align-items: center; gap: 16px;">
-            <a href="../" style="color: #94a3b8; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-arrow-left"></i> Home</a>
-            <a href="../lyrics" style="color: #94a3b8; text-decoration: none; font-size: 14px;">Lyrics</a>
-            <a href="../live" style="color: #ef4444; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-tower-broadcast"></i> Live Stream</a>
-            <a href="../admin" style="background: rgba(212, 175, 55, 0.15); border: 1px solid #d4af37; color: #d4af37; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;"><i class="fa-solid fa-lock"></i> Admin CMS</a>
-        </div>
+        <nav style="display: flex; gap: 20px; align-items: center;">
+            <a href="../" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Home</a>
+            <a href="/music/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Music</a>
+            <a href="/lyrics/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Lyrics</a>
+            <a href="/videos/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Videos</a>
+            <a href="/gallery/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Gallery</a>
+            <a href="/events/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Crusades</a>
+            <a href="/blog/" style="color: #d4af37; text-decoration: none; font-size: 14px; font-weight: 600;">Devotionals</a>
+            <a href="/live" style="color: #ef4444; text-decoration: none; font-size: 14px; font-weight: 700;"><i class="fa-solid fa-circle" style="font-size: 8px; margin-right: 4px;"></i>Live</a>
+        </nav>
     </header>
 
     <div class="blog-page-hero">
@@ -127,61 +159,97 @@
         });
 
         function loadPublicBlog() {
-            if (window.RichaliFirebase && window.RichaliFirebase.database) {
-                const schema = window.RichaliFirebase.schema.aliwelekhasia;
-                window.RichaliFirebase.getDbRef(schema.blog).once('value', (snap) => {
-                    const data = snap.val() || {};
-                    const published = Object.values(data).filter(p => p.status === 'PUBLISHED' || !p.status);
-                    renderArticles(published);
-                });
-            } else {
-                renderDefaultBlogFallback();
+            const container = document.getElementById('publicBlogList');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; color: #94a3b8;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 32px; color: #d4af37; margin-bottom: 16px;"></i>
+                    <p style="font-size: 15px; color: #fff; font-weight: 600;">Connecting to Devotional Archive...</p>
+                    <p style="font-size: 13px;">Retrieving published ministry messages and devotionals from Firebase.</p>
+                </div>
+            `;
+
+            if (!window.RichaliFirebase || !window.RichaliFirebase.database) {
+                renderBlogError('Firebase database connection is unavailable.');
+                return;
             }
+
+            const schema = window.RichaliFirebase.schema.aliwelekhasia;
+            const blogRef = window.RichaliFirebase.getDbRef(schema.blog);
+
+            if (!blogRef) {
+                renderBlogError('Database reference for devotionals could not be resolved.');
+                return;
+            }
+
+            blogRef.once('value')
+                .then((snap) => {
+                    const data = snap.val();
+                    if (!data || Object.keys(data).length === 0) {
+                        renderBlogEmpty('No devotional articles published yet.');
+                    } else {
+                        const published = Object.values(data).filter(p => p.status === 'PUBLISHED' || !p.status);
+                        if (published.length === 0) {
+                            renderBlogEmpty('No devotional articles currently published.');
+                        } else {
+                            renderArticles(published);
+                        }
+                    }
+                })
+                .catch((err) => {
+                    console.error('Firebase Blog Read Error:', err);
+                    renderBlogError(err.message || 'Permission denied or network offline.');
+                });
         }
 
-        function renderDefaultBlogFallback() {
-            const fallback = [
-                {
-                    title: "The Mystery of True Worship in Spirit and in Truth",
-                    category: "Worship Revelation",
-                    scripture: "John 4:23-24",
-                    excerpt: "Worship is not merely an artistic sequence or melody; it is the total surrender of the human will to the divine sovereignty of Jesus Christ.",
-                    content: "When we worship from the depth of a transformed heart, the atmosphere shifts and burdens are dissolved by the presence of the Holy Spirit.",
-                    author: "Evangelist Ali Welekhasia",
-                    date: "October 2026"
-                },
-                {
-                    title: "BADO: God is Not Finished With Your Life",
-                    category: "Prophetic Word",
-                    scripture: "Philippians 1:6",
-                    excerpt: "Being confident of this very thing, that He who began a good work in you will carry it on to completion until the day of Jesus Christ.",
-                    content: "No matter the delay or physical obstacles you encounter, the covenant of God stands firm. He is still working behind the scenes for your victory.",
-                    author: "Evangelist Ali Welekhasia",
-                    date: "October 2026"
-                }
-            ];
-            renderArticles(fallback);
+        function renderBlogEmpty(msg) {
+            const container = document.getElementById('publicBlogList');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; background: #0e1626; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
+                    <i class="fa-solid fa-book-bible" style="font-size: 40px; color: #d4af37; margin-bottom: 16px; display: block;"></i>
+                    <h3 style="color: #fff; font-size: 18px; margin-bottom: 8px;">No Devotionals Available</h3>
+                    <p style="color: #94a3b8; font-size: 14px; max-width: 440px; margin: 0 auto;">${escapeHtml(msg)}</p>
+                </div>
+            `;
+        }
+
+        function renderBlogError(msg) {
+            const container = document.getElementById('publicBlogList');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px;">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: #ef4444; margin-bottom: 16px; display: block;"></i>
+                    <h3 style="color: #fff; font-size: 18px; margin-bottom: 8px;">Unable to Load Devotionals</h3>
+                    <p style="color: #f87171; font-size: 14px; max-width: 480px; margin: 0 auto 20px;">${escapeHtml(msg)}</p>
+                    <button onclick="loadPublicBlog()" style="background: #d4af37; color: #070b14; border: none; padding: 10px 22px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        <i class="fa-solid fa-rotate-right"></i> Retry Connection
+                    </button>
+                </div>
+            `;
         }
 
         function renderArticles(articles) {
             const container = document.getElementById('publicBlogList');
             if (articles.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: #94a3b8; padding: 40px;">No devotional articles published yet.</p>`;
+                renderBlogEmpty('No articles published.');
                 return;
             }
 
             container.innerHTML = articles.map(a => `
                 <article class="article-card">
-                    <span class="tag-pill">${a.category || 'Devotional'}</span>
-                    <h2>${a.title}</h2>
-                    ${a.scripture ? `<span class="scripture-anchor"><i class="fa-solid fa-bible"></i> ${a.scripture}</span>` : ''}
-                    <div class="article-excerpt">${a.content || a.excerpt || ''}</div>
+                    <span class="tag-pill">${escapeHtml(a.category || 'Devotional')}</span>
+                    <h2>${escapeHtml(a.title || 'Ministry Message')}</h2>
+                    ${a.scripture ? `<span class="scripture-anchor"><i class="fa-solid fa-bible"></i> ${escapeHtml(a.scripture)}</span>` : ''}
+                    <div class="article-excerpt" style="white-space: pre-line;">${escapeHtml(a.content || a.excerpt || '')}</div>
                     <div class="article-author-row">
-                        <span>By ${a.author || 'Ali Welekhasia'}</span>
-                        <span>${a.date || 'Published'}</span>
+                        <span>By ${escapeHtml(a.author || 'Evangelist Ali Welekhasia')}</span>
+                        <span>${a.createdAt ? new Date(a.createdAt).toLocaleDateString() : (escapeHtml(a.date || 'Published'))}</span>
                     </div>
                 </article>
             `).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
         }
     </script>
 </body>

@@ -1,0 +1,44 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Ali Welekhasia Partitioned Storage Rules
+    match /aliwelekhasia {
+      // Audio Master Files (MP3, WAV, M4A, FLAC) up to 50MB
+      match /music/{allPaths=**} {
+        allow read: if true;
+        allow write: if request.auth != null 
+                     && request.resource.size < 50 * 1024 * 1024
+                     && request.resource.contentType.matches('audio/.*');
+      }
+
+      // Artwork and Album Covers up to 15MB
+      match /artwork/{allPaths=**} {
+        allow read: if true;
+        allow write: if request.auth != null 
+                     && request.resource.size < 15 * 1024 * 1024
+                     && request.resource.contentType.matches('image/.*');
+      }
+
+      // Ministry Gallery Photos up to 15MB
+      match /gallery/{allPaths=**} {
+        allow read: if true;
+        allow write: if request.auth != null 
+                     && request.resource.size < 15 * 1024 * 1024
+                     && request.resource.contentType.matches('image/.*');
+      }
+
+      // General Ministry Media Library up to 25MB
+      match /media/{allPaths=**} {
+        allow read: if true;
+        allow write: if request.auth != null 
+                     && request.resource.size < 25 * 1024 * 1024;
+      }
+    }
+
+    // Default deny write for unpartitioned paths
+    match /{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

@@ -534,7 +534,7 @@
                     <div class="view-header">
                         <div>
                             <h1><i class="fa-solid fa-tower-broadcast" style="color: #ef4444;"></i> Cloudflare Live Broadcast Control</h1>
-                            <p>Monitor live streams, broadcaster ingest endpoints, and real-time church attendance.</p>
+                            <p>Real-time live streaming management, broadcast state transitions, viewer monitoring, and ingest settings.</p>
                         </div>
                         <div class="header-actions">
                             <a href="../live" target="_blank" class="btn btn-gold">
@@ -543,17 +543,136 @@
                         </div>
                     </div>
 
-                    <div class="admin-card">
+                    <!-- Live Stream Status Banner -->
+                    <div style="display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
+                        <div class="stat-metric-card" style="flex: 1; min-width: 220px; border-left: 4px solid #ef4444;">
+                            <div class="stat-icon-wrapper" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">
+                                <i class="fa-solid fa-satellite-dish"></i>
+                            </div>
+                            <div class="stat-metric-info">
+                                <span class="stat-metric-label">Broadcast State</span>
+                                <h3 id="adminLiveStateDisplay" style="color: #ef4444; font-size: 20px;">OFFLINE</h3>
+                            </div>
+                        </div>
+
+                        <div class="stat-metric-card" style="flex: 1; min-width: 220px; border-left: 4px solid #3b82f6;">
+                            <div class="stat-icon-wrapper" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">
+                                <i class="fa-solid fa-eye"></i>
+                            </div>
+                            <div class="stat-metric-info">
+                                <span class="stat-metric-label">Real-Time Viewers</span>
+                                <h3 id="adminLiveViewersCount" style="color: #60a5fa; font-size: 20px;">0</h3>
+                            </div>
+                        </div>
+
+                        <div class="stat-metric-card" style="flex: 1; min-width: 220px; border-left: 4px solid #10b981;">
+                            <div class="stat-icon-wrapper" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                                <i class="fa-solid fa-comments"></i>
+                            </div>
+                            <div class="stat-metric-info">
+                                <span class="stat-metric-label">Live Intercession Chat</span>
+                                <h3 id="adminLiveChatState" style="color: #34d399; font-size: 20px;">Enabled</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stream Control Form Card -->
+                    <div class="admin-card" style="margin-bottom: 24px;">
                         <div class="card-header-bar">
-                            <h3><i class="fa-solid fa-signal"></i> Ingest & Live Channel Status</h3>
-                            <span id="liveControlStatus" style="font-size: 13px; font-weight: 600;">Checking status...</span>
+                            <h3><i class="fa-solid fa-sliders"></i> Broadcast Configuration & Metadata</h3>
+                            <div style="display: flex; gap: 8px;">
+                                <button type="button" class="btn btn-sm" style="background: #10b981; color: #fff;" onclick="quickTransitionLiveState('live')">
+                                    <i class="fa-solid fa-play"></i> Go LIVE
+                                </button>
+                                <button type="button" class="btn btn-sm" style="background: #ef4444; color: #fff;" onclick="quickTransitionLiveState('ended')">
+                                    <i class="fa-solid fa-stop"></i> End Broadcast
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline" onclick="quickTransitionLiveState('offline')">
+                                    <i class="fa-solid fa-power-off"></i> Set Offline
+                                </button>
+                            </div>
                         </div>
                         <div class="card-body">
-                            <p style="color: var(--adm-text-muted); font-size: 13.5px; margin-bottom: 18px;">
-                                Cloudflare Stream Live handles global multi-bitrate delivery. To broadcast using OBS Studio or Larix Broadcaster, configure your streaming client with the secure endpoint:
+                            <form id="liveControlForm" onsubmit="handleSaveLiveStreamConfig(event)">
+                                <div class="adm-form-grid" style="margin-bottom: 16px;">
+                                    <div class="adm-form-group">
+                                        <label for="liveInput_status">Live Stream Broadcast State *</label>
+                                        <select id="liveInput_status" class="adm-form-control" required onchange="onLiveStatusDropdownChange(this.value)">
+                                            <option value="offline">OFFLINE (Standby / Off Air)</option>
+                                            <option value="connecting">STARTING / CONNECTING (Pre-stream)</option>
+                                            <option value="live">LIVE NOW (Broadcasting)</option>
+                                            <option value="ended">ENDED (Service Concluded)</option>
+                                        </select>
+                                    </div>
+                                    <div class="adm-form-group">
+                                        <label for="liveInput_scheduledStart">Scheduled Broadcast Time (EAT)</label>
+                                        <input type="datetime-local" id="liveInput_scheduledStart" class="adm-form-control">
+                                    </div>
+                                </div>
+
+                                <div class="adm-form-group" style="margin-bottom: 16px;">
+                                    <label for="liveInput_title">Broadcast Title *</label>
+                                    <input type="text" id="liveInput_title" class="adm-form-control" required placeholder="e.g. Sunday Miracle & Prophetic Worship Service">
+                                </div>
+
+                                <div class="adm-form-group" style="margin-bottom: 16px;">
+                                    <label for="liveInput_description">Broadcast Description & Scripture Theme</label>
+                                    <textarea id="liveInput_description" class="adm-form-control" style="min-height: 70px;" placeholder="e.g. Join Evangelist Ali Welekhasia live as we lift an incense of pure worship to the King of Kings."></textarea>
+                                </div>
+
+                                <div class="adm-form-grid" style="margin-bottom: 16px;">
+                                    <div class="adm-form-group">
+                                        <label for="liveInput_playbackUrl">HLS Playback URL / Stream Video URL</label>
+                                        <input type="url" id="liveInput_playbackUrl" class="adm-form-control" placeholder="https://customer-stream.cloudflare.com/.../manifest/video.m3u8">
+                                    </div>
+                                    <div class="adm-form-group">
+                                        <label for="liveInput_cloudflareUid">Cloudflare Stream Live UID</label>
+                                        <input type="text" id="liveInput_cloudflareUid" class="adm-form-control" placeholder="e.g. 5d5380d4e654460d3e1e9a3000f3e4f1">
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; gap: 24px; margin-bottom: 20px; flex-wrap: wrap;">
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--adm-text-main); font-size: 14px;">
+                                        <input type="checkbox" id="liveInput_chatEnabled" checked style="accent-color: var(--adm-gold); width: 16px; height: 16px;">
+                                        <span>Enable Live Prayer Chat on /live</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--adm-text-main); font-size: 14px;">
+                                        <input type="checkbox" id="liveInput_recordingsEnabled" checked style="accent-color: var(--adm-gold); width: 16px; height: 16px;">
+                                        <span>Show Recorded Replays when Offline</span>
+                                    </label>
+                                </div>
+
+                                <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                                    <button type="submit" class="btn btn-gold">
+                                        <i class="fa-solid fa-floppy-disk"></i> Save Broadcast Settings
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Broadcaster Ingest Endpoints Card -->
+                    <div class="admin-card">
+                        <div class="card-header-bar">
+                            <h3><i class="fa-solid fa-satellite"></i> Broadcaster Ingest Credentials (OBS / vMix / Larix)</h3>
+                        </div>
+                        <div class="card-body">
+                            <p style="color: var(--adm-text-muted); font-size: 13.5px; margin-bottom: 14px;">
+                                Use these parameters in your broadcasting software to transmit live video into the Cloudflare Stream infrastructure:
                             </p>
-                            <div style="background: var(--adm-bg); padding: 14px; border-radius: var(--adm-radius-sm); border: 1px solid var(--adm-border-subtle); font-family: monospace; font-size: 13px; color: var(--adm-gold);">
-                                RTMPS Server: rtmps://live.cloudflare.com:443/live/
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+                                <div style="background: var(--adm-bg); padding: 14px; border-radius: var(--adm-radius-sm); border: 1px solid var(--adm-border-subtle);">
+                                    <div style="font-size: 12px; color: var(--adm-text-subtle); margin-bottom: 4px;">RTMPS Server Ingest URL</div>
+                                    <div style="font-family: monospace; font-size: 13px; color: var(--adm-gold); word-break: break-all;">
+                                        rtmps://live.cloudflare.com:443/live/
+                                    </div>
+                                </div>
+                                <div style="background: var(--adm-bg); padding: 14px; border-radius: var(--adm-radius-sm); border: 1px solid var(--adm-border-subtle);">
+                                    <div style="font-size: 12px; color: var(--adm-text-subtle); margin-bottom: 4px;">SRT Ingest Endpoint</div>
+                                    <div style="font-family: monospace; font-size: 13px; color: var(--adm-gold); word-break: break-all;">
+                                        srt://live.cloudflare.com:10000
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -580,6 +699,7 @@
                             <h1><i class="fa-solid fa-users-gear"></i> User Management & Permissions</h1>
                             <p>Manage administrative roles (SUPER ADMIN, ADMIN, ARTIST, USER) for the ecosystem.</p>
                         </div>
+                        <button class="btn btn-gold" onclick="openUserModal()"><i class="fa-solid fa-user-plus"></i> Assign User Role</button>
                     </div>
 
                     <div class="table-responsive-container">
@@ -843,8 +963,15 @@
                         </select>
                     </div>
                     <div class="adm-form-group" style="margin-bottom: 14px;">
-                        <label for="pictureInput_imageUrl">Image URL</label>
-                        <input type="text" id="pictureInput_imageUrl" class="adm-form-control" placeholder="https://..." required>
+                        <label>Upload Photo (PNG, JPG, WebP - max 15MB)</label>
+                        <input type="file" id="pictureInput_file" class="adm-form-control" accept="image/*" onchange="handleGalleryImageUpload(event)" style="margin-bottom: 8px;">
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <img id="picturePreviewImg" src="../hero.jpg" alt="Preview" style="width: 70px; height: 70px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(212, 175, 55, 0.4);" onerror="this.src='../hero.jpg'">
+                            <div style="flex: 1;">
+                                <label for="pictureInput_imageUrl" style="font-size: 12px; color: #94a3b8;">Or Image URL / Cloud CDN</label>
+                                <input type="text" id="pictureInput_imageUrl" class="adm-form-control" placeholder="https://..." required>
+                            </div>
+                        </div>
                     </div>
                     <div class="adm-form-group" style="margin-bottom: 14px;">
                         <label for="pictureInput_caption">Caption</label>
@@ -1013,6 +1140,49 @@
                 <div class="adm-modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="closeModal('blogModal')">Cancel</button>
                     <button type="submit" class="btn btn-gold">Publish Devotional</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- USER ROLE MODAL -->
+    <div id="userModal" class="adm-modal-overlay">
+        <div class="adm-modal-container" style="max-width: 520px;">
+            <div class="adm-modal-header">
+                <h3 id="userModalTitle"><i class="fa-solid fa-user-shield"></i> Assign User Role</h3>
+                <button type="button" class="adm-modal-close" onclick="closeModal('userModal')">&times;</button>
+            </div>
+            <form id="userRoleForm" onsubmit="handleSaveUserRole(event)">
+                <div class="adm-modal-body">
+                    <input type="hidden" id="userInput_uid">
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="userInput_email">User Email Address *</label>
+                        <input type="email" id="userInput_email" class="adm-form-control" required placeholder="e.g. minister.assistant@aliwelekhasia.co.ke">
+                    </div>
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="userInput_displayName">Full Name / Display Name</label>
+                        <input type="text" id="userInput_displayName" class="adm-form-control" placeholder="e.g. Media Ministry Director">
+                    </div>
+                    <div class="adm-form-group" style="margin-bottom: 14px;">
+                        <label for="userInput_role">System Access Role *</label>
+                        <select id="userInput_role" class="adm-form-control" required>
+                            <option value="ADMIN">ADMIN — Full CMS Content Management</option>
+                            <option value="ARTIST">ARTIST — Songs, Lyrics & Media Management</option>
+                            <option value="SUPER_ADMIN">SUPER_ADMIN — Global Control & User Management</option>
+                            <option value="USER">USER — Read & Prayer Submission Only</option>
+                        </select>
+                    </div>
+                    <div class="adm-form-group">
+                        <label for="userInput_status">Account Status</label>
+                        <select id="userInput_status" class="adm-form-control">
+                            <option value="ACTIVE">Active (Authorized)</option>
+                            <option value="SUSPENDED">Suspended (Access Revoked)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('userModal')">Cancel</button>
+                    <button type="submit" class="btn btn-gold">Save Role Assignment</button>
                 </div>
             </form>
         </div>

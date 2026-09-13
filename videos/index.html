@@ -5,9 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gospel Videos & Ministrations | Ali Welekhasia Music</title>
     <meta name="description" content="Watch official gospel music videos, worship broadcasts, and prophetic crusades by Minister Ali Welekhasia.">
+    <link rel="canonical" href="https://aliwelekhasia.co.ke/videos/">
     <link rel="icon" type="image/jpeg" href="../hero.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
+
+    <!-- Open Graph / Social SEO -->
+    <meta property="og:type" content="video.other">
+    <meta property="og:title" content="Gospel Videos & Ministrations | Ali Welekhasia Music">
+    <meta property="og:description" content="Watch official gospel music videos, worship broadcasts, and prophetic crusades by Minister Ali Welekhasia.">
+    <meta property="og:url" content="https://aliwelekhasia.co.ke/videos/">
+    <meta property="og:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Gospel Videos & Ministrations | Ali Welekhasia Music">
+    <meta property="twitter:description" content="Watch official gospel music videos, worship broadcasts, and prophetic crusades by Minister Ali Welekhasia.">
+    <meta property="twitter:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+
+    <!-- Schema.org JSON-LD Structured Data for Videos -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Ali Welekhasia Official Gospel Videos & Ministrations",
+      "description": "Archive of gospel music videos, live praise sessions, and crusade video ministrations.",
+      "author": {
+        "@type": "Person",
+        "name": "Ali Welekhasia",
+        "url": "https://aliwelekhasia.co.ke"
+      }
+    }
+    </script>
 
     <!-- Firebase SDK v10 Compat -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -119,12 +147,16 @@
             <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #d4af37, #b89628); display: flex; align-items: center; justify-content: center; color: #070b14; font-size: 18px; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
             <span style="font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700;">ALI WELEKHASIA</span>
         </a>
-        <div style="display: flex; align-items: center; gap: 16px;">
-            <a href="../" style="color: #94a3b8; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-arrow-left"></i> Home</a>
-            <a href="../lyrics" style="color: #94a3b8; text-decoration: none; font-size: 14px;">Lyrics</a>
-            <a href="../live" style="color: #ef4444; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-tower-broadcast"></i> Live Stream</a>
-            <a href="../admin" style="background: rgba(212, 175, 55, 0.15); border: 1px solid #d4af37; color: #d4af37; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;"><i class="fa-solid fa-lock"></i> Admin CMS</a>
-        </div>
+        <nav style="display: flex; gap: 20px; align-items: center;">
+            <a href="../" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Home</a>
+            <a href="/music/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Music</a>
+            <a href="/lyrics/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Lyrics</a>
+            <a href="/videos/" style="color: #d4af37; text-decoration: none; font-size: 14px; font-weight: 600;">Videos</a>
+            <a href="/gallery/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Gallery</a>
+            <a href="/events/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Crusades</a>
+            <a href="/blog/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Devotionals</a>
+            <a href="/live" style="color: #ef4444; text-decoration: none; font-size: 14px; font-weight: 700;"><i class="fa-solid fa-circle" style="font-size: 8px; margin-right: 4px;"></i>Live</a>
+        </nav>
     </header>
 
     <div class="videos-page-hero">
@@ -134,7 +166,10 @@
 
     <div class="videos-container">
         <div id="publicVideosGrid" class="public-videos-grid">
-            <p style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;">Loading video catalogue...</p>
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #94a3b8;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 32px; color: #d4af37; margin-bottom: 16px;"></i>
+                <p>Loading video catalogue from Firebase...</p>
+            </div>
         </div>
     </div>
 
@@ -144,59 +179,107 @@
         });
 
         function loadPublicVideos() {
-            if (window.RichaliFirebase && window.RichaliFirebase.database) {
-                const schema = window.RichaliFirebase.schema.aliwelekhasia;
-                window.RichaliFirebase.getDbRef(schema.videos).once('value', (snap) => {
-                    const data = snap.val() || {};
-                    const published = Object.values(data).filter(v => v.status === 'PUBLISHED' || !v.status);
-                    renderVideos(published);
-                });
-            } else {
-                renderDefaultVideosFallback();
+            const container = document.getElementById('publicVideosGrid');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #94a3b8;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 32px; color: #d4af37; margin-bottom: 16px;"></i>
+                    <p>Connecting to video database...</p>
+                </div>
+            `;
+
+            if (!window.RichaliFirebase || !window.RichaliFirebase.database) {
+                renderVideosError('Firebase Realtime Database is not active.');
+                return;
             }
+
+            const schema = window.RichaliFirebase.schema.aliwelekhasia;
+            const ref = window.RichaliFirebase.getDbRef(schema.videos);
+            if (!ref) {
+                renderVideosError('Video database reference unavailable.');
+                return;
+            }
+
+            ref.once('value', (snap) => {
+                const data = snap.val();
+                if (!data || Object.keys(data).length === 0) {
+                    renderVideosEmpty();
+                    return;
+                }
+
+                const published = Object.values(data).filter(v => v.status === 'PUBLISHED' || !v.status);
+                if (published.length === 0) {
+                    renderVideosEmpty();
+                } else {
+                    renderVideos(published);
+                }
+            }, (error) => {
+                console.error('[Public Videos Error]:', error);
+                renderVideosError(error.message || 'Permission denied or offline.');
+            });
         }
 
-        function renderDefaultVideosFallback() {
-            const fallback = [
-                {
-                    title: "NI WEWE (Official Music Video)",
-                    category: "Music Video",
-                    youtubeUrl: "https://youtu.be/BLkpibP7XAU",
-                    youtubeId: "BLkpibP7XAU",
-                    description: "A deep song of praise and thanksgiving, acknowledging the supreme hand of God in our lives."
-                },
-                {
-                    title: "BADO (Official Video)",
-                    category: "Prophetic Praise",
-                    youtubeUrl: "https://youtu.be/TQxObs0FZ3w",
-                    youtubeId: "TQxObs0FZ3w",
-                    description: "Prophetic praise declaring that God is not yet finished with you."
-                }
-            ];
-            renderVideos(fallback);
+        function renderVideosEmpty() {
+            const container = document.getElementById('publicVideosGrid');
+            if (!container) return;
+            container.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #94a3b8; background: #0e1626; border-radius: 12px; border: 1px solid rgba(212, 175, 55, 0.2);">
+                    <i class="fa-solid fa-video" style="font-size: 40px; color: #d4af37; margin-bottom: 16px; display: block;"></i>
+                    <h3 style="color: #fff; font-size: 18px; margin-bottom: 8px;">No Videos Published Yet</h3>
+                    <p style="max-width: 440px; margin: 0 auto 16px; font-size: 14px; line-height: 1.5;">
+                        Official ministrations and videos will appear here once published from the CMS.
+                    </p>
+                    <button onclick="loadPublicVideos()" style="background: #d4af37; color: #070b14; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                        <i class="fa-solid fa-rotate-right"></i> Refresh
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderVideosError(msg) {
+            const container = document.getElementById('publicVideosGrid');
+            if (!container) return;
+            container.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #94a3b8; background: rgba(239, 68, 68, 0.05); border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.4);">
+                    <i class="fa-solid fa-circle-exclamation" style="font-size: 40px; color: #ef4444; margin-bottom: 16px; display: block;"></i>
+                    <h3 style="color: #fff; font-size: 18px; margin-bottom: 8px;">Database Offline / Unavailable</h3>
+                    <p style="max-width: 480px; margin: 0 auto 16px; font-size: 14px; line-height: 1.5;">${escapeHtml(msg)}</p>
+                    <button onclick="loadPublicVideos()" style="background: #d4af37; color: #070b14; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                        <i class="fa-solid fa-rotate-right"></i> Retry Connection
+                    </button>
+                </div>
+            `;
         }
 
         function renderVideos(videos) {
             const container = document.getElementById('publicVideosGrid');
-            if (videos.length === 0) {
-                container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">No videos published yet.</p>`;
-                return;
-            }
+            if (!container) return;
 
             container.innerHTML = videos.map(v => `
                 <div class="video-card-item">
                     <div class="video-thumb-container">
-                        <img src="${v.thumbnailUrl || (v.youtubeId ? `https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg` : '../images/hero.jpg')}" alt="${v.title}" onerror="this.src='../images/hero.jpg'">
-                        <a href="${v.youtubeUrl || '#'}" target="_blank" class="video-play-overlay">
+                        <img src="${v.thumbnailUrl || (v.youtubeId ? `https://img.youtube.com/vi/${v.youtubeId}/hqdefault.jpg` : '../images/hero.jpg')}" alt="${escapeHtml(v.title)}" onerror="this.src='../images/hero.jpg'">
+                        <a href="${v.youtubeUrl || '#'}" target="_blank" rel="noopener noreferrer" class="video-play-overlay">
                             <div class="video-play-btn"><i class="fa-solid fa-play"></i></div>
                         </a>
                     </div>
                     <div class="video-info-box">
-                        <h3>${v.title}</h3>
-                        <p>${v.description || ''}</p>
+                        <h3>${escapeHtml(v.title)}</h3>
+                        <p>${escapeHtml(v.description || '')}</p>
                     </div>
                 </div>
             `).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
     </script>
 </body>

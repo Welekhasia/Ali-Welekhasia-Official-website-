@@ -3,79 +3,89 @@
     "aliwelekhasia": {
       "songs": {
         ".read": true,
-        ".write": "auth != null",
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ARTIST' || auth.token.email === 'ali.werekhasia01@gmail.com')",
         ".indexOn": ["status", "featured", "title", "createdAt"]
       },
       "lyrics": {
         ".read": true,
-        ".write": "auth != null",
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ARTIST' || auth.token.email === 'ali.werekhasia01@gmail.com')",
         ".indexOn": ["status", "songId", "slug"]
       },
       "gallery": {
         ".read": true,
-        ".write": "auth != null",
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
         ".indexOn": ["status", "category", "featured", "createdAt"]
       },
       "albums": {
         ".read": true,
-        ".write": "auth != null"
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')"
       },
       "videos": {
         ".read": true,
-        ".write": "auth != null",
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
         ".indexOn": ["status", "category", "featured", "createdAt"]
       },
       "events": {
         ".read": true,
-        ".write": "auth != null",
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
         ".indexOn": ["status", "startDate", "featured"]
       },
       "blog": {
         ".read": true,
-        ".write": "auth != null",
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
         ".indexOn": ["status", "slug", "category", "createdAt"]
       },
       "testimonials": {
         ".read": true,
-        ".write": "auth != null",
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
+        ".indexOn": ["status", "featured"]
+      },
+      "testimonies": {
+        ".read": true,
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
         ".indexOn": ["status", "featured"]
       },
       "prayer_requests": {
-        ".read": "auth != null",
+        ".read": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
         "$prayer_id": {
-          ".write": "!data.exists() || auth != null",
+          ".write": "!data.exists() || (auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com'))",
           ".validate": "newData.hasChildren(['name', 'request'])"
         }
       },
       "media": {
         ".read": true,
-        ".write": "auth != null",
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ARTIST' || auth.token.email === 'ali.werekhasia01@gmail.com')",
         ".indexOn": ["type", "createdAt"]
       },
       "users": {
-        ".read": "auth != null",
-        ".write": "auth != null"
+        ".read": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
+        "$uid": {
+          ".read": "auth != null && (auth.uid === $uid || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
+          ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com' || (auth.uid === $uid && (!data.exists() ? newData.child('role').val() === 'USER' : data.child('role').val() === newData.child('role').val())))"
+        }
       },
       "audit_logs": {
-        ".read": "auth != null",
-        ".write": "auth != null",
+        ".read": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
+        "$log_id": {
+          ".write": "!data.exists() && auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ARTIST' || auth.token.email === 'ali.werekhasia01@gmail.com')"
+        },
         ".indexOn": ["timestamp", "action", "userId"]
       },
       "settings": {
         ".read": true,
-        ".write": "auth != null"
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')"
       },
       "site_images": {
         ".read": true,
-        ".write": "auth != null"
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')"
       },
       "live_stream": {
         ".read": true,
-        ".write": "auth != null"
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')"
       },
       "live_stream_state": {
         ".read": true,
-        ".write": "auth != null"
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')"
       },
       "live_viewers": {
         ".read": true,
@@ -87,20 +97,20 @@
       "live_chat": {
         ".read": true,
         "$message_id": {
-          ".write": "!data.exists() || auth != null",
+          ".write": "!data.exists()",
           ".validate": "newData.hasChildren(['author', 'message']) && newData.child('message').val().length <= 300 && newData.child('author').val().length <= 40"
         }
       },
       "live_schedule": {
         ".read": true,
-        ".write": "auth != null"
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')"
       },
       "live_recordings": {
         ".read": true,
-        ".write": "auth != null"
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')"
       },
       "live_reminders": {
-        ".read": "auth != null",
+        ".read": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
         "$reminder_id": {
           ".write": true,
           ".validate": "newData.hasChildren(['email']) && newData.child('email').val().contains('@')"

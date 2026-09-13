@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Gospel Music Catalogue | Ali Welekhasia Music</title>
+    <meta name="description" content="Listen to anointed Swahili and Luhya gospel worship songs, singles, and albums by Minister Ali Welekhasia. Stream and download official music.">
+    <link rel="canonical" href="https://aliwelekhasia.co.ke/music">
+    <link rel="icon" type="image/jpeg" href="../hero.jpg">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="music.playlist">
+    <meta property="og:url" content="https://aliwelekhasia.co.ke/music">
+    <meta property="og:title" content="Official Gospel Music Catalogue | Ali Welekhasia Music">
+    <meta property="og:description" content="Listen to anointed Swahili and Luhya gospel worship songs, singles, and albums by Minister Ali Welekhasia.">
+    <meta property="og:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+    <meta property="og:site_name" content="Ali Welekhasia Music">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://aliwelekhasia.co.ke/music">
+    <meta name="twitter:title" content="Official Gospel Music Catalogue | Ali Welekhasia Music">
+    <meta name="twitter:description" content="Listen to anointed Swahili and Luhya gospel worship songs, singles, and albums by Minister Ali Welekhasia.">
+    <meta name="twitter:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+
+    <!-- Schema.org JSON-LD Structured Data for Music Catalogue -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MusicPlaylist",
+      "name": "Ali Welekhasia Official Gospel Discography",
+      "numTracks": 20,
+      "description": "Anointed Swahili and Luhya gospel worship songs and prophetic ministrations by Minister Ali Welekhasia.",
+      "producer": {
+        "@type": "Person",
+        "name": "Ali Welekhasia",
+        "url": "https://aliwelekhasia.co.ke"
+      }
+    }
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Firebase SDK v10 Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+
+    <style>
+        .music-page-hero {
+            padding: 120px 20px 40px;
+            background: linear-gradient(180deg, #070b14 0%, #0d1527 100%);
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .music-page-hero h1 {
+            font-size: 36px;
+            color: #fff;
+            margin-bottom: 10px;
+            font-family: 'Cinzel', serif;
+        }
+        .music-page-hero p {
+            color: #d4af37;
+            font-size: 16px;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .music-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Player Bar */
+        .master-player-bar {
+            background: #0e1626;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 18px 24px;
+            margin-bottom: 36px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            flex-wrap: wrap;
+        }
+        .master-player-thumb {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #d4af37;
+        }
+        .master-player-info {
+            min-width: 180px;
+        }
+        .master-player-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .master-player-artist {
+            font-size: 13px;
+            color: #d4af37;
+        }
+        .master-audio-element {
+            flex: 1;
+            min-width: 260px;
+        }
+
+        /* Search & Filter Bar */
+        .music-filter-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+        .music-search-box {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+        .music-search-box input {
+            width: 100%;
+            background: #0e1626;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 10px 14px 10px 38px;
+            color: #fff;
+            font-size: 14px;
+        }
+        .music-search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+
+        /* Songs Grid */
+        .songs-catalogue-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .song-catalogue-card {
+            background: #0e1626;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .song-catalogue-card:hover {
+            transform: translateY(-4px);
+            border-color: #d4af37;
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.15);
+        }
+        .song-card-artwork {
+            position: relative;
+            width: 100%;
+            padding-top: 100%;
+            overflow: hidden;
+            background: #152238;
+        }
+        .song-card-artwork img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .song-catalogue-card:hover .song-card-artwork img {
+            transform: scale(1.04);
+        }
+        .song-card-play-btn {
+            position: absolute;
+            bottom: 14px;
+            right: 14px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #d4af37;
+            color: #070b14;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            cursor: pointer;
+            border: none;
+            transition: transform 0.2s;
+        }
+        .song-card-play-btn:hover {
+            transform: scale(1.1);
+        }
+        .song-card-content {
+            padding: 18px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .song-card-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .song-card-artist {
+            font-size: 13.5px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+        .song-card-tags {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .tag-badge {
+            background: rgba(212, 175, 55, 0.1);
+            color: #d4af37;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        .song-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 12px;
+            margin-top: 8px;
+        }
+        .btn-view-lyrics {
+            color: #d4af37;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-view-lyrics:hover {
+            text-decoration: underline;
+        }
+        .stream-links-group {
+            display: flex;
+            gap: 8px;
+        }
+        .stream-icon-link {
+            color: #94a3b8;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .stream-icon-link:hover {
+            color: #fff;
+        }
+
+        /* State Alerts */
+        .state-container {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            background: #0e1626;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .state-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+        .state-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .state-desc {
+            font-size: 14px;
+            color: #94a3b8;
+            max-width: 480px;
+            margin: 0 auto 20px;
+        }
+        .btn-retry {
+            background: #d4af37;
+            color: #070b14;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body style="background-color: #070b14; color: #fff;">
+
+    <!-- Navigation Header -->
+    <header class="main-header" style="position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding: 15px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <a href="../" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff;">
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #d4af37, #b89628); display: flex; align-items: center; justify-content: center; color: #070b14; font-size: 18px; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
+            <span style="font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700;">ALI WELEKHASIA</span>
+        </a>
+        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <a href="../" style="color: #94a3b8; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-arrow-left"></i> Home</a>
+            <a href="../lyrics" style="color: #94a3b8; text-decoration: none; font-size: 14px;">Lyrics</a>
+            <a href="../gallery" style="color: #94a3b8; text-decoration: none; font-size: 14px;">Gallery</a>
+            <a href="../videos" style="color: #94a3b8; text-decoration: none; font-size: 14px;">Videos</a>
+            <a href="../events" style="color: #94a3b8; text-decoration: none; font-size: 14px;">Events</a>
+            <a href="../blog" style="color: #94a3b8; text-decoration: none; font-size: 14px;">Blog</a>
+            <a href="../live" style="color: #ef4444; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-tower-broadcast"></i> Live Stream</a>
+            <a href="../admin" style="background: rgba(212, 175, 55, 0.15); border: 1px solid #d4af37; color: #d4af37; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;"><i class="fa-solid fa-lock"></i> Admin CMS</a>
+        </div>
+    </header>
+
+    <div class="music-page-hero">
+        <h1>Gospel Music Catalogue</h1>
+        <p>Listen, worship, and experience anointed Swahili & Luhya gospel songs released by Minister Ali Welekhasia.</p>
+    </div>
+
+    <div class="music-container">
+
+        <!-- Global Master Audio Player -->
+        <div id="masterPlayerBar" class="master-player-bar" style="display: none;">
+            <img id="masterPlayerThumb" src="../hero.jpg" class="master-player-thumb" alt="Track Cover" onerror="this.src='../hero.jpg'">
+            <div class="master-player-info">
+                <div id="masterPlayerTitle" class="master-player-title">Track Title</div>
+                <div id="masterPlayerArtist" class="master-player-artist">Ali Welekhasia</div>
+            </div>
+            <audio id="masterAudioElem" controls class="master-audio-element"></audio>
+        </div>
+
+        <!-- Filter / Search Toolbar -->
+        <div class="music-filter-toolbar">
+            <div class="music-search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="musicSearchInput" placeholder="Search by song title, album, or genre..." oninput="handleMusicSearch()">
+            </div>
+        </div>
+
+        <!-- Songs Grid -->
+        <div id="musicCatalogueGrid" class="songs-catalogue-grid">
+            <div class="state-container">
+                <div class="state-icon" style="color: #d4af37;"><i class="fa-solid fa-spinner fa-spin"></i></div>
+                <div class="state-title">Connecting to Music Database...</div>
+                <div class="state-desc">Retrieving the published gospel catalogue from Firebase.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let allSongs = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMusicFromFirebase();
+        });
+
+        function loadMusicFromFirebase() {
+            const container = document.getElementById('musicCatalogueGrid');
+            container.innerHTML = `
+                <div class="state-container">
+                    <div class="state-icon" style="color: #d4af37;"><i class="fa-solid fa-spinner fa-spin"></i></div>
+                    <div class="state-title">Connecting to Music Database...</div>
+                    <div class="state-desc">Retrieving the published gospel catalogue from Firebase.</div>
+                </div>
+            `;
+
+            if (!window.RichaliFirebase || !window.RichaliFirebase.database) {
+                renderErrorState('Firebase Realtime Database SDK is not initialized. Please check network connectivity.');
+                return;
+            }
+
+            const schema = window.RichaliFirebase.schema.aliwelekhasia;
+            const songsRef = window.RichaliFirebase.getDbRef(schema.songs);
+
+            if (!songsRef) {
+                renderErrorState('Database reference could not be resolved.');
+                return;
+            }
+
+            songsRef.once('value')
+                .then((snap) => {
+                    const data = snap.val();
+                    if (!data || Object.keys(data).length === 0) {
+                        renderEmptyState();
+                    } else {
+                        allSongs = Object.values(data).filter(s => s.status === 'PUBLISHED' || !s.status);
+                        if (allSongs.length === 0) {
+                            renderEmptyState();
+                        } else {
+                            renderSongs(allSongs);
+                        }
+                    }
+                })
+                .catch((err) => {
+                    console.error('Firebase Music Read Error:', err);
+                    renderErrorState(`Database connection error: ${err.message || 'Permission denied or offline'}`);
+                });
+        }
+
+        function renderSongs(songs) {
+            const container = document.getElementById('musicCatalogueGrid');
+            if (songs.length === 0) {
+                container.innerHTML = `
+                    <div class="state-container">
+                        <div class="state-icon" style="color: #64748b;"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <div class="state-title">No Songs Found</div>
+                        <div class="state-desc">No published songs match your search query.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = songs.map(s => `
+                <div class="song-catalogue-card">
+                    <div class="song-card-artwork">
+                        <img src="${s.artworkUrl || '../hero.jpg'}" alt="${escapeHtml(s.title)}" onerror="this.src='../hero.jpg'">
+                        ${s.audioUrl ? `
+                            <button class="song-card-play-btn" onclick="playTrack('${escapeHtml(s.title)}', '${escapeHtml(s.artist || 'Ali Welekhasia')}', '${s.audioUrl}', '${s.artworkUrl || '../hero.jpg'}')">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                    <div class="song-card-content">
+                        <div>
+                            <div class="song-card-title">${escapeHtml(s.title)}</div>
+                            <div class="song-card-artist">${escapeHtml(s.artist || 'Ali Welekhasia')}</div>
+                            <div class="song-card-tags">
+                                <span class="tag-badge">${escapeHtml(s.genre || 'Worship')}</span>
+                                ${s.album ? `<span class="tag-badge">${escapeHtml(s.album)}</span>` : ''}
+                                ${s.key ? `<span class="tag-badge">Key: ${escapeHtml(s.key)}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="song-card-footer">
+                            <a href="../lyrics?song=${encodeURIComponent(s.id || s.title)}" class="btn-view-lyrics">
+                                <i class="fa-solid fa-file-lines"></i> Lyrics
+                            </a>
+                            <div class="stream-links-group">
+                                ${s.youtubeUrl ? `<a href="${s.youtubeUrl}" target="_blank" class="stream-icon-link" title="YouTube"><i class="fa-brands fa-youtube" style="color: #ef4444;"></i></a>` : ''}
+                                ${s.spotifyUrl ? `<a href="${s.spotifyUrl}" target="_blank" class="stream-icon-link" title="Spotify"><i class="fa-brands fa-spotify" style="color: #10b981;"></i></a>` : ''}
+                                ${s.appleMusicUrl ? `<a href="${s.appleMusicUrl}" target="_blank" class="stream-icon-link" title="Apple Music"><i class="fa-brands fa-apple"></i></a>` : ''}
+                                ${s.boomplayUrl ? `<a href="${s.boomplayUrl}" target="_blank" class="stream-icon-link" title="Boomplay"><i class="fa-solid fa-play-circle" style="color: #3b82f6;"></i></a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderEmptyState() {
+            const container = document.getElementById('musicCatalogueGrid');
+            container.innerHTML = `
+                <div class="state-container">
+                    <div class="state-icon" style="color: #d4af37;"><i class="fa-solid fa-compact-disc"></i></div>
+                    <div class="state-title">No Songs Published Yet</div>
+                    <div class="state-desc">The official gospel catalogue is currently being prepared. Check back soon for new releases.</div>
+                </div>
+            `;
+        }
+
+        function renderErrorState(message) {
+            const container = document.getElementById('musicCatalogueGrid');
+            container.innerHTML = `
+                <div class="state-container">
+                    <div class="state-icon" style="color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="state-title">Unable to Load Music Catalogue</div>
+                    <div class="state-desc">${escapeHtml(message)}</div>
+                    <button class="btn-retry" onclick="loadMusicFromFirebase()"><i class="fa-solid fa-rotate-right"></i> Retry Connection</button>
+                </div>
+            `;
+        }
+
+        function playTrack(title, artist, audioUrl, artworkUrl) {
+            const bar = document.getElementById('masterPlayerBar');
+            const player = document.getElementById('masterAudioElem');
+            const titleEl = document.getElementById('masterPlayerTitle');
+            const artistEl = document.getElementById('masterPlayerArtist');
+            const thumbEl = document.getElementById('masterPlayerThumb');
+
+            titleEl.innerText = title;
+            artistEl.innerText = artist;
+            thumbEl.src = artworkUrl;
+            player.src = audioUrl;
+
+            bar.style.display = 'flex';
+            player.play().catch(e => console.log('Autoplay deferred:', e));
+        }
+
+        function handleMusicSearch() {
+            const q = (document.getElementById('musicSearchInput')?.value || '').toLowerCase().trim();
+            if (!q) {
+                renderSongs(allSongs);
+                return;
+            }
+            const filtered = allSongs.filter(s => 
+                (s.title && s.title.toLowerCase().includes(q)) ||
+                (s.album && s.album.toLowerCase().includes(q)) ||
+                (s.genre && s.genre.toLowerCase().includes(q)) ||
+                (s.artist && s.artist.toLowerCase().includes(q))
+            );
+            renderSongs(filtered);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>
