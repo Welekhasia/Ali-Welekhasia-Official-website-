@@ -56,6 +56,15 @@ export async function onRequestPost(context) {
             return jsonResponse({ success: false, error: "Requested song was not found in the music catalogue." }, 404);
         }
 
+        // Enforce that only PUBLISHED tracks can be purchased
+        const publicationStatus = (songData.status || 'DRAFT').toUpperCase();
+        if (publicationStatus !== 'PUBLISHED') {
+            return jsonResponse({
+                success: false,
+                error: `This song is currently unavailable for purchase (Status: ${publicationStatus}). Only published tracks may be purchased.`
+            }, 400);
+        }
+
         // 2. Authoritative Price Calculation
         const price = typeof songData.price === 'number' && songData.price > 0 ? songData.price : 100;
         const currency = songData.currency || 'KSh';

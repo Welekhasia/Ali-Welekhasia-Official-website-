@@ -92,8 +92,8 @@ async function handleDownloadRequest(context) {
             return jsonResponse({ success: false, error: "Purchased song asset not found in database." }, 404);
         }
 
-        // Master downloadable file URL (downloadUrl takes priority over audioUrl)
-        const targetAudioUrl = songData.downloadUrl || songData.audioUrl;
+        // Master downloadable file URL (masterStorageKey takes priority over downloadUrl and audioUrl)
+        const targetAudioUrl = songData.masterStorageKey || songData.downloadUrl || songData.audioUrl;
 
         if (!targetAudioUrl) {
             return jsonResponse({
