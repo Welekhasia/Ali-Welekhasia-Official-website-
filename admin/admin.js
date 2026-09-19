@@ -14,6 +14,7 @@ const AdminState = {
     
     // Live Collections Cache
     songs: {},
+    orders: {},
     lyrics: {},
     gallery: {},
     videos: {},
@@ -222,6 +223,7 @@ function refreshCurrentTabView(tabId) {
     switch (tabId) {
         case 'overview': renderOverviewStats(); break;
         case 'songs': renderSongsTable(); break;
+        case 'orders': renderOrdersTable(); break;
         case 'lyrics': renderLyricsEditorView(); break;
         case 'gallery': renderGalleryGrid(); break;
         case 'videos': renderVideosGrid(); break;
@@ -256,6 +258,18 @@ function attachDatabaseListeners() {
             if (AdminState.currentTab === 'songs') renderSongsTable();
             if (AdminState.currentTab === 'overview') renderOverviewStats();
         });
+    }
+
+    // Store Orders Listener
+    if (schema.orders) {
+        const ordersRef = window.RichaliFirebase.getDbRef(schema.orders);
+        if (ordersRef) {
+            ordersRef.on('value', (snap) => {
+                AdminState.orders = snap.val() || {};
+                if (AdminState.currentTab === 'orders') renderOrdersTable();
+                if (AdminState.currentTab === 'overview') renderOverviewStats();
+            });
+        }
     }
 
     // 2. Lyrics
@@ -518,31 +532,144 @@ function renderOverviewStats() {
     }
 }
 
-// --- SONG MANAGEMENT (/admin/songs) ---
+// --- SONG & PRODUCT CATALOGUE MANAGEMENT (/admin/songs) ---
+
+function validateSongForPublish(songData) {
+    const errors = [];
+    if (!songData.title || !songData.title.trim()) {
+        errors.push("Song Title is strictly required.");
+    }
+    if (!songData.artist || !songData.artist.trim()) {
+        errors.push("Primary Artist name is required.");
+    }
+    if (!songData.artworkUrl || !songData.artworkUrl.trim()) {
+        errors.push("Cover Artwork image URL or file upload is required.");
+    }
+    if (!songData.audioUrl || !songData.audioUrl.trim()) {
+        errors.push("Public Audio Preview file URL or upload is required.");
+    }
+    if (!songData.downloadUrl || !songData.downloadUrl.trim()) {
+        errors.push("Full Master Audio Download asset is required.");
+    }
+    if (songData.price === undefined || songData.price === null || isNaN(songData.price) || songData.price < 0) {
+        errors.push("Valid sales price (e.g. 100) is required.");
+    }
+    return {
+        valid: errors.length === 0,
+        errors
+    };
+}
+
 function renderSongsTable() {
     const tableBody = document.getElementById('songsTableBody');
     if (!tableBody) return;
 
     const songs = Object.values(AdminState.songs || {});
-    const searchVal = (document.getElementById('songsSearchInput')?.value || '').toLowerCase();
-    const statusFilter = document.getElementById('songsStatusFilter')?.value || 'ALL';
+    const orders = Object.values(AdminState.orders || {});
 
-    const filtered = songs.filter(s => {
+    // Compute sales statistics map per song
+    const songStatsMap = {};
+    orders.forEach(ord => {
+        if (!ord) return;
+        const songKey = ord.productId || ord.productTitle;
+        if (!songKey) return;
+        if (!songStatsMap[songKey]) {
+            songStatsMap[songKey] = { salesCount: 0, revenue: 0, downloadCount: 0 };
+        }
+        if (ord.paymentStatus === 'PAID') {
+            songStatsMap[songKey].salesCount += 1;
+            songStatsMap[songKey].revenue += parseFloat(ord.amount || 0);
+            songStatsMap[songKey].downloadCount += parseInt(ord.downloadCount || 1);
+        }
+    });
+
+    // Calculate Summary Totals
+    let totalSongs = songs.length;
+    let publishedCount = 0;
+    let draftCount = 0;
+    let archivedCount = 0;
+    let totalStorePurchases = 0;
+    let totalDownloads = 0;
+    let totalGrossRevenue = 0;
+
+    songs.forEach(s => {
+        const st = (s.status || 'DRAFT').toUpperCase();
+        if (st === 'PUBLISHED') publishedCount++;
+        else if (st === 'ARCHIVED') archivedCount++;
+        else draftCount++;
+
+        const stat = songStatsMap[s.id] || songStatsMap[s.title] || { salesCount: 0, revenue: 0, downloadCount: 0 };
+        totalStorePurchases += stat.salesCount;
+        totalDownloads += stat.downloadCount;
+        totalGrossRevenue += stat.revenue;
+    });
+
+    // Update Summary Dashboard UI Cards
+    if (document.getElementById('songStatTotal')) document.getElementById('songStatTotal').innerText = totalSongs;
+    if (document.getElementById('songStatPublished')) document.getElementById('songStatPublished').innerText = publishedCount;
+    if (document.getElementById('songStatDrafts')) document.getElementById('songStatDrafts').innerText = draftCount;
+    if (document.getElementById('songStatArchived')) document.getElementById('songStatArchived').innerText = archivedCount;
+    if (document.getElementById('songStatPurchases')) document.getElementById('songStatPurchases').innerText = totalStorePurchases;
+    if (document.getElementById('songStatDownloads')) document.getElementById('songStatDownloads').innerText = totalDownloads;
+    if (document.getElementById('songStatRevenue')) document.getElementById('songStatRevenue').innerText = `KSh ${totalGrossRevenue.toLocaleString()}`;
+
+    // Filters
+    const searchVal = (document.getElementById('songsSearchInput')?.value || '').toLowerCase().trim();
+    const statusFilter = document.getElementById('songsStatusFilter')?.value || 'ALL';
+    const salesFilter = document.getElementById('songsSalesFilter')?.value || 'ALL';
+    const storageFilter = document.getElementById('songsStorageFilter')?.value || 'ALL';
+    const sortBy = document.getElementById('songsSortBy')?.value || 'TITLE_ASC';
+
+    let filtered = songs.filter(s => {
+        const stat = songStatsMap[s.id] || songStatsMap[s.title] || { salesCount: 0, revenue: 0, downloadCount: 0 };
+        
+        // Search
         const matchesSearch = !searchVal || 
             (s.title && s.title.toLowerCase().includes(searchVal)) || 
-            (s.artist && s.artist.toLowerCase().includes(searchVal));
-        const matchesStatus = statusFilter === 'ALL' || s.status === statusFilter;
-        return matchesSearch && matchesStatus;
+            (s.artist && s.artist.toLowerCase().includes(searchVal)) ||
+            (s.id && s.id.toLowerCase().includes(searchVal));
+
+        // Status
+        const st = (s.status || 'DRAFT').toUpperCase();
+        const matchesStatus = statusFilter === 'ALL' || st === statusFilter;
+
+        // Sales
+        let matchesSales = true;
+        if (salesFilter === 'HAS_SALES') matchesSales = stat.salesCount > 0;
+        else if (salesFilter === 'NO_SALES') matchesSales = stat.salesCount === 0;
+
+        // Storage
+        let matchesStorage = true;
+        const hasMaster = !!(s.downloadUrl || s.audioUrl);
+        const hasPreview = !!s.audioUrl;
+        if (storageFilter === 'MASTER_OK') matchesStorage = hasMaster;
+        else if (storageFilter === 'MASTER_MISSING') matchesStorage = !hasMaster;
+        else if (storageFilter === 'PREVIEW_OK') matchesStorage = hasPreview;
+
+        return matchesSearch && matchesStatus && matchesSales && matchesStorage;
+    });
+
+    // Sorting
+    filtered.sort((a, b) => {
+        const statA = songStatsMap[a.id] || songStatsMap[a.title] || { salesCount: 0, revenue: 0, downloadCount: 0 };
+        const statB = songStatsMap[b.id] || songStatsMap[b.title] || { salesCount: 0, revenue: 0, downloadCount: 0 };
+
+        if (sortBy === 'TITLE_ASC') return (a.title || '').localeCompare(b.title || '');
+        if (sortBy === 'NEWEST') return new Date(b.releaseDate || b.updatedAt || 0) - new Date(a.releaseDate || a.updatedAt || 0);
+        if (sortBy === 'PRICE_DESC') return (b.price || 0) - (a.price || 0);
+        if (sortBy === 'SALES_DESC') return statB.salesCount - statA.salesCount;
+        if (sortBy === 'DOWNLOADS_DESC') return statB.downloadCount - statA.downloadCount;
+        return 0;
     });
 
     if (filtered.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="7" style="text-align: center; padding: 40px; color: var(--adm-text-muted);">
+                <td colspan="8" style="text-align: center; padding: 40px; color: var(--adm-text-muted);">
                     <i class="fa-solid fa-music" style="font-size: 32px; color: var(--adm-gold); margin-bottom: 12px; display: block;"></i>
-                    <p style="font-size: 15px; font-weight: 600; color: #fff;">No songs matching current filters.</p>
+                    <p style="font-size: 15px; font-weight: 600; color: #fff;">No gospel tracks found matching current filter criteria.</p>
                     <button class="btn btn-sm btn-gold" onclick="openAddSongModal()" style="margin-top: 14px;">
-                        <i class="fa-solid fa-plus"></i> Add New Song
+                        <i class="fa-solid fa-plus"></i> + Add New Song
                     </button>
                 </td>
             </tr>
@@ -550,44 +677,207 @@ function renderSongsTable() {
         return;
     }
 
-    tableBody.innerHTML = filtered.map(s => `
-        <tr>
-            <td>
-                <div class="table-title-cell">
-                    <img src="${s.artworkUrl || 'images/hero.jpg'}" class="table-thumb" alt="${escapeHtml(s.title)}" onerror="this.src='images/hero.jpg'">
-                    <div>
-                        <div class="title-text">${escapeHtml(s.title)} ${s.featured ? '<span class="badge-featured"><i class="fa-solid fa-star"></i> Featured</span>' : ''}</div>
-                        <div class="sub-text">${escapeHtml(s.artist || 'Ali Welekhasia')} ${s.feat ? 'ft. ' + escapeHtml(s.feat) : ''}</div>
+    tableBody.innerHTML = filtered.map(s => {
+        const stat = songStatsMap[s.id] || songStatsMap[s.title] || { salesCount: 0, revenue: 0, downloadCount: 0 };
+        const st = (s.status || 'DRAFT').toUpperCase();
+        const hasMaster = !!(s.downloadUrl || s.audioUrl);
+        const priceDisplay = s.price !== undefined ? `${s.currency || 'KSh'} ${s.price}` : 'KSh 100';
+
+        return `
+            <tr>
+                <td style="text-align: center;">
+                    <input type="checkbox" class="songRowCheckbox" value="${s.id}">
+                </td>
+                <td>
+                    <div class="table-title-cell">
+                        <img src="${s.artworkUrl || 'images/hero.jpg'}" class="table-thumb" alt="${escapeHtml(s.title)}" onerror="this.src='images/hero.jpg'">
+                        <div>
+                            <div class="title-text">
+                                ${escapeHtml(s.title)} 
+                                ${s.featured ? '<span class="badge-featured"><i class="fa-solid fa-star"></i> Featured</span>' : ''}
+                            </div>
+                            <div class="sub-text">${escapeHtml(s.artist || 'Ali Welekhasia')} ${s.feat ? 'ft. ' + escapeHtml(s.feat) : ''}</div>
+                        </div>
                     </div>
-                </div>
-            </td>
-            <td>${escapeHtml(s.album || 'Single')}</td>
-            <td>${escapeHtml(s.genre || 'Gospel')}</td>
-            <td>${s.key ? `<span style="font-family: monospace; font-size: 12px; color: var(--adm-gold);">${escapeHtml(s.key)}</span>` : '—'}</td>
-            <td><span class="status-badge status-${(s.status || 'draft').toLowerCase()}">${escapeHtml(s.status || 'DRAFT')}</span></td>
-            <td>
-                ${s.audioUrl ? '<i class="fa-solid fa-volume-high" style="color: #10b981;" title="Audio master uploaded"></i>' : '<i class="fa-solid fa-volume-xmark" style="color: var(--adm-text-subtle);" title="No audio file"></i>'}
-                ${s.youtubeUrl ? ' <i class="fa-brands fa-youtube" style="color: #ef4444;" title="YouTube link attached"></i>' : ''}
-            </td>
-            <td>
-                <div class="action-buttons-wrap">
-                    <button class="btn-action-icon" title="Edit Song" onclick="editSong('${s.id}')">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="btn-action-icon" title="Edit Lyrics" onclick="openLyricsEditorForSong('${s.id}')">
-                        <i class="fa-solid fa-file-lines"></i>
-                    </button>
-                    ${s.status === 'PUBLISHED' 
-                        ? `<button class="btn-action-icon" title="Unpublish (Save as Draft)" onclick="setSongStatus('${s.id}', 'DRAFT')"><i class="fa-solid fa-eye-slash"></i></button>`
-                        : `<button class="btn-action-icon" title="Publish Song" onclick="setSongStatus('${s.id}', 'PUBLISHED')"><i class="fa-solid fa-circle-check" style="color: #10b981;"></i></button>`
-                    }
-                    <button class="btn-action-icon danger" title="Delete Song" onclick="deleteSongConfirm('${s.id}')">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>
-    `).join('');
+                </td>
+                <td><span style="font-weight: 700; color: var(--adm-gold); font-size: 13px;">${priceDisplay}</span></td>
+                <td><span class="status-badge status-${st.toLowerCase()}">${st}</span></td>
+                <td>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        ${s.audioUrl ? '<i class="fa-solid fa-volume-high" style="color: #38bdf8;" title="Public audio preview attached"></i>' : '<i class="fa-solid fa-volume-xmark" style="color: var(--adm-text-subtle);" title="Missing preview audio"></i>'}
+                        ${hasMaster ? '<i class="fa-solid fa-file-shield" style="color: #10b981;" title="Private master asset ready"></i>' : '<i class="fa-solid fa-file-excel" style="color: #ef4444;" title="Missing private master download asset"></i>'}
+                    </div>
+                </td>
+                <td>
+                    <div style="font-weight: 600; color: #fff; font-size: 13px;">${stat.salesCount} sales</div>
+                    <div style="font-size: 11px; color: #34d399;">KSh ${stat.revenue.toLocaleString()}</div>
+                </td>
+                <td><span style="font-size: 13px; font-weight: 600; color: #38bdf8;">${stat.downloadCount}</span></td>
+                <td>
+                    <div class="action-buttons-wrap">
+                        <button class="btn-action-icon" title="Edit Song Details" onclick="editSong('${s.id}')">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button class="btn-action-icon" title="Preview Public Store Listing" onclick="openStorePreviewModal('${s.id}')">
+                            <i class="fa-solid fa-store" style="color: var(--adm-gold);"></i>
+                        </button>
+                        <button class="btn-action-icon" title="View Sales & Order Breakdown" onclick="openSongDetailsModal('${s.id}')">
+                            <i class="fa-solid fa-chart-pie" style="color: #38bdf8;"></i>
+                        </button>
+                        ${st === 'PUBLISHED' 
+                            ? `<button class="btn-action-icon" title="Unpublish Track" onclick="toggleSongPublishStatus('${s.id}')"><i class="fa-solid fa-eye-slash" style="color: #f59e0b;"></i></button>`
+                            : `<button class="btn-action-icon" title="Publish Track" onclick="toggleSongPublishStatus('${s.id}')"><i class="fa-solid fa-circle-check" style="color: #10b981;"></i></button>`
+                        }
+                        <button class="btn-action-icon danger" title="Archive / Safe Delete" onclick="archiveOrDeleteSongConfirm('${s.id}')">
+                            <i class="fa-solid fa-box-archive"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Bulk Selection and Actions
+function toggleSelectAllSongs(master) {
+    const checkboxes = document.querySelectorAll('.songRowCheckbox');
+    checkboxes.forEach(cb => cb.checked = master.checked);
+}
+
+async function executeBulkSongAction() {
+    const selectedCbs = Array.from(document.querySelectorAll('.songRowCheckbox:checked'));
+    const action = document.getElementById('bulkSongActionSelect')?.value;
+
+    if (!selectedCbs.length) {
+        showAdminToast("Please select at least one song using the checkboxes.", "warning");
+        return;
+    }
+    if (!action) {
+        showAdminToast("Please select a bulk action to perform.", "warning");
+        return;
+    }
+
+    let successCount = 0;
+    let skippedCount = 0;
+    const skippedReasons = [];
+
+    for (const cb of selectedCbs) {
+        const songId = cb.value;
+        const song = AdminState.songs[songId];
+        if (!song) continue;
+
+        if (action === 'PUBLISH') {
+            const val = validateSongForPublish(song);
+            if (!val.valid) {
+                skippedCount++;
+                skippedReasons.push(`"${song.title}": ${val.errors.join('; ')}`);
+                continue;
+            }
+            await updateSingleSongStatusInDb(songId, 'PUBLISHED');
+            successCount++;
+        } else if (action === 'UNPUBLISH') {
+            await updateSingleSongStatusInDb(songId, 'DRAFT');
+            successCount++;
+        } else if (action === 'ARCHIVE') {
+            await updateSingleSongStatusInDb(songId, 'ARCHIVED');
+            successCount++;
+        }
+    }
+
+    renderSongsTable();
+    renderOverviewStats();
+
+    let msg = `Bulk action "${action}" completed. ${successCount} songs updated.`;
+    if (skippedCount > 0) {
+        msg += ` ${skippedCount} skipped due to incomplete publishing details: ${skippedReasons.join(' | ')}`;
+        showAdminToast(msg, "warning");
+    } else {
+        showAdminToast(msg, "success");
+    }
+}
+
+async function updateSingleSongStatusInDb(songId, status) {
+    if (window.RichaliFirebase) {
+        const schema = window.RichaliFirebase.schema.aliwelekhasia;
+        await window.RichaliFirebase.updateData(`${schema.songs}/${songId}`, { status, updatedAt: Date.now() });
+        await window.RichaliFirebase.logAudit('UPDATE_SONG_STATUS', 'songs', songId, { status });
+    } else if (AdminState.songs[songId]) {
+        AdminState.songs[songId].status = status;
+    }
+}
+
+// --- STORE ORDERS MANAGEMENT (/admin/orders) ---
+function renderOrdersTable() {
+    const tableBody = document.getElementById('ordersTableBody');
+    if (!tableBody) return;
+
+    const orders = Object.values(AdminState.orders || {}).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    const searchVal = (document.getElementById('ordersSearchInput')?.value || '').toLowerCase();
+    const statusFilter = document.getElementById('ordersStatusFilter')?.value || 'ALL';
+
+    const filtered = orders.filter(ord => {
+        if (!ord) return false;
+        const matchesSearch = !searchVal || 
+            (ord.orderNumber && ord.orderNumber.toLowerCase().includes(searchVal)) ||
+            (ord.customerEmail && ord.customerEmail.toLowerCase().includes(searchVal)) ||
+            (ord.customerPhone && ord.customerPhone.toLowerCase().includes(searchVal)) ||
+            (ord.paymentReference && ord.paymentReference.toLowerCase().includes(searchVal)) ||
+            (ord.productTitle && ord.productTitle.toLowerCase().includes(searchVal));
+        
+        const matchesStatus = statusFilter === 'ALL' || ord.paymentStatus === statusFilter;
+        return matchesSearch && matchesStatus;
+    });
+
+    if (filtered.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 40px; color: var(--adm-text-muted);">
+                    <i class="fa-solid fa-cart-shopping" style="font-size: 32px; color: var(--adm-gold); margin-bottom: 12px; display: block;"></i>
+                    <p style="font-size: 15px; font-weight: 600; color: #fff;">No store sales or order records found matching current filters.</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tableBody.innerHTML = filtered.map(ord => {
+        const dateStr = ord.createdAt ? new Date(ord.createdAt).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+        const isPaid = ord.paymentStatus === 'PAID';
+        const statusClass = isPaid ? 'status-published' : (ord.paymentStatus === 'FAILED' ? 'status-draft' : 'status-draft');
+
+        return `
+            <tr>
+                <td>
+                    <div style="font-weight: 700; color: #fff;">${escapeHtml(ord.orderNumber || ord.id)}</div>
+                    <div style="font-size: 11.5px; color: var(--adm-text-subtle);">${dateStr}</div>
+                </td>
+                <td>
+                    <div style="font-weight: 600; color: #fff;">${escapeHtml(ord.productTitle || 'Song')}</div>
+                    <div style="font-size: 11.5px; color: var(--adm-text-subtle);">${escapeHtml(ord.productArtist || 'Ali Welekhasia')}</div>
+                </td>
+                <td>
+                    <div style="color: #fff; font-size: 13px;">${escapeHtml(ord.customerEmail || '—')}</div>
+                    <div style="font-size: 11.5px; color: var(--adm-text-subtle);">${escapeHtml(ord.customerPhone || '—')}</div>
+                </td>
+                <td>
+                    <strong style="color: var(--adm-gold); font-size: 14px;">${escapeHtml(ord.currency || 'KSh')} ${ord.amount || 100}</strong>
+                </td>
+                <td>
+                    <span class="status-badge ${statusClass}">${escapeHtml(ord.paymentStatus || 'PENDING')}</span>
+                </td>
+                <td>
+                    <code style="font-size: 11.5px; color: #cbd5e1; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">${escapeHtml(ord.paymentReference || '—')}</code>
+                </td>
+                <td>
+                    ${isPaid && ord.downloadToken ? `
+                        <a href="/api/store/download?token=${ord.downloadToken}" target="_blank" class="btn btn-sm btn-gold" style="font-size: 11px; padding: 4px 10px;" title="Test Download Asset">
+                            <i class="fa-solid fa-download"></i> Fulfilled (${ord.downloadCount || 0})
+                        </a>
+                    ` : `<span style="color: var(--adm-text-subtle); font-size: 12px;">Pending Payment</span>`}
+                </td>
+            </tr>
+        `;
+    }).join('');
 }
 
 // Modal open for Add/Edit Song
@@ -598,7 +888,10 @@ function openAddSongModal(songId = null) {
 
     form.reset();
     document.getElementById('songModalId').value = songId || '';
-    document.getElementById('songModalTitle').innerText = songId ? 'Edit Gospel Song' : 'Add New Gospel Song';
+    document.getElementById('songModalTitle').innerText = songId ? 'Edit Gospel Song & Product Details' : 'Add New Gospel Song';
+
+    const alertBox = document.getElementById('songPublishValidationAlert');
+    if (alertBox) alertBox.style.display = 'none';
 
     // Clear preview boxes
     const artPreview = document.getElementById('songArtPreview');
@@ -621,6 +914,9 @@ function openAddSongModal(songId = null) {
         setVal('songInput_description', s.description || '');
         setVal('songInput_artworkUrl', s.artworkUrl || '');
         setVal('songInput_audioUrl', s.audioUrl || '');
+        setVal('songInput_price', s.price !== undefined ? s.price : 100);
+        setVal('songInput_currency', s.currency || 'KSh');
+        setVal('songInput_downloadUrl', s.downloadUrl || '');
         setVal('songInput_youtubeUrl', s.youtubeUrl || '');
         setVal('songInput_spotifyUrl', s.spotifyUrl || '');
         setVal('songInput_appleMusicUrl', s.appleMusicUrl || '');
@@ -648,8 +944,16 @@ function editSong(songId) {
 
 async function handleSongFormSubmit(event) {
     if (event) event.preventDefault();
-    const id = document.getElementById('songModalId')?.value.trim() || `song_${Date.now()}`;
+
+    const alertBox = document.getElementById('songPublishValidationAlert');
+    if (alertBox) alertBox.style.display = 'none';
+
+    const rawId = document.getElementById('songModalId')?.value.trim();
+    const isNew = !rawId;
+    const id = rawId || `song_${Date.now()}`;
     const title = getVal('songInput_title').trim();
+    const targetStatus = (getVal('songInput_status') || 'PUBLISHED').toUpperCase();
+    const oldSong = !isNew ? AdminState.songs[id] : null;
 
     if (!title) {
         showAdminToast('Song title is strictly required.', 'warning');
@@ -671,22 +975,54 @@ async function handleSongFormSubmit(event) {
         description: getVal('songInput_description'),
         artworkUrl: getVal('songInput_artworkUrl') || 'images/hero.jpg',
         audioUrl: getVal('songInput_audioUrl'),
+        price: parseFloat(getVal('songInput_price')) || 100,
+        currency: getVal('songInput_currency') || 'KSh',
+        downloadUrl: getVal('songInput_downloadUrl') || getVal('songInput_audioUrl'),
         youtubeUrl: getVal('songInput_youtubeUrl'),
         spotifyUrl: getVal('songInput_spotifyUrl'),
         appleMusicUrl: getVal('songInput_appleMusicUrl'),
         boomplayUrl: getVal('songInput_boomplayUrl'),
         songwriter: getVal('songInput_songwriter'),
         producer: getVal('songInput_producer'),
-        status: getVal('songInput_status') || 'PUBLISHED',
+        status: targetStatus,
         featured: document.getElementById('songInput_featured')?.checked || false,
+        masterVersionId: oldSong?.masterVersionId || `ver_${Date.now()}`,
         updatedAt: Date.now()
     };
+
+    // Publish Validation Check
+    if (targetStatus === 'PUBLISHED') {
+        const val = validateSongForPublish(songData);
+        if (!val.valid) {
+            if (alertBox) {
+                alertBox.style.display = 'block';
+                const list = document.getElementById('songPublishValidationList');
+                if (list) {
+                    list.innerHTML = 'This song cannot be published until all required fields are completed:<br>• ' + val.errors.join('<br>• ');
+                }
+            }
+            showAdminToast('Publishing requirements incomplete. Please review required fields.', 'error');
+            return;
+        }
+    }
 
     try {
         if (window.RichaliFirebase) {
             const schema = window.RichaliFirebase.schema.aliwelekhasia;
             await window.RichaliFirebase.setData(`${schema.songs}/${id}`, songData);
-            await window.RichaliFirebase.logAudit('SAVE_SONG', 'songs', id, { title: songData.title, status: songData.status });
+            
+            // Audit logging
+            await window.RichaliFirebase.logAudit(isNew ? 'CREATE_SONG' : 'EDIT_SONG', 'songs', id, { title: songData.title, status: songData.status });
+
+            // Price change safety audit log
+            if (oldSong && oldSong.price !== songData.price) {
+                await window.RichaliFirebase.logAudit('PRICE_CHANGED', 'songs', id, {
+                    title: songData.title,
+                    oldPrice: oldSong.price,
+                    newPrice: songData.price,
+                    summary: `Price changed: ${oldSong.currency || 'KES'} ${oldSong.price} -> ${songData.currency || 'KES'} ${songData.price}`
+                });
+            }
         } else {
             AdminState.songs[id] = songData;
         }
@@ -700,41 +1036,196 @@ async function handleSongFormSubmit(event) {
     }
 }
 
-async function setSongStatus(songId, status) {
-    try {
-        if (window.RichaliFirebase) {
-            const schema = window.RichaliFirebase.schema.aliwelekhasia;
-            await window.RichaliFirebase.updateData(`${schema.songs}/${songId}`, { status, updatedAt: Date.now() });
-            await window.RichaliFirebase.logAudit('UPDATE_SONG_STATUS', 'songs', songId, { newStatus: status });
-        } else if (AdminState.songs[songId]) {
-            AdminState.songs[songId].status = status;
+async function toggleSongPublishStatus(songId) {
+    const song = AdminState.songs[songId];
+    if (!song) return;
+
+    const currentSt = (song.status || 'DRAFT').toUpperCase();
+    if (currentSt === 'PUBLISHED') {
+        await updateSingleSongStatusInDb(songId, 'DRAFT');
+        showAdminToast(`"${song.title}" unpublished and saved as DRAFT.`, 'info');
+    } else {
+        const val = validateSongForPublish(song);
+        if (!val.valid) {
+            alert(`This song cannot be published until all required fields are completed:\n\n• ` + val.errors.join('\n• '));
+            showAdminToast(`Cannot publish "${song.title}". Mandatory fields missing.`, 'error');
+            return;
         }
-        showAdminToast(`Song status updated to ${status}.`, 'success');
-        renderSongsTable();
-    } catch (err) {
-        showAdminToast(`Failed to update status: ${err.message}`, 'error');
+        await updateSingleSongStatusInDb(songId, 'PUBLISHED');
+        showAdminToast(`"${song.title}" is now PUBLISHED live on the music store!`, 'success');
+    }
+    renderSongsTable();
+    renderOverviewStats();
+}
+
+async function archiveOrDeleteSongConfirm(songId) {
+    const song = AdminState.songs[songId];
+    if (!song) return;
+
+    const orders = Object.values(AdminState.orders || {});
+    const paidOrders = orders.filter(o => o && (o.productId === songId || o.productTitle === song.title) && o.paymentStatus === 'PAID');
+    const salesCount = paidOrders.length;
+
+    if (salesCount > 0) {
+        const msg = `Song "${song.title}" has ${salesCount} existing paid customer purchases.\n\nTo preserve existing customer access and download entitlements, permanent deletion is disabled.\n\nClick OK to ARCHIVE this song. Archiving hides it from new store buyers while preserving existing purchase records and customer download access intact.`;
+        if (confirm(msg)) {
+            await updateSingleSongStatusInDb(songId, 'ARCHIVED');
+            showAdminToast(`"${song.title}" archived. Historical purchases preserved.`, 'info');
+            renderSongsTable();
+            renderOverviewStats();
+        }
+        return;
+    }
+
+    if (confirm(`Are you sure you want to permanently delete "${song.title}"?`)) {
+        try {
+            if (window.RichaliFirebase) {
+                const schema = window.RichaliFirebase.schema.aliwelekhasia;
+                await window.RichaliFirebase.removeData(`${schema.songs}/${songId}`);
+                await window.RichaliFirebase.logAudit('DELETE_SONG', 'songs', songId, { title: song.title });
+            } else {
+                delete AdminState.songs[songId];
+            }
+            showAdminToast(`Song "${song.title}" deleted.`, 'info');
+            renderSongsTable();
+            renderOverviewStats();
+        } catch (err) {
+            showAdminToast(`Delete error: ${err.message}`, 'error');
+        }
     }
 }
 
-async function deleteSongConfirm(songId) {
+function openStorePreviewModal(songId) {
     const song = AdminState.songs[songId];
-    const name = song ? song.title : 'this song';
-    if (!confirm(`Are you sure you want to permanently delete "${name}"?`)) return;
+    if (!song) return;
 
-    try {
-        if (window.RichaliFirebase) {
-            const schema = window.RichaliFirebase.schema.aliwelekhasia;
-            await window.RichaliFirebase.removeData(`${schema.songs}/${songId}`);
-            await window.RichaliFirebase.logAudit('DELETE_SONG', 'songs', songId, { title: name });
+    const modal = document.getElementById('storePreviewModal');
+    if (!modal) return;
+
+    document.getElementById('prevModal_title').innerText = song.title || 'Untitled';
+    document.getElementById('prevModal_artist').innerText = song.artist || 'Ali Welekhasia';
+    document.getElementById('prevModal_album').innerText = song.album || 'Single';
+    document.getElementById('prevModal_price').innerText = `${song.currency || 'KSh'} ${song.price !== undefined ? song.price : 100}`;
+    
+    const art = document.getElementById('prevModal_art');
+    if (art) art.src = song.artworkUrl || 'images/hero.jpg';
+
+    const player = document.getElementById('prevModal_audioPlayer');
+    if (player) {
+        if (song.audioUrl) {
+            player.src = song.audioUrl;
+            player.style.display = 'block';
         } else {
-            delete AdminState.songs[songId];
+            player.style.display = 'none';
         }
-        showAdminToast(`Song "${name}" deleted.`, 'info');
-        renderSongsTable();
-        renderOverviewStats();
-    } catch (err) {
-        showAdminToast(`Delete error: ${err.message}`, 'error');
     }
+
+    modal.classList.add('active');
+}
+
+function previewCurrentFormStoreListing() {
+    const title = getVal('songInput_title') || 'Song Title Preview';
+    const artist = getVal('songInput_artist') || 'Ali Welekhasia';
+    const album = getVal('songInput_album') || 'Single';
+    const price = getVal('songInput_price') || '100';
+    const currency = getVal('songInput_currency') || 'KSh';
+    const artUrl = getVal('songInput_artworkUrl') || 'images/hero.jpg';
+    const audioUrl = getVal('songInput_audioUrl');
+
+    const modal = document.getElementById('storePreviewModal');
+    if (!modal) return;
+
+    document.getElementById('prevModal_title').innerText = title;
+    document.getElementById('prevModal_artist').innerText = artist;
+    document.getElementById('prevModal_album').innerText = album;
+    document.getElementById('prevModal_price').innerText = `${currency} ${price}`;
+    
+    const art = document.getElementById('prevModal_art');
+    if (art) art.src = artUrl;
+
+    const player = document.getElementById('prevModal_audioPlayer');
+    if (player) {
+        if (audioUrl) {
+            player.src = audioUrl;
+            player.style.display = 'block';
+        } else {
+            player.style.display = 'none';
+        }
+    }
+
+    modal.classList.add('active');
+}
+
+function openSongDetailsModal(songId) {
+    const song = AdminState.songs[songId];
+    if (!song) return;
+
+    const modal = document.getElementById('songDetailsModal');
+    if (!modal) return;
+
+    document.getElementById('detailModal_title').innerText = song.title;
+    document.getElementById('detailModal_artist').innerText = song.artist || 'Ali Welekhasia';
+    document.getElementById('detailModal_price').innerText = `${song.currency || 'KSh'} ${song.price !== undefined ? song.price : 100}`;
+    document.getElementById('detailModal_releaseDate').innerText = song.releaseDate || 'Not specified';
+    document.getElementById('detailModal_language').innerText = song.language || 'Swahili';
+    document.getElementById('detailModal_genre').innerText = song.genre || 'Worship';
+
+    const stBadge = document.getElementById('detailModal_statusBadge');
+    if (stBadge) {
+        stBadge.innerText = (song.status || 'DRAFT').toUpperCase();
+        stBadge.className = `status-badge status-${(song.status || 'draft').toLowerCase()}`;
+    }
+
+    const art = document.getElementById('detailModal_art');
+    if (art) art.src = song.artworkUrl || 'images/hero.jpg';
+
+    // Orders for this song
+    const orders = Object.values(AdminState.orders || {});
+    const songOrders = orders.filter(o => o && (o.productId === songId || o.productTitle === song.title));
+    const paidOrders = songOrders.filter(o => o.paymentStatus === 'PAID');
+
+    let grossRev = 0;
+    let totalDls = 0;
+    paidOrders.forEach(o => {
+        grossRev += parseFloat(o.amount || 0);
+        totalDls += parseInt(o.downloadCount || 1);
+    });
+
+    document.getElementById('detailModal_ordersCount').innerText = paidOrders.length;
+    document.getElementById('detailModal_grossRevenue').innerText = `KSh ${grossRev.toLocaleString()}`;
+    document.getElementById('detailModal_downloadCount').innerText = totalDls;
+
+    const tbody = document.getElementById('detailModal_ordersTableBody');
+    if (tbody) {
+        if (songOrders.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--adm-text-subtle); padding: 20px;">No order history records for this song yet.</td></tr>`;
+        } else {
+            tbody.innerHTML = songOrders.map(o => `
+                <tr>
+                    <td>
+                        <div style="font-weight: 700; color: #fff;">${escapeHtml(o.orderNumber || o.orderId || 'ORD')}</div>
+                        <div style="font-size: 11px; color: var(--adm-text-subtle);">${new Date(o.createdAt || Date.now()).toLocaleDateString()}</div>
+                    </td>
+                    <td>
+                        <div>${escapeHtml(o.customerEmail || 'Guest')}</div>
+                        <div style="font-size: 11px; color: #94a3b8;">${escapeHtml(maskPhone(o.customerPhone))}</div>
+                    </td>
+                    <td><strong style="color: var(--adm-gold);">KSh ${o.amount || 100}</strong></td>
+                    <td><span style="font-family: monospace; font-size: 11px; color: #94a3b8;">${escapeHtml(o.paymentReference || '—')}</span></td>
+                    <td><span class="status-badge status-${(o.paymentStatus || 'pending').toLowerCase()}">${escapeHtml(o.paymentStatus || 'PENDING')}</span></td>
+                </tr>
+            `).join('');
+        }
+    }
+
+    modal.classList.add('active');
+}
+
+function maskPhone(phone) {
+    if (!phone) return '—';
+    const clean = phone.replace(/\s+/g, '');
+    if (clean.length < 8) return clean;
+    return clean.substring(0, 5) + '****' + clean.substring(clean.length - 2);
 }
 
 // --- FILE & AUDIO STORAGE UPLOADS ---

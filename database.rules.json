@@ -115,6 +115,25 @@
           ".write": true,
           ".validate": "newData.hasChildren(['email']) && newData.child('email').val().contains('@')"
         }
+      },
+      "orders": {
+        ".read": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
+        ".indexOn": ["customerEmail", "customerPhone", "paymentReference", "paymentStatus", "createdAt"],
+        "$order_id": {
+          ".read": true,
+          ".write": "!data.exists() || (auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com'))"
+        }
+      },
+      "payments": {
+        ".read": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
+        ".write": "auth != null && (root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'SUPER_ADMIN' || root.child('aliwelekhasia/users').child(auth.uid).child('role').val() === 'ADMIN' || auth.token.email === 'ali.werekhasia01@gmail.com')",
+        ".indexOn": ["orderId", "paymentReference", "createdAt"]
+      },
+      "download_entitlements": {
+        ".read": true,
+        "$token": {
+          ".write": true
+        }
       }
     }
   }

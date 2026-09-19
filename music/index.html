@@ -319,6 +319,7 @@
             <a href="../events" style="color: #94a3b8; text-decoration: none; font-size: 14px;">Events</a>
             <a href="../blog" style="color: #94a3b8; text-decoration: none; font-size: 14px;">Blog</a>
             <a href="../live" style="color: #ef4444; text-decoration: none; font-size: 14px;"><i class="fa-solid fa-tower-broadcast"></i> Live Stream</a>
+            <button onclick="openMyPurchasesModal()" style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-receipt"></i> My Purchases</button>
             <a href="../admin" style="background: rgba(212, 175, 55, 0.15); border: 1px solid #d4af37; color: #d4af37; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;"><i class="fa-solid fa-lock"></i> Admin CMS</a>
         </div>
     </header>
@@ -359,12 +360,408 @@
 
     </div>
 
+    <!-- STORE CHECKOUT MODAL -->
+    <div id="storeCheckoutModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 999; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: #0e1626; border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 16px; width: 100%; max-width: 480px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
+            <div style="padding: 20px 24px; background: #152238; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between;">
+                <h3 style="margin: 0; font-size: 18px; color: #fff; font-family: 'Cinzel', serif;"><i class="fa-solid fa-cart-shopping" style="color: #d4af37;"></i> Buy & Download Song</h3>
+                <button onclick="closeStoreModal('storeCheckoutModal')" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer;">&times;</button>
+            </div>
+            <form id="storeCheckoutForm" onsubmit="handleStoreCheckoutSubmit(event)">
+                <div style="padding: 24px;">
+                    <!-- Product Summary Box -->
+                    <div style="display: flex; gap: 16px; background: #070b14; padding: 14px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.2); margin-bottom: 20px; align-items: center;">
+                        <img id="checkoutThumb" src="../hero.jpg" style="width: 64px; height: 64px; border-radius: 8px; object-fit: cover; border: 1px solid #d4af37;" alt="Song Cover">
+                        <div>
+                            <div id="checkoutTitle" style="font-weight: 700; color: #fff; font-size: 16px;">Song Title</div>
+                            <div id="checkoutArtist" style="color: #94a3b8; font-size: 13px;">Ali Welekhasia</div>
+                            <div style="margin-top: 4px; display: inline-block; background: rgba(212,175,55,0.15); color: #d4af37; padding: 2px 10px; border-radius: 12px; font-weight: 700; font-size: 13px;" id="checkoutPriceBadge">KSh 100</div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="checkoutInput_productId">
+
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px; font-weight: 600;">Email Address * (For Purchase Receipt & Download Access)</label>
+                        <input type="email" id="checkoutInput_email" required placeholder="e.g. customer@gmail.com" style="width: 100%; background: #070b14; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 12px; color: #fff; font-size: 14px;">
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px; font-weight: 600;">M-Pesa Phone Number * (e.g. 0712345678 or 254712345678)</label>
+                        <input type="tel" id="checkoutInput_phone" required placeholder="e.g. 0712345678" style="width: 100%; background: #070b14; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 12px; color: #fff; font-size: 14px;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px; font-weight: 600;">Payment Gateway Method</label>
+                        <select id="checkoutInput_provider" style="width: 100%; background: #070b14; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 12px; color: #fff; font-size: 14px;">
+                            <option value="PAYSTACK">M-Pesa / Card Payment (Paystack Secure Checkout)</option>
+                            <option value="MPESA">Direct M-Pesa Mobile Express</option>
+                        </select>
+                    </div>
+
+                    <div id="checkoutErrorMessage" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #f87171; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 16px;"></div>
+
+                    <button type="submit" id="checkoutSubmitBtn" style="width: 100%; background: linear-gradient(135deg, #d4af37, #b89628); color: #070b14; border: none; padding: 14px; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="fa-solid fa-shield-halved"></i> Proceed to Pay <span id="checkoutBtnPrice">KSh 100</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PURCHASE SUCCESS & AUTOMATIC DOWNLOAD MODAL -->
+    <div id="storePurchaseSuccessModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: #0e1626; border: 1px solid #10b981; border-radius: 16px; width: 100%; max-width: 500px; overflow: hidden; box-shadow: 0 20px 50px rgba(16, 185, 129, 0.2); text-align: center;">
+            <div style="padding: 28px 24px 20px; background: linear-gradient(180deg, rgba(16, 185, 129, 0.15) 0%, #0e1626 100%);">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: #10b981; color: #070b14; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 14px; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h2 style="margin: 0 0 6px; font-size: 22px; color: #fff; font-family: 'Cinzel', serif;">PAYMENT SUCCESSFUL ✓</h2>
+                <p style="color: #10b981; font-weight: 600; margin: 0; font-size: 14px;">Your song purchase has been verified and fulfilled.</p>
+            </div>
+            
+            <div style="padding: 20px 24px 28px;">
+                <div style="background: #070b14; padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); text-align: left; margin-bottom: 20px;">
+                    <div style="font-size: 18px; font-weight: 700; color: #fff;" id="successSongTitle">Song Title</div>
+                    <div style="color: #d4af37; font-size: 14px; margin-bottom: 12px;" id="successSongArtist">Ali Welekhasia</div>
+                    
+                    <div style="border-top: 1px solid rgba(255,255,255,0.08); pt-12; padding-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12.5px;">
+                        <div><span style="color: #64748b;">Order #:</span> <strong style="color: #fff;" id="successOrderNum">ALIMUSIC-000000</strong></div>
+                        <div><span style="color: #64748b;">Amount Paid:</span> <strong style="color: #10b981;" id="successAmount">KSh 100</strong></div>
+                        <div><span style="color: #64748b;">Payment Ref:</span> <strong style="color: #cbd5e1;" id="successRef">PAYREF...</strong></div>
+                        <div><span style="color: #64748b;">Status:</span> <strong style="color: #10b981;"><i class="fa-solid fa-circle-check"></i> PAID</strong></div>
+                    </div>
+                </div>
+
+                <p style="color: #cbd5e1; font-size: 14px; margin-bottom: 18px;">
+                    <strong>Your download should begin automatically.</strong><br>
+                    If blocked by browser settings, click the button below to download your master MP3 file.
+                </p>
+
+                <a id="successDownloadBtn" href="#" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: linear-gradient(135deg, #10b981, #059669); color: #fff; padding: 14px; border-radius: 8px; font-weight: 700; font-size: 16px; text-decoration: none; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);">
+                    <i class="fa-solid fa-download"></i> DOWNLOAD NOW (MP3)
+                </a>
+
+                <div style="margin-top: 16px;">
+                    <button onclick="closeStoreModal('storePurchaseSuccessModal')" style="background: none; border: none; color: #94a3b8; font-size: 13px; cursor: pointer; text-decoration: underline;">Return to Music Catalogue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAYMENT STATUS ALERTS (FAILED / CANCELLED) MODAL -->
+    <div id="storeStatusModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: #0e1626; border: 1px solid #ef4444; border-radius: 16px; width: 100%; max-width: 440px; overflow: hidden; text-align: center; padding: 30px 24px;">
+            <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(239, 68, 68, 0.2); color: #ef4444; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 16px;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 id="statusModalTitle" style="margin: 0 0 10px; font-size: 20px; color: #fff; font-family: 'Cinzel', serif;">PAYMENT NOT COMPLETED</h3>
+            <p id="statusModalMessage" style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Your payment was not successful or was cancelled. No song download has been delivered.</p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button onclick="closeStoreModal('storeStatusModal')" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">RETURN TO MUSIC</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MY PURCHASES ORDER LOOKUP MODAL -->
+    <div id="myPurchasesModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 999; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: #0e1626; border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 16px; width: 100%; max-width: 520px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden;">
+            <div style="padding: 20px 24px; background: #152238; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between;">
+                <h3 style="margin: 0; font-size: 18px; color: #fff; font-family: 'Cinzel', serif;"><i class="fa-solid fa-receipt" style="color: #10b981;"></i> My Song Purchases</h3>
+                <button onclick="closeStoreModal('myPurchasesModal')" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer;">&times;</button>
+            </div>
+            <div style="padding: 20px 24px; overflow-y: auto; flex: 1;">
+                <p style="color: #94a3b8; font-size: 13.5px; margin-top: 0; margin-bottom: 16px;">
+                    Enter the Email address or Order Number used during checkout to retrieve your purchased song download links.
+                </p>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" id="purchasesSearchInput" placeholder="e.g. customer@gmail.com or ALIMUSIC-123456" style="flex: 1; background: #070b14; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 14px;">
+                    <button onclick="searchCustomerPurchases()" style="background: #10b981; color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer;"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                </div>
+                <div id="purchasesResultContainer">
+                    <div style="text-align: center; color: #64748b; padding: 30px 10px;">
+                        <i class="fa-solid fa-compact-disc" style="font-size: 32px; margin-bottom: 10px;"></i>
+                        <div>Enter your details above to view past purchases.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let allSongs = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             loadMusicFromFirebase();
+            checkPostPurchaseUrl();
         });
+
+        function renderSongs(songs) {
+            const container = document.getElementById('musicCatalogueGrid');
+            if (songs.length === 0) {
+                container.innerHTML = `
+                    <div class="state-container">
+                        <div class="state-icon" style="color: #64748b;"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <div class="state-title">No Songs Found</div>
+                        <div class="state-desc">No published songs match your search query.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = songs.map(s => {
+                const price = typeof s.price === 'number' && s.price > 0 ? s.price : 100;
+                const currency = s.currency || 'KSh';
+                const songId = s.id || `song_${s.title.toLowerCase().replace(/\s+/g, '_')}`;
+
+                return `
+                <div class="song-catalogue-card">
+                    <div class="song-card-artwork">
+                        <img src="${s.artworkUrl || '../hero.jpg'}" alt="${escapeHtml(s.title)}" onerror="this.src='../hero.jpg'">
+                        ${s.audioUrl ? `
+                            <button class="song-card-play-btn" title="Listen Audio Preview" onclick="playTrack('${escapeHtml(s.title)}', '${escapeHtml(s.artist || 'Ali Welekhasia')}', '${s.audioUrl}', '${s.artworkUrl || '../hero.jpg'}')">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                        ` : ''}
+                        <div style="position: absolute; top: 12px; right: 12px; background: rgba(7, 11, 20, 0.85); backdrop-filter: blur(6px); border: 1px solid #d4af37; color: #d4af37; padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                            ${currency} ${price}
+                        </div>
+                    </div>
+                    <div class="song-card-content">
+                        <div>
+                            <div class="song-card-title">${escapeHtml(s.title)}</div>
+                            <div class="song-card-artist">${escapeHtml(s.artist || 'Ali Welekhasia')}</div>
+                            <div class="song-card-tags">
+                                <span class="tag-badge">${escapeHtml(s.genre || 'Worship')}</span>
+                                ${s.album ? `<span class="tag-badge">${escapeHtml(s.album)}</span>` : ''}
+                                ${s.key ? `<span class="tag-badge">Key: ${escapeHtml(s.key)}</span>` : ''}
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 10px; margin-bottom: 12px;">
+                            <button onclick="openBuyModal('${songId}')" style="width: 100%; background: linear-gradient(135deg, #d4af37, #b89628); color: #070b14; border: none; padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(212,175,55,0.25);">
+                                <i class="fa-solid fa-cart-shopping"></i> BUY & DOWNLOAD — ${currency} ${price}
+                            </button>
+                        </div>
+
+                        <div class="song-card-footer">
+                            <a href="../lyrics?song=${encodeURIComponent(s.id || s.title)}" class="btn-view-lyrics">
+                                <i class="fa-solid fa-file-lines"></i> Lyrics
+                            </a>
+                            <div class="stream-links-group">
+                                ${s.youtubeUrl ? `<a href="${s.youtubeUrl}" target="_blank" class="stream-icon-link" title="YouTube"><i class="fa-brands fa-youtube" style="color: #ef4444;"></i></a>` : ''}
+                                ${s.spotifyUrl ? `<a href="${s.spotifyUrl}" target="_blank" class="stream-icon-link" title="Spotify"><i class="fa-brands fa-spotify" style="color: #10b981;"></i></a>` : ''}
+                                ${s.appleMusicUrl ? `<a href="${s.appleMusicUrl}" target="_blank" class="stream-icon-link" title="Apple Music"><i class="fa-brands fa-apple"></i></a>` : ''}
+                                ${s.boomplayUrl ? `<a href="${s.boomplayUrl}" target="_blank" class="stream-icon-link" title="Boomplay"><i class="fa-solid fa-play-circle" style="color: #3b82f6;"></i></a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        /* --- STORE MODALS & CHECKOUT HANDLERS --- */
+        function openBuyModal(songId) {
+            const song = allSongs.find(s => (s.id || `song_${s.title.toLowerCase().replace(/\s+/g, '_')}`) === songId) || allSongs[0];
+            if (!song) return;
+
+            const price = typeof song.price === 'number' && song.price > 0 ? song.price : 100;
+            const currency = song.currency || 'KSh';
+
+            document.getElementById('checkoutInput_productId').value = song.id || songId;
+            document.getElementById('checkoutThumb').src = song.artworkUrl || '../hero.jpg';
+            document.getElementById('checkoutTitle').innerText = song.title;
+            document.getElementById('checkoutArtist').innerText = song.artist || 'Ali Welekhasia';
+            document.getElementById('checkoutPriceBadge').innerText = `${currency} ${price}`;
+            document.getElementById('checkoutBtnPrice').innerText = `${currency} ${price}`;
+
+            // Pre-fill email if stored in localStorage
+            const savedEmail = localStorage.getItem('ali_customer_email') || '';
+            const savedPhone = localStorage.getItem('ali_customer_phone') || '';
+            if (savedEmail) document.getElementById('checkoutInput_email').value = savedEmail;
+            if (savedPhone) document.getElementById('checkoutInput_phone').value = savedPhone;
+
+            document.getElementById('checkoutErrorMessage').style.display = 'none';
+            document.getElementById('storeCheckoutModal').style.display = 'flex';
+        }
+
+        function closeStoreModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'none';
+        }
+
+        async function handleStoreCheckoutSubmit(e) {
+            if (e) e.preventDefault();
+
+            const productId = document.getElementById('checkoutInput_productId').value;
+            const customerEmail = document.getElementById('checkoutInput_email').value.trim();
+            const customerPhone = document.getElementById('checkoutInput_phone').value.trim();
+            const paymentProvider = document.getElementById('checkoutInput_provider').value;
+            const errBox = document.getElementById('checkoutErrorMessage');
+            const submitBtn = document.getElementById('checkoutSubmitBtn');
+
+            if (!customerEmail || !customerEmail.includes('@')) {
+                errBox.innerText = 'Please enter a valid email address.';
+                errBox.style.display = 'block';
+                return;
+            }
+
+            // Save email and phone for convenience
+            localStorage.setItem('ali_customer_email', customerEmail);
+            if (customerPhone) localStorage.setItem('ali_customer_phone', customerPhone);
+
+            errBox.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Initializing Secure Payment...`;
+
+            try {
+                const res = await fetch('/api/store/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        productId,
+                        customerEmail,
+                        customerPhone,
+                        paymentProvider
+                    })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.error || 'Failed to initialize payment.');
+                }
+
+                if (data.checkoutUrl || data.authorizationUrl) {
+                    // Redirect to secure payment gateway (Paystack / M-Pesa checkout)
+                    window.location.href = data.checkoutUrl || data.authorizationUrl;
+                } else {
+                    // Fallback verification if environment is pending
+                    window.location.href = `/music/index.html?purchase=success&orderId=${data.orderId}&reference=${data.paymentReference}`;
+                }
+
+            } catch (err) {
+                console.error('Checkout error:', err);
+                errBox.innerText = err.message || 'Error processing purchase. Please try again.';
+                errBox.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Proceed to Pay`;
+            }
+        }
+
+        /* --- POST-PURCHASE AUTOMATIC DOWNLOAD VERIFICATION --- */
+        async function checkPostPurchaseUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const purchaseStatus = urlParams.get('purchase');
+            const orderId = urlParams.get('orderId');
+            const reference = urlParams.get('reference');
+
+            if (!purchaseStatus) return;
+
+            if (purchaseStatus === 'cancelled' || purchaseStatus === 'failed') {
+                document.getElementById('statusModalTitle').innerText = purchaseStatus === 'cancelled' ? 'PAYMENT CANCELLED' : 'PAYMENT NOT COMPLETED';
+                document.getElementById('statusModalMessage').innerText = purchaseStatus === 'cancelled' 
+                    ? 'You cancelled the checkout process. No song has been delivered.'
+                    : 'Your payment was not successful. Please try again.';
+                document.getElementById('storeStatusModal').style.display = 'flex';
+                // Clean URL parameters
+                window.history.replaceState({}, document.title, window.location.pathname);
+                return;
+            }
+
+            if (purchaseStatus === 'success' && (orderId || reference)) {
+                // Show loading modal while server verifies payment
+                const successModal = document.getElementById('storePurchaseSuccessModal');
+                successModal.style.display = 'flex';
+
+                try {
+                    const verifyRes = await fetch(`/api/store/payment/verify?orderId=${encodeURIComponent(orderId || '')}&reference=${encodeURIComponent(reference || '')}`);
+                    const verifyData = await verifyRes.json();
+
+                    if (verifyData.success && verifyData.downloadToken) {
+                        const ord = verifyData.order || {};
+                        document.getElementById('successSongTitle').innerText = ord.productTitle || (verifyData.song ? verifyData.song.title : 'Purchased Song');
+                        document.getElementById('successSongArtist').innerText = ord.productArtist || 'Ali Welekhasia';
+                        document.getElementById('successOrderNum').innerText = ord.orderNumber || 'ALIMUSIC-PAID';
+                        document.getElementById('successAmount').innerText = `${ord.currency || 'KSh'} ${ord.amount || 100}`;
+                        document.getElementById('successRef').innerText = ord.paymentReference || reference || 'CONFIRMED';
+
+                        const downloadUrl = `/api/store/download?token=${verifyData.downloadToken}`;
+                        document.getElementById('successDownloadBtn').href = downloadUrl;
+
+                        // AUTOMATIC BROWSER DOWNLOAD TRIGGER
+                        setTimeout(() => {
+                            window.location.href = downloadUrl;
+                        }, 800);
+
+                    } else {
+                        closeStoreModal('storePurchaseSuccessModal');
+                        document.getElementById('statusModalTitle').innerText = 'PAYMENT UNVERIFIED';
+                        document.getElementById('statusModalMessage').innerText = verifyData.message || 'Payment verification is pending or was not successful.';
+                        document.getElementById('storeStatusModal').style.display = 'flex';
+                    }
+                } catch (err) {
+                    console.error('Post purchase verification error:', err);
+                }
+
+                // Clean URL query params without reloading
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+
+        /* --- MY PURCHASES LOOKUP --- */
+        function openMyPurchasesModal() {
+            document.getElementById('myPurchasesModal').style.display = 'flex';
+            const savedEmail = localStorage.getItem('ali_customer_email');
+            if (savedEmail) {
+                document.getElementById('purchasesSearchInput').value = savedEmail;
+                searchCustomerPurchases();
+            }
+        }
+
+        async function searchCustomerPurchases() {
+            const query = document.getElementById('purchasesSearchInput').value.trim();
+            const container = document.getElementById('purchasesResultContainer');
+
+            if (!query) {
+                container.innerHTML = `<div style="text-align: center; color: #ef4444; padding: 20px;">Please enter an email or order number.</div>`;
+                return;
+            }
+
+            container.innerHTML = `<div style="text-align: center; color: #d4af37; padding: 30px;"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><div style="margin-top: 10px;">Searching purchase records...</div></div>`;
+
+            try {
+                const res = await fetch(`/api/store/purchases?query=${encodeURIComponent(query)}`);
+                const data = await res.json();
+
+                if (!res.ok || !data.success || data.purchases.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; color: #94a3b8; padding: 30px 10px;">
+                            <i class="fa-solid fa-circle-question" style="font-size: 32px; margin-bottom: 10px; color: #64748b;"></i>
+                            <div style="font-weight: 600; color: #fff;">No Purchases Found</div>
+                            <div style="font-size: 13px; margin-top: 4px;">No paid orders found matching "${escapeHtml(query)}".</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = data.purchases.map(p => `
+                    <div style="background: #070b14; border: 1px solid rgba(16,185,129,0.3); border-radius: 10px; padding: 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+                        <div>
+                            <div style="font-weight: 700; color: #fff; font-size: 15px;">${escapeHtml(p.productTitle)}</div>
+                            <div style="color: #94a3b8; font-size: 12.5px;">${escapeHtml(p.productArtist)} • <span style="color: #10b981;">${p.currency} ${p.amount}</span></div>
+                            <div style="color: #64748b; font-size: 11.5px; margin-top: 2px;">Order #${escapeHtml(p.orderNumber)}</div>
+                        </div>
+                        <a href="${p.downloadUrl}" target="_blank" style="background: #10b981; color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-download"></i> Download MP3
+                        </a>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                container.innerHTML = `<div style="text-align: center; color: #ef4444; padding: 20px;">Error retrieving purchases. Please try again.</div>`;
+            }
+        }
 
         function loadMusicFromFirebase() {
             const container = document.getElementById('musicCatalogueGrid');

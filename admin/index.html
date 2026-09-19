@@ -78,6 +78,9 @@
                 <button type="button" class="nav-item-btn" data-tab="songs" onclick="switchTab('songs')">
                     <i class="fa-solid fa-music"></i> Songs
                 </button>
+                <button type="button" class="nav-item-btn" data-tab="orders" onclick="switchTab('orders')">
+                    <i class="fa-solid fa-cart-shopping"></i> Store Orders & Payments
+                </button>
                 <button type="button" class="nav-item-btn" data-tab="lyrics" onclick="switchTab('lyrics')">
                     <i class="fa-solid fa-file-lines"></i> Lyrics Editor
                 </button>
@@ -259,8 +262,8 @@
                 <section id="tabView_songs" class="tab-view-container" style="display: none;">
                     <div class="view-header">
                         <div>
-                            <h1><i class="fa-solid fa-music"></i> Songs Catalogue Management</h1>
-                            <p>Manage audio releases, cover artwork, streaming platform links, and publishing statuses.</p>
+                            <h1><i class="fa-solid fa-music"></i> Songs & Product Catalogue Management</h1>
+                            <p>Control audio releases, cover artwork, private master assets, sales pricing, and publication statuses.</p>
                         </div>
                         <div class="header-actions">
                             <button type="button" class="btn btn-gold" onclick="openAddSongModal()">
@@ -269,17 +272,141 @@
                         </div>
                     </div>
 
+                    <!-- Song Management Summary Dashboard -->
+                    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-bottom: 20px;">
+                        <div class="stat-card" style="padding: 12px 16px;">
+                            <div class="stat-info">
+                                <div class="stat-label">Total Tracks</div>
+                                <div class="stat-value" id="songStatTotal" style="font-size: 22px;">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="padding: 12px 16px;">
+                            <div class="stat-info">
+                                <div class="stat-label" style="color: #10b981;">Published</div>
+                                <div class="stat-value" id="songStatPublished" style="font-size: 22px; color: #10b981;">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="padding: 12px 16px;">
+                            <div class="stat-info">
+                                <div class="stat-label" style="color: #f59e0b;">Drafts</div>
+                                <div class="stat-value" id="songStatDrafts" style="font-size: 22px; color: #f59e0b;">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="padding: 12px 16px;">
+                            <div class="stat-info">
+                                <div class="stat-label" style="color: #94a3b8;">Archived</div>
+                                <div class="stat-value" id="songStatArchived" style="font-size: 22px; color: #94a3b8;">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="padding: 12px 16px;">
+                            <div class="stat-info">
+                                <div class="stat-label" style="color: var(--adm-gold);">Store Sales</div>
+                                <div class="stat-value" id="songStatPurchases" style="font-size: 22px; color: var(--adm-gold);">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="padding: 12px 16px;">
+                            <div class="stat-info">
+                                <div class="stat-label" style="color: #38bdf8;">Downloads</div>
+                                <div class="stat-value" id="songStatDownloads" style="font-size: 22px; color: #38bdf8;">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="padding: 12px 16px;">
+                            <div class="stat-info">
+                                <div class="stat-label" style="color: #34d399;">Gross Sales</div>
+                                <div class="stat-value" id="songStatRevenue" style="font-size: 20px; color: #34d399;">KSh 0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Filter & Bulk Actions Toolbar -->
+                    <div class="admin-toolbar" style="flex-wrap: wrap; gap: 10px;">
+                        <div class="toolbar-left" style="flex-wrap: wrap; gap: 8px;">
+                            <div class="search-input-wrap">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="songsSearchInput" placeholder="Search title, artist, or ID..." oninput="renderSongsTable()">
+                            </div>
+                            <select id="songsStatusFilter" class="filter-select" onchange="renderSongsTable()">
+                                <option value="ALL">Status: All</option>
+                                <option value="PUBLISHED">Published</option>
+                                <option value="DRAFT">Draft</option>
+                                <option value="UNPUBLISHED">Unpublished</option>
+                                <option value="ARCHIVED">Archived</option>
+                            </select>
+                            <select id="songsSalesFilter" class="filter-select" onchange="renderSongsTable()">
+                                <option value="ALL">Sales: All</option>
+                                <option value="HAS_SALES">Has Sales</option>
+                                <option value="NO_SALES">Never Sold</option>
+                            </select>
+                            <select id="songsStorageFilter" class="filter-select" onchange="renderSongsTable()">
+                                <option value="ALL">Storage: All</option>
+                                <option value="MASTER_OK">Master Audio Attached</option>
+                                <option value="MASTER_MISSING">Master Audio Missing</option>
+                                <option value="PREVIEW_OK">Preview Audio Attached</option>
+                            </select>
+                            <select id="songsSortBy" class="filter-select" onchange="renderSongsTable()">
+                                <option value="TITLE_ASC">Sort: Title (A-Z)</option>
+                                <option value="NEWEST">Sort: Release / Date Added</option>
+                                <option value="PRICE_DESC">Sort: Highest Price</option>
+                                <option value="SALES_DESC">Sort: Top Selling Tracks</option>
+                                <option value="DOWNLOADS_DESC">Sort: Most Downloaded</option>
+                            </select>
+                        </div>
+                        <div class="toolbar-right" style="display: flex; gap: 8px; align-items: center;">
+                            <select id="bulkSongActionSelect" class="filter-select" style="border-color: var(--adm-gold);">
+                                <option value="">Bulk Actions...</option>
+                                <option value="PUBLISH">Publish Selected</option>
+                                <option value="UNPUBLISH">Unpublish Selected</option>
+                                <option value="ARCHIVE">Archive Selected</option>
+                            </select>
+                            <button type="button" class="btn btn-sm btn-gold" onclick="executeBulkSongAction()">
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px; text-align: center;">
+                                        <input type="checkbox" id="selectAllSongsCheckbox" onchange="toggleSelectAllSongs(this)">
+                                    </th>
+                                    <th>Song Title & Artist</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Media Assets</th>
+                                    <th>Sales & Revenue</th>
+                                    <th>DLs</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="songsTableBody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB: STORE ORDERS & PAYMENTS MANAGEMENT -->
+                <section id="tabView_orders" class="tab-view-container" style="display: none;">
+                    <div class="view-header">
+                        <div>
+                            <h1><i class="fa-solid fa-cart-shopping"></i> Direct Music Store Orders</h1>
+                            <p>Track sales, payment verifications, customer digital download fulfillment, and transaction references.</p>
+                        </div>
+                    </div>
+
                     <div class="admin-toolbar">
                         <div class="toolbar-left">
                             <div class="search-input-wrap">
                                 <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="text" id="songsSearchInput" placeholder="Search song title or artist..." oninput="renderSongsTable()">
+                                <input type="text" id="ordersSearchInput" placeholder="Search order #, customer email, phone, or reference..." oninput="renderOrdersTable()">
                             </div>
-                            <select id="songsStatusFilter" class="filter-select" onchange="renderSongsTable()">
-                                <option value="ALL">All Statuses</option>
-                                <option value="PUBLISHED">Published Only</option>
-                                <option value="DRAFT">Drafts Only</option>
-                                <option value="ARCHIVED">Archived</option>
+                            <select id="ordersStatusFilter" class="filter-select" onchange="renderOrdersTable()">
+                                <option value="ALL">All Payment Statuses</option>
+                                <option value="PAID">Paid & Fulfilled</option>
+                                <option value="PENDING">Pending Payment</option>
+                                <option value="FAILED">Failed / Cancelled</option>
                             </select>
                         </div>
                     </div>
@@ -288,17 +415,17 @@
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Song Title & Artist</th>
-                                    <th>Album</th>
-                                    <th>Genre</th>
-                                    <th>Key</th>
-                                    <th>Status</th>
-                                    <th>Media</th>
-                                    <th>Actions</th>
+                                    <th>Order # & Date</th>
+                                    <th>Song Purchased</th>
+                                    <th>Customer Contact</th>
+                                    <th>Amount</th>
+                                    <th>Payment Status</th>
+                                    <th>Gateway Ref</th>
+                                    <th>Fulfillment</th>
                                 </tr>
                             </thead>
-                            <tbody id="songsTableBody">
-                                <!-- Rendered dynamically -->
+                            <tbody id="ordersTableBody">
+                                <!-- Rendered dynamically by admin.js -->
                             </tbody>
                         </table>
                     </div>
@@ -819,6 +946,14 @@
             </div>
             <form id="songForm" onsubmit="handleSongFormSubmit(event)">
                 <div class="adm-modal-body">
+                    <!-- Validation Alert Banner -->
+                    <div id="songPublishValidationAlert" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; color: #fca5a5; font-size: 13px;">
+                        <div style="font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i> Publishing Requirements Incomplete
+                        </div>
+                        <div id="songPublishValidationList">This song cannot be published until all required fields are completed.</div>
+                    </div>
+
                     <input type="hidden" id="songModalId">
                     <div class="adm-form-grid">
                         <div class="adm-form-group">
@@ -896,7 +1031,7 @@
 
                         <!-- Audio Master Section -->
                         <div class="adm-form-group full-width">
-                            <label>Audio File Master (MP3 / WAV / M4A)</label>
+                            <label>Audio File Master (MP3 / WAV / M4A Preview)</label>
                             <input type="text" id="songInput_audioUrl" class="adm-form-control" placeholder="Direct audio URL or upload file below">
                             <div style="margin-top: 8px;">
                                 <button type="button" class="btn btn-sm btn-gold" onclick="document.getElementById('fileUploadAudio').click()">
@@ -910,6 +1045,24 @@
                             </div>
                             <!-- Audio Preview Player -->
                             <audio id="songAudioPlayer" controls style="display: none; width: 100%; margin-top: 10px;"></audio>
+                        </div>
+
+                        <!-- Direct Digital Store Configuration -->
+                        <div class="adm-form-group">
+                            <label for="songInput_price"><i class="fa-solid fa-tag" style="color: #d4af37;"></i> Digital Sales Price</label>
+                            <input type="number" id="songInput_price" class="adm-form-control" placeholder="100" min="0" step="1">
+                        </div>
+                        <div class="adm-form-group">
+                            <label for="songInput_currency">Currency Code</label>
+                            <select id="songInput_currency" class="adm-form-control">
+                                <option value="KSh">KSh (Kenyan Shilling)</option>
+                                <option value="USD">USD ($)</option>
+                            </select>
+                        </div>
+                        <div class="adm-form-group full-width">
+                            <label for="songInput_downloadUrl"><i class="fa-solid fa-file-shield" style="color: #10b981;"></i> Master High-Quality Download URL (Delivered after payment verification)</label>
+                            <input type="text" id="songInput_downloadUrl" class="adm-form-control" placeholder="Private storage URL (e.g. Cloudflare R2 / S3 / Private Storage URL)">
+                            <small style="color: #94a3b8; font-size: 11.5px; display: block; margin-top: 4px;">If left blank, the system uses the Audio File Master URL above as the download asset.</small>
                         </div>
 
                         <!-- Streaming Platform Links -->
@@ -931,9 +1084,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="adm-modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('songModal')">Cancel</button>
-                    <button type="submit" class="btn btn-gold"><i class="fa-solid fa-floppy-disk"></i> Save Song</button>
+                <div class="adm-modal-footer" style="justify-content: space-between; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-outline" onclick="previewCurrentFormStoreListing()">
+                        <i class="fa-solid fa-store" style="color: var(--adm-gold);"></i> Preview Store Listing
+                    </button>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('songModal')">Cancel</button>
+                        <button type="submit" class="btn btn-gold"><i class="fa-solid fa-floppy-disk"></i> Save Song</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -1185,6 +1343,129 @@
                     <button type="submit" class="btn btn-gold">Save Role Assignment</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- PUBLIC STORE PREVIEW MODAL -->
+    <div id="storePreviewModal" class="adm-modal-overlay">
+        <div class="adm-modal-container" style="max-width: 520px;">
+            <div class="adm-modal-header">
+                <h3><i class="fa-solid fa-store" style="color: var(--adm-gold);"></i> Public Music Store Card Preview</h3>
+                <button type="button" class="adm-modal-close" onclick="closeModal('storePreviewModal')">&times;</button>
+            </div>
+            <div class="adm-modal-body" style="padding: 24px;">
+                <p style="font-size: 12px; color: var(--adm-text-subtle); margin-bottom: 16px;">
+                    <i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> Customer Store Listing View (Private Master Audio File Is Protected & Hidden).
+                </p>
+                
+                <!-- Mock Store Song Card -->
+                <div style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 12px; overflow: hidden; padding: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 14px;">
+                        <img id="prevModal_art" src="images/hero.jpg" style="width: 90px; height: 90px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1);" alt="Preview Cover">
+                        <div style="flex: 1;">
+                            <div style="font-size: 11px; color: var(--adm-gold); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;" id="prevModal_album">Single</div>
+                            <h4 style="font-size: 18px; font-weight: 700; color: #fff; margin: 2px 0 4px 0;" id="prevModal_title">NI WEWE</h4>
+                            <div style="font-size: 13px; color: #cbd5e1;" id="prevModal_artist">Ali Welekhasia</div>
+                            <div style="margin-top: 8px;">
+                                <span style="background: rgba(212, 175, 55, 0.15); color: var(--adm-gold); font-size: 13px; font-weight: 700; padding: 2px 10px; border-radius: 20px; border: 1px solid rgba(212, 175, 55, 0.3);" id="prevModal_price">KSh 100</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Audio Preview Player -->
+                    <div style="margin-bottom: 14px;">
+                        <label style="font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px;"><i class="fa-solid fa-volume-high"></i> Public Audio Preview Player</label>
+                        <audio id="prevModal_audioPlayer" controls style="width: 100%; height: 36px;"></audio>
+                    </div>
+                    <!-- Action Buttons Mock -->
+                    <button type="button" class="btn btn-gold" style="width: 100%; justify-content: center; opacity: 0.85; cursor: default;" disabled>
+                        <i class="fa-solid fa-cart-shopping"></i> BUY & DOWNLOAD
+                    </button>
+                </div>
+            </div>
+            <div class="adm-modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('storePreviewModal')">Close Preview</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SONG SALES & DETAILS BREAKDOWN MODAL -->
+    <div id="songDetailsModal" class="adm-modal-overlay">
+        <div class="adm-modal-container large">
+            <div class="adm-modal-header">
+                <h3><i class="fa-solid fa-chart-line" style="color: var(--adm-gold);"></i> Song Details & Sales Breakdown</h3>
+                <button type="button" class="adm-modal-close" onclick="closeModal('songDetailsModal')">&times;</button>
+            </div>
+            <div class="adm-modal-body">
+                <!-- Song Header Overview -->
+                <div style="display: flex; gap: 20px; align-items: center; background: rgba(0,0,0,0.25); padding: 16px; border-radius: 10px; margin-bottom: 20px;">
+                    <img id="detailModal_art" src="images/hero.jpg" style="width: 100px; height: 100px; border-radius: 8px; object-fit: cover;" alt="Artwork">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                            <h2 style="font-size: 22px; font-weight: 800; color: #fff; margin: 0;" id="detailModal_title">Title</h2>
+                            <span id="detailModal_statusBadge" class="status-badge status-published">PUBLISHED</span>
+                        </div>
+                        <p style="color: var(--adm-text-subtle); margin: 0 0 8px 0; font-size: 14px;" id="detailModal_artist">Ali Welekhasia</p>
+                        <div style="display: flex; gap: 16px; font-size: 12px; color: #cbd5e1; flex-wrap: wrap;">
+                            <div><strong>Current Price:</strong> <span style="color: var(--adm-gold);" id="detailModal_price">KSh 100</span></div>
+                            <div><strong>Release Date:</strong> <span id="detailModal_releaseDate">—</span></div>
+                            <div><strong>Language:</strong> <span id="detailModal_language">Swahili</span></div>
+                            <div><strong>Genre:</strong> <span id="detailModal_genre">Worship</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Asset Storage & Sales Stats Grid -->
+                <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 20px;">
+                    <div class="stat-card" style="padding: 14px;">
+                        <div class="stat-info">
+                            <div class="stat-label">Total Paid Orders</div>
+                            <div class="stat-value" id="detailModal_ordersCount" style="color: var(--adm-gold);">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="padding: 14px;">
+                        <div class="stat-info">
+                            <div class="stat-label">Gross Revenue</div>
+                            <div class="stat-value" id="detailModal_grossRevenue" style="color: #34d399;">KSh 0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="padding: 14px;">
+                        <div class="stat-info">
+                            <div class="stat-label">Total Downloads</div>
+                            <div class="stat-value" id="detailModal_downloadCount" style="color: #38bdf8;">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="padding: 14px;">
+                        <div class="stat-info">
+                            <div class="stat-label">Private Master Storage</div>
+                            <div id="detailModal_masterStatus" style="font-size: 12px; font-weight: 600; color: #10b981; margin-top: 4px;">
+                                <i class="fa-solid fa-file-shield"></i> Protected R2 / S3 Storage
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Song Orders Table -->
+                <h4 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 12px;"><i class="fa-solid fa-receipt"></i> Direct Purchases for this Track</h4>
+                <div class="table-responsive-container" style="max-height: 250px; overflow-y: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order # & Date</th>
+                                <th>Customer Email / Phone</th>
+                                <th>Amount Paid</th>
+                                <th>Payment Ref</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailModal_ordersTableBody">
+                            <!-- Rendered dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="adm-modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('songDetailsModal')">Close</button>
+            </div>
         </div>
     </div>
 

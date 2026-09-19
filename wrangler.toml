@@ -1,0 +1,13 @@
+name = "aliwelekhasia"
+pages_build_output_dir = "."
+
+# Cloudflare R2 Private Bucket Binding for Music Masters
+# NOTE: This bucket MUST NOT have a Public R2 Development Domain or Custom Domain enabled.
+# Access is strictly limited to serverless Functions via context.env.R2_BUCKET.
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "aliwelekhasia-private-music"
+
+[vars]
+ENVIRONMENT = "production"
+DEFAULT_CURRENCY = "KES"

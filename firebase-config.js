@@ -66,7 +66,10 @@ const RICHALI_SCHEMA = {
         liveRecordings: "aliwelekhasia/live_recordings",
         liveSchedule: "aliwelekhasia/live_schedule",
         liveChat: "aliwelekhasia/live_chat",
-        liveViewers: "aliwelekhasia/live_stream/active_viewers"
+        liveViewers: "aliwelekhasia/live_stream/active_viewers",
+        orders: "aliwelekhasia/orders",
+        payments: "aliwelekhasia/payments",
+        downloadEntitlements: "aliwelekhasia/download_entitlements"
     },
     // Firebase Cloud Storage Buckets / Folders
     storage: {
