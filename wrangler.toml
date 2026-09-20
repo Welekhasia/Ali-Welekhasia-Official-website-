@@ -1,13 +1,36 @@
 name = "aliwelekhasia"
+main = "src/worker.js"
+compatibility_date = "2024-09-01"
 pages_build_output_dir = "."
+account_id = "aeb41c9c812d6807027c3c5bb5dcefbe"
 
-# Cloudflare R2 Private Bucket Binding for Music Masters
-# NOTE: This bucket MUST NOT have a Public R2 Development Domain or Custom Domain enabled.
-# Access is strictly limited to serverless Functions via context.env.R2_BUCKET.
+# 1. Cloudflare D1 Relational SQL Database Binding
+[[d1_databases]]
+binding = "DB"
+database_name = "ali-welekhasia-production-db"
+database_id = "55bae613-dfba-4c87-ad76-48f4c5d0b6c7"
+migrations_dir = "migrations"
+
+# 2. Cloudflare R2 Object Storage Binding (Single Bucket with Prefixes)
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "ali-music-audio"
+
+# Secondary compatibility alias for existing Pages functions
 [[r2_buckets]]
 binding = "R2_BUCKET"
-bucket_name = "aliwelekhasia-private-music"
+bucket_name = "ali-music-audio"
 
+# 3. Environment Variables
 [vars]
 ENVIRONMENT = "production"
 DEFAULT_CURRENCY = "KES"
+API_HOSTNAME = "api.aliwelekhasia.co.ke"
+PRIMARY_DOMAIN = "aliwelekhasia.co.ke"
+ALLOWED_ORIGINS = "https://aliwelekhasia.co.ke,https://www.aliwelekhasia.co.ke,https://api.aliwelekhasia.co.ke"
+
+# 4. Worker Routes / Custom Domain
+# When deployed as a standalone Worker on Cloudflare DNS
+[routes]
+pattern = "api.aliwelekhasia.co.ke/*"
+custom_domain = true
