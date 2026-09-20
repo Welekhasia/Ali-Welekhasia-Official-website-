@@ -10,17 +10,23 @@
  * - Audit logging for all administrative product changes
  */
 
+import { validateEnvironmentConfig } from '../security/env.js';
+import { checkRateLimit, buildRateLimitResponse } from '../security/rateLimit.js';
+
 const FIREBASE_DB_URL = "https://gospelsphere-default-rtdb.europe-west1.firebasedatabase.app";
 
-function jsonResponse(data, status = 200) {
+function jsonResponse(data, status = 200, requestId = null) {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Admin-Role, X-Admin-Email, X-Request-Id'
+    };
+    if (requestId) headers['X-Request-Id'] = requestId;
+
     return new Response(JSON.stringify(data), {
         status,
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Admin-Role, X-Admin-Email'
-        }
+        headers
     });
 }
 
@@ -30,7 +36,7 @@ export async function onRequestOptions() {
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Admin-Role, X-Admin-Email'
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Admin-Role, X-Admin-Email, X-Request-Id'
         }
     });
 }
@@ -100,6 +106,22 @@ export async function onRequestGet(context) {
 export async function onRequestPost(context) {
     const { request, env } = context;
 
+    // Rate Limiting Protection (admin profile: 40 req / 5 min, burst 10 / 10s)
+    const rateCheck = await checkRateLimit('admin', request);
+    if (!rateCheck.allowed) {
+        return buildRateLimitResponse(rateCheck);
+    }
+    const requestId = rateCheck.requestId;
+
+    // Environment Guardrails Validation
+    const envValidation = validateEnvironmentConfig(env);
+    if (!envValidation.valid) {
+        return jsonResponse({
+            success: false,
+            error: "Environment configuration error: " + envValidation.errors[0]
+        }, 500, requestId);
+    }
+
     try {
         const body = await request.json();
         const { action, product, adminEmail = 'admin@aliwelekhasia.com', adminRole = 'SUPER_ADMIN' } = body;
@@ -109,11 +131,11 @@ export async function onRequestPost(context) {
             return jsonResponse({
                 success: false,
                 error: "Unauthorized: Accounts with SALES_VIEWER role cannot modify music products."
-            }, 403);
+            }, 403, requestId);
         }
 
         if (!product || !product.id) {
-            return jsonResponse({ success: false, error: "Product ID and details are required." }, 400);
+            return jsonResponse({ success: false, error: "Product ID and details are required." }, 400, requestId);
         }
 
         const productId = product.id;

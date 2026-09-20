@@ -9,15 +9,22 @@
  * - Payment secret keys are NEVER exposed to client.
  */
 
-function jsonResponse(data, status = 200) {
+import { validateEnvironmentConfig } from '../security/env.js';
+import { checkRateLimit, buildRateLimitResponse, generateRequestId } from '../security/rateLimit.js';
+import { recordAuditEvent } from '../security/audit.js';
+
+function jsonResponse(data, status = 200, requestId = null) {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-Id'
+    };
+    if (requestId) headers['X-Request-Id'] = requestId;
+
     return new Response(JSON.stringify(data), {
         status,
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-        }
+        headers
     });
 }
 
@@ -27,7 +34,7 @@ export async function onRequestOptions() {
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-Id'
         }
     });
 }
@@ -37,15 +44,44 @@ const FIREBASE_DB_URL = "https://gospelsphere-default-rtdb.europe-west1.firebase
 export async function onRequestPost(context) {
     const { request, env } = context;
 
+    // 1. Rate Limiting Protection (orders profile: 10 req / 5 min, burst 3 / 10s)
+    const rateCheck = await checkRateLimit('orders', request);
+    if (!rateCheck.allowed) {
+        await recordAuditEvent(context, {
+            eventType: 'RATE_LIMIT_TRIGGERED',
+            result: rateCheck.status,
+            requestId: rateCheck.requestId,
+            hashedIdentifier: rateCheck.hashedIdentifier
+        });
+        return buildRateLimitResponse(rateCheck);
+    }
+
+    const requestId = rateCheck.requestId;
+
+    // 2. Server-Side Environment Guardrails Validation
+    const envValidation = validateEnvironmentConfig(env);
+    if (!envValidation.valid) {
+        await recordAuditEvent(context, {
+            eventType: 'ENVIRONMENT_GUARDRAIL_VIOLATION',
+            result: 'BLOCKED',
+            requestId,
+            metadata: { errors: envValidation.errors }
+        });
+        return jsonResponse({
+            success: false,
+            error: "Payment configuration guardrail violation: " + envValidation.errors[0]
+        }, 500, requestId);
+    }
+
     try {
         const body = await request.json();
         const { productId, customerEmail, customerPhone, paymentProvider = 'PAYSTACK' } = body;
 
         if (!productId) {
-            return jsonResponse({ success: false, error: "Product ID is required for music purchases." }, 400);
+            return jsonResponse({ success: false, error: "Product ID is required for music purchases." }, 400, requestId);
         }
         if (!customerEmail || !customerEmail.includes('@')) {
-            return jsonResponse({ success: false, error: "A valid customer email address is required." }, 400);
+            return jsonResponse({ success: false, error: "A valid customer email address is required." }, 400, requestId);
         }
 
         // 1. Retrieve authoritative song product from Firebase Realtime Database
@@ -180,11 +216,17 @@ export async function onRequestPost(context) {
 
 export async function onRequestGet(context) {
     const { request } = context;
+    const rateCheck = await checkRateLimit('orders', request);
+    if (!rateCheck.allowed) {
+        return buildRateLimitResponse(rateCheck);
+    }
+    const requestId = rateCheck.requestId;
+
     const url = new URL(request.url);
     const orderId = url.searchParams.get('orderId');
 
     if (!orderId) {
-        return jsonResponse({ success: false, error: "Order ID parameter is required." }, 400);
+        return jsonResponse({ success: false, error: "Order ID parameter is required." }, 400, requestId);
     }
 
     try {
@@ -192,14 +234,26 @@ export async function onRequestGet(context) {
         const orderData = await orderRes.json();
 
         if (!orderData) {
-            return jsonResponse({ success: false, error: "Order not found." }, 404);
+            return jsonResponse({ success: false, error: "Order not found." }, 404, requestId);
         }
+
+        // Return strictly sanitized public status info; NEVER leak PII or downloadToken
+        const sanitized = {
+            id: orderData.id,
+            orderNumber: orderData.orderNumber,
+            productTitle: orderData.productTitle,
+            productArtist: orderData.productArtist,
+            amount: orderData.amount,
+            currency: orderData.currency,
+            paymentStatus: orderData.paymentStatus,
+            createdAt: orderData.createdAt
+        };
 
         return jsonResponse({
             success: true,
-            order: orderData
-        });
+            order: sanitized
+        }, 200, requestId);
     } catch (err) {
-        return jsonResponse({ success: false, error: "Error retrieving order details." }, 500);
+        return jsonResponse({ success: false, error: "Error retrieving order details." }, 500, requestId);
     }
 }

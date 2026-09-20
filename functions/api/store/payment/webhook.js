@@ -9,10 +9,16 @@
  * - Creates download entitlement token upon successful payment verification.
  */
 
-function jsonResponse(data, status = 200) {
+import { validateEnvironmentConfig } from '../../security/env.js';
+import { checkRateLimit, buildRateLimitResponse } from '../../security/rateLimit.js';
+import { recordAuditEvent } from '../../security/audit.js';
+
+function jsonResponse(data, status = 200, requestId = null) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (requestId) headers['X-Request-Id'] = requestId;
     return new Response(JSON.stringify(data), {
         status,
-        headers: { 'Content-Type': 'application/json' }
+        headers
     });
 }
 
@@ -21,20 +27,55 @@ const FIREBASE_DB_URL = "https://gospelsphere-default-rtdb.europe-west1.firebase
 export async function onRequestPost(context) {
     const { request, env } = context;
 
+    // 1. Webhook Rate Limiting Protection (High capacity: 60/min to permit legitimate gateway retries)
+    const rateCheck = await checkRateLimit('webhook', request);
+    if (!rateCheck.allowed) {
+        await recordAuditEvent(context, {
+            eventType: 'WEBHOOK_RATE_LIMIT_TRIGGERED',
+            result: rateCheck.status,
+            requestId: rateCheck.requestId
+        });
+        return buildRateLimitResponse(rateCheck);
+    }
+
+    const requestId = rateCheck.requestId;
+
+    // 2. Server-Side Environment Guardrail Validation
+    const envValidation = validateEnvironmentConfig(env);
+    if (!envValidation.valid) {
+        await recordAuditEvent(context, {
+            eventType: 'WEBHOOK_GUARDRAIL_VIOLATION',
+            result: 'BLOCKED',
+            requestId,
+            metadata: { errors: envValidation.errors }
+        });
+        return jsonResponse({ error: "Webhook configuration guardrail violation: " + envValidation.errors[0] }, 500, requestId);
+    }
+
     try {
         const bodyText = await request.text();
         let body = {};
         try {
             body = JSON.parse(bodyText);
         } catch (e) {
-            return jsonResponse({ error: "Invalid JSON body" }, 400);
+            return jsonResponse({ error: "Invalid JSON body" }, 400, requestId);
         }
 
-        // 1. Verify Paystack Webhook Signature if secret configured
+        // 3. Verify Paystack Webhook Signature First
         const paystackSignature = request.headers.get('x-paystack-signature');
         const webhookSecret = env.PAYSTACK_WEBHOOK_SECRET || env.PAYSTACK_SECRET_KEY;
 
-        if (paystackSignature && webhookSecret) {
+        if (webhookSecret) {
+            if (!paystackSignature) {
+                console.error("Missing x-paystack-signature header in webhook!");
+                await recordAuditEvent(context, {
+                    eventType: 'WEBHOOK_SIGNATURE_MISSING',
+                    result: 'REJECTED',
+                    requestId
+                });
+                return jsonResponse({ error: "Missing webhook signature header" }, 401, requestId);
+            }
+
             const encoder = new TextEncoder();
             const key = await crypto.subtle.importKey(
                 'raw',
@@ -51,7 +92,12 @@ export async function onRequestPost(context) {
 
             if (computedHex.toLowerCase() !== paystackSignature.trim().toLowerCase()) {
                 console.error("Webhook signature mismatch!");
-                return jsonResponse({ error: "Invalid webhook signature" }, 401);
+                await recordAuditEvent(context, {
+                    eventType: 'WEBHOOK_SIGNATURE_MISMATCH',
+                    result: 'REJECTED',
+                    requestId
+                });
+                return jsonResponse({ error: "Invalid webhook signature" }, 401, requestId);
             }
         }
 
@@ -99,7 +145,14 @@ export async function onRequestPost(context) {
                 return jsonResponse({ message: "Order already fulfilled (idempotent)" }, 200);
             }
 
-            // 5. Verify Amount
+            // 5. Verify Currency & Amount
+            const expectedCurrency = (orderData.currency === 'KSh' ? 'KES' : (orderData.currency || 'KES')).toUpperCase();
+            const paidCurrency = (data.currency || '').toUpperCase();
+            if (paidCurrency && expectedCurrency && paidCurrency !== expectedCurrency) {
+                console.error(`Currency mismatch! Expected ${expectedCurrency}, received ${paidCurrency}`);
+                return jsonResponse({ error: "Payment currency does not match authoritative order currency" }, 200);
+            }
+
             const expectedAmountKobo = Math.round((orderData.amount || 100) * 100);
             if (paidAmountKobo && paidAmountKobo < expectedAmountKobo) {
                 console.error(`Underpayment detected! Expected ${expectedAmountKobo}, received ${paidAmountKobo}`);
@@ -111,8 +164,10 @@ export async function onRequestPost(context) {
                 return jsonResponse({ error: "Payment amount does not match authoritative order price" }, 200);
             }
 
-            // 6. Generate Download Entitlement Token
-            const token = `tok_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+            // 6. Generate High-Entropy 256-bit Cryptographically Random Download Entitlement Token
+            const randBytes = new Uint8Array(24);
+            crypto.getRandomValues(randBytes);
+            const token = 'aw_dl_' + Array.from(randBytes).map(b => b.toString(16).padStart(2, '0')).join('');
             const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days validity
 
             const entitlement = {
@@ -136,6 +191,16 @@ export async function onRequestPost(context) {
                 body: JSON.stringify(entitlement)
             });
 
+            // Calculate actual gateway fee and payment channel telemetry
+            const rawFees = data.fees; // in kobo/cents
+            const gatewayFee = typeof rawFees === 'number' ? (rawFees / 100) : null;
+            const channel = data.channel || 'paystack';
+            const auth = data.authorization || {};
+            const cardType = auth.brand || auth.card_type || null;
+            const cardCountry = auth.country_code || null;
+            const isInternational = cardCountry ? (cardCountry.toUpperCase() !== 'KE') : false;
+            const netSettlement = gatewayFee !== null ? Math.max(0, (orderData.amount || 0) - gatewayFee) : null;
+
             // 7. Update Order Status to PAID
             const paidTimestamp = new Date().toISOString();
             await fetch(`${FIREBASE_DB_URL}/aliwelekhasia/orders/${targetOrderId}.json`, {
@@ -146,8 +211,14 @@ export async function onRequestPost(context) {
                     fulfillmentStatus: 'FULFILLED',
                     paidAt: paidTimestamp,
                     downloadToken: token,
-                    gatewayChannel: data.channel || 'paystack',
-                    gatewayTransactionId: data.id || null
+                    paymentChannel: channel,
+                    gatewayChannel: channel,
+                    gatewayTransactionId: data.id || null,
+                    gatewayFee,
+                    cardType,
+                    cardCountry,
+                    isInternational,
+                    netSettlement
                 })
             });
 

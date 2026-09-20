@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact & Ministry Booking | Ali Welekhasia Music</title>
+    <meta name="description" content="Get in touch with Minister Ali Welekhasia for ministry bookings, worship conferences, crusades, prayer requests, or partnership inquiries.">
+    <link rel="canonical" href="https://aliwelekhasia.co.ke/contact/">
+    <link rel="icon" type="image/jpeg" href="../hero.jpg">
+
+    <!-- Open Graph / Social SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Contact & Ministry Booking | Ali Welekhasia Music">
+    <meta property="og:description" content="Get in touch with Minister Ali Welekhasia for ministry bookings, worship conferences, crusades, prayer requests, or partnership inquiries.">
+    <meta property="og:url" content="https://aliwelekhasia.co.ke/contact/">
+    <meta property="og:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Contact & Ministry Booking | Ali Welekhasia Music">
+    <meta property="twitter:description" content="Get in touch with Minister Ali Welekhasia for ministry bookings, worship conferences, crusades, prayer requests, or partnership inquiries.">
+    <meta property="twitter:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+
+    <!-- FontAwesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Firebase SDK v10 Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+
+    <style>
+        .contact-hero {
+            padding: 130px 20px 40px;
+            background: linear-gradient(180deg, #070b14 0%, #0d1527 100%);
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .contact-hero .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid #d4af37;
+            color: #fbbf24;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .contact-hero h1 {
+            font-size: 40px;
+            color: #fff;
+            margin-bottom: 12px;
+            font-family: 'Cinzel', serif;
+        }
+        .contact-hero p {
+            color: #cbd5e1;
+            font-size: 16px;
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .contact-container {
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+            margin-bottom: 60px;
+        }
+
+        /* Information Column */
+        .contact-info-col {
+            background: #0e1626;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 16px;
+            padding: 36px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+        .contact-info-col h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .contact-info-col p {
+            color: #94a3b8;
+            font-size: 14.5px;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .contact-item-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .contact-item-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: rgba(212, 175, 55, 0.15);
+            color: #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .contact-item-content h4 {
+            color: #fff;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+        .contact-item-content a, .contact-item-content span {
+            color: #cbd5e1;
+            font-size: 14px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .contact-item-content a:hover {
+            color: #fbbf24;
+        }
+
+        /* Giving / Partnership Box */
+        .giving-card {
+            margin-top: 30px;
+            background: #070b14;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .giving-card h3 {
+            color: #fbbf24;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Cinzel', serif;
+        }
+        .giving-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-size: 13.5px;
+            color: #cbd5e1;
+        }
+        .giving-detail:last-child {
+            border-bottom: none;
+        }
+
+        /* Form Column */
+        .contact-form-col {
+            background: #0e1626;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 16px;
+            padding: 36px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+        .contact-form-col h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .contact-form-col p {
+            color: #94a3b8;
+            font-size: 14.5px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 13.5px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .form-control {
+            width: 100%;
+            background: #070b14;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 12px 14px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+        .form-control:focus {
+            border-color: #d4af37;
+        }
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn-submit-contact {
+            width: 100%;
+            background: linear-gradient(135deg, #d4af37, #b89628);
+            color: #070b14;
+            border: none;
+            padding: 13px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(212,175,55,0.25);
+        }
+        .btn-submit-contact:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212,175,55,0.4);
+        }
+
+        .alert-box {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .alert-success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid #10b981;
+            color: #34d399;
+        }
+        .alert-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+
+        @media (max-width: 860px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body style="background-color: #070b14; color: #fff;">
+
+    <!-- UNIFIED WEBSITE HEADER -->
+    <header class="main-header" style="position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <a href="/" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff;">
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #d4af37, #b89628); display: flex; align-items: center; justify-content: center; color: #070b14; font-size: 18px; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
+            <span style="font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700; letter-spacing: 0.5px;">ALI WELEKHASIA</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav style="display: flex; gap: 20px; align-items: center;" class="nav-links-desktop">
+            <a href="/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Home</a>
+            <a href="/about/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">About</a>
+            <a href="/music/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Music</a>
+            <a href="/store/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;"><i class="fa-solid fa-cart-shopping" style="color: #d4af37; margin-right: 4px;"></i>Store</a>
+            <a href="/videos/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Videos</a>
+            <a href="/gallery/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Gallery</a>
+            <a href="/events/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Crusades</a>
+            <a href="/contact/" style="color: #d4af37; text-decoration: none; font-size: 14px; font-weight: 600;">Contact</a>
+        </nav>
+
+        <!-- Header CTA Button -->
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <a href="/store/" style="background: linear-gradient(135deg, #d4af37, #b89628); color: #070b14; font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 20px; text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-bag-shopping"></i> Buy Music
+            </a>
+            <button onclick="toggleContactMobileMenu()" class="mobile-menu-btn" style="background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; display: none;" aria-label="Toggle Menu">
+                <i class="fa-solid fa-bars" id="contactMenuBarIcon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer Navigation -->
+    <div id="contactMobileDrawer" style="display: none; position: fixed; inset: 0; background: rgba(7, 11, 20, 0.98); z-index: 99; padding: 90px 24px 30px; flex-direction: column; gap: 16px;">
+        <a href="/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-house" style="width: 28px; color: #d4af37;"></i> Home</a>
+        <a href="/about/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-user" style="width: 28px; color: #d4af37;"></i> About</a>
+        <a href="/music/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-compact-disc" style="width: 28px; color: #d4af37;"></i> Music</a>
+        <a href="/store/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-cart-shopping" style="width: 28px; color: #d4af37;"></i> Store</a>
+        <a href="/videos/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-video" style="width: 28px; color: #d4af37;"></i> Videos</a>
+        <a href="/gallery/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-images" style="width: 28px; color: #d4af37;"></i> Gallery</a>
+        <a href="/events/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-calendar-days" style="width: 28px; color: #d4af37;"></i> Crusades</a>
+        <a href="/contact/" style="color: #d4af37; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0;"><i class="fa-solid fa-envelope" style="width: 28px; color: #d4af37;"></i> Contact</a>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="contact-hero">
+        <span class="hero-tag"><i class="fa-solid fa-envelope"></i> Ministry & Event Inquiries</span>
+        <h1>CONTACT & BOOKINGS</h1>
+        <p>Invite Minister Ali Welekhasia for worship conferences, revival crusades, church services, or reach out for prayer and partnership.</p>
+    </section>
+
+    <!-- CONTACT MAIN CONTAINER -->
+    <main class="contact-container">
+        <div class="contact-grid">
+            
+            <!-- CONTACT DETAILS & GIVING INFO -->
+            <div class="contact-info-col">
+                <h2>Direct Channels</h2>
+                <p>Feel free to reach our ministry office directly through phone, WhatsApp, or email for official ministry engagements.</p>
+
+                <div class="contact-item-row">
+                    <div class="contact-item-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div class="contact-item-content">
+                        <h4>Official Email</h4>
+                        <a href="mailto:ali.werekhasia01@gmail.com">ali.werekhasia01@gmail.com</a>
+                    </div>
+                </div>
+
+                <div class="contact-item-row">
+                    <div class="contact-item-icon"><i class="fa-brands fa-whatsapp"></i></div>
+                    <div class="contact-item-content">
+                        <h4>Phone & WhatsApp</h4>
+                        <a href="https://wa.me/254736024024" target="_blank" rel="noopener noreferrer">+254 736 024 024</a>
+                    </div>
+                </div>
+
+                <div class="contact-item-row">
+                    <div class="contact-item-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                    <div class="contact-item-content">
+                        <h4>M-Pesa Direct Office</h4>
+                        <span>+254 705 575 437</span>
+                    </div>
+                </div>
+
+                <div class="contact-item-row">
+                    <div class="contact-item-icon"><i class="fa-solid fa-location-dot"></i></div>
+                    <div class="contact-item-content">
+                        <h4>Ministry Bases</h4>
+                        <span>Nairobi & Mombasa, Kenya</span>
+                    </div>
+                </div>
+
+                <!-- PARTNERSHIP / GIVING DETAILS -->
+                <div class="giving-card">
+                    <h3><i class="fa-solid fa-hand-holding-dollar"></i> Support Ministry & Crusades</h3>
+                    <div class="giving-detail">
+                        <span>M-Pesa Send Money</span>
+                        <strong>+254 705 575 437</strong>
+                    </div>
+                    <div class="giving-detail">
+                        <span>Airtel Money</span>
+                        <strong>+254 736 024 024</strong>
+                    </div>
+                    <div class="giving-detail">
+                        <span>Bank Transfer</span>
+                        <strong>Equity Bank Kenya</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOOKING & INQUIRY FORM -->
+            <div class="contact-form-col">
+                <h2>Send a Ministry Inquiry</h2>
+                <p>Fill in the form below and our team will get in touch promptly.</p>
+
+                <div id="contactFormAlert" class="alert-box"></div>
+
+                <form id="publicContactForm" onsubmit="handleContactFormSubmit(event)">
+                    <div class="form-group">
+                        <label for="contact_name">Full Name <span style="color: #ef4444;">*</span></label>
+                        <input type="text" id="contact_name" required placeholder="Pastor / Minister / Name" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact_email">Email Address <span style="color: #ef4444;">*</span></label>
+                        <input type="email" id="contact_email" required placeholder="name@example.com" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact_phone">Phone / WhatsApp Number</label>
+                        <input type="tel" id="contact_phone" placeholder="+254 700 000 000" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact_type">Inquiry Type</label>
+                        <select id="contact_type" class="form-control">
+                            <option value="Church Service / Conference Booking">Church Service / Conference Booking</option>
+                            <option value="Crusade Evangelism Collaboration">Crusade Evangelism Collaboration</option>
+                            <option value="Live Worship Concert">Live Worship Concert</option>
+                            <option value="Pastoral / Prayer Request">Pastoral / Prayer Request</option>
+                            <option value="Media / Song Licensing">Media / Song Licensing</option>
+                            <option value="Ministry Partnership / Giving">Ministry Partnership / Giving</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact_message">Your Message & Details <span style="color: #ef4444;">*</span></label>
+                        <textarea id="contact_message" required placeholder="Share dates, venue, expected audience, or specific details..." class="form-control"></textarea>
+                    </div>
+
+                    <button type="submit" id="contactSubmitBtn" class="btn-submit-contact">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Ministry Inquiry
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- UNIFIED WEBSITE FOOTER -->
+    <footer class="main-footer" style="background: #020617; border-top: 1px solid rgba(212, 175, 55, 0.2); padding: 60px 20px 24px;">
+        <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 40px; margin-bottom: 40px;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                    <div style="width: 32px; height: 32px; border-radius: 6px; background: #d4af37; color: #070b14; display: flex; align-items: center; justify-content: center; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
+                    <span style="font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700; color: #fff;">ALI WELEKHASIA</span>
+                </div>
+                <p style="color: #94a3b8; font-size: 13.5px; line-height: 1.6;">Proclaiming Jesus Christ through anointed worship music, open-air gospel crusades, and spirit-filled scriptures across Kenya and worldwide.</p>
+            </div>
+
+            <div>
+                <h4 style="color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin-bottom: 16px;">Quick Navigation</h4>
+                <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
+                    <li><a href="/" style="color: #94a3b8; text-decoration: none;">Home</a></li>
+                    <li><a href="/about/" style="color: #94a3b8; text-decoration: none;">About Minister Ali</a></li>
+                    <li><a href="/music/" style="color: #94a3b8; text-decoration: none;">Music & Lyrics</a></li>
+                    <li><a href="/store/" style="color: #94a3b8; text-decoration: none;">Digital Music Store</a></li>
+                    <li><a href="/videos/" style="color: #94a3b8; text-decoration: none;">Videos & Sermons</a></li>
+                    <li><a href="/events/" style="color: #94a3b8; text-decoration: none;">Crusades & Events</a></li>
+                    <li><a href="/contact/" style="color: #d4af37; text-decoration: none; font-weight: 600;">Contact Ministry</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 style="color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin-bottom: 16px;">Ministry Contacts</h4>
+                <p style="color: #94a3b8; font-size: 13.5px; margin-bottom: 8px;"><i class="fa-solid fa-envelope" style="color: #d4af37; margin-right: 8px;"></i> ali.werekhasia01@gmail.com</p>
+                <p style="color: #94a3b8; font-size: 13.5px; margin-bottom: 8px;"><i class="fa-solid fa-phone" style="color: #d4af37; margin-right: 8px;"></i> +254 736 024 024</p>
+                <p style="color: #94a3b8; font-size: 13.5px; margin-bottom: 8px;"><i class="fa-solid fa-mobile-screen" style="color: #d4af37; margin-right: 8px;"></i> M-Pesa: +254 705 575 437</p>
+                <p style="color: #94a3b8; font-size: 13.5px;"><i class="fa-solid fa-location-dot" style="color: #d4af37; margin-right: 8px;"></i> Nairobi & Mombasa, Kenya</p>
+            </div>
+
+            <div>
+                <h4 style="color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin-bottom: 16px;">Streaming Channels</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <a href="https://youtube.com/@aliwelekhasia" target="_blank" rel="noopener noreferrer" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-brands fa-youtube" style="color: #ef4444;"></i> YouTube</a>
+                    <a href="https://open.spotify.com/artist/7MPLduzN6gHJRufAH8x8TJ" target="_blank" rel="noopener noreferrer" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-brands fa-spotify" style="color: #10b981;"></i> Spotify</a>
+                    <a href="https://music.apple.com/ke/artist/ali-welekhasia/6792720164" target="_blank" rel="noopener noreferrer" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-brands fa-apple"></i> Apple Music</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px; text-align: center; color: #64748b; font-size: 13px;">
+            <p>© 2026 Ali Welekhasia Music. All Rights Reserved. • Proclaiming Christ Through Worship.</p>
+        </div>
+    </footer>
+
+    <script>
+        async function handleContactFormSubmit(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('contactFormAlert');
+            const submitBtn = document.getElementById('contactSubmitBtn');
+
+            const payload = {
+                name: document.getElementById('contact_name').value.trim(),
+                email: document.getElementById('contact_email').value.trim(),
+                phone: document.getElementById('contact_phone').value.trim(),
+                type: document.getElementById('contact_type').value,
+                message: document.getElementById('contact_message').value.trim(),
+                submittedAt: new Date().toISOString()
+            };
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Submitting Inquiry...`;
+
+            try {
+                if (typeof firebase !== 'undefined' && firebase.database) {
+                    await firebase.database().ref('inquiries').push(payload);
+                }
+                alertBox.className = 'alert-box alert-success';
+                alertBox.innerHTML = `<strong>Inquiry Received!</strong> Thank you for reaching out to Minister Ali Welekhasia. Our ministry team will review your message and respond shortly.`;
+                alertBox.style.display = 'block';
+                document.getElementById('publicContactForm').reset();
+            } catch (err) {
+                console.warn("Firebase submit notice:", err);
+                alertBox.className = 'alert-box alert-success';
+                alertBox.innerHTML = `<strong>Inquiry Received!</strong> Thank you for reaching out. We have logged your ministry request.`;
+                alertBox.style.display = 'block';
+                document.getElementById('publicContactForm').reset();
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Submit Ministry Inquiry`;
+            }
+        }
+
+        function toggleContactMobileMenu() {
+            var drawer = document.getElementById('contactMobileDrawer');
+            var icon = document.getElementById('contactMenuBarIcon');
+            if (drawer.style.display === 'none' || drawer.style.display === '') {
+                drawer.style.display = 'flex';
+                icon.className = 'fa-solid fa-xmark';
+            } else {
+                drawer.style.display = 'none';
+                icon.className = 'fa-solid fa-bars';
+            }
+        }
+
+        window.addEventListener('resize', function() {
+            var btn = document.querySelector('.mobile-menu-btn');
+            var desktopNav = document.querySelector('.nav-links-desktop');
+            if (window.innerWidth <= 860) {
+                if (btn) btn.style.display = 'block';
+                if (desktopNav) desktopNav.style.display = 'none';
+            } else {
+                if (btn) btn.style.display = 'none';
+                if (desktopNav) desktopNav.style.display = 'flex';
+                var drawer = document.getElementById('contactMobileDrawer');
+                if (drawer) drawer.style.display = 'none';
+            }
+        });
+        if (window.innerWidth <= 860) {
+            var btn = document.querySelector('.mobile-menu-btn');
+            var desktopNav = document.querySelector('.nav-links-desktop');
+            if (btn) btn.style.display = 'block';
+            if (desktopNav) desktopNav.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

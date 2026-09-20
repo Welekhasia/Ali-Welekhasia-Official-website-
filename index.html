@@ -142,22 +142,25 @@
         <nav class="nav-menu" id="navMenu">
             <ul>
                 <li><a href="#home" onclick="closeMobileMenu()">Home</a></li>
+                <li><a href="/about/" onclick="closeMobileMenu()">About</a></li>
+                <li><a href="/music/" onclick="closeMobileMenu()">Music</a></li>
+                <li><a href="/store/" onclick="closeMobileMenu()" style="color: #d4af37 !important; font-weight: 600;"><i class="fa-solid fa-cart-shopping" style="margin-right: 4px;"></i>Store</a></li>
+                <li><a href="/videos/" onclick="closeMobileMenu()">Videos</a></li>
+                <li><a href="/gallery/" onclick="closeMobileMenu()">Gallery</a></li>
+                <li><a href="/events/" onclick="closeMobileMenu()">Crusades</a></li>
+                <li><a href="/blog/" onclick="closeMobileMenu()">Devotionals</a></li>
                 <li id="navLiveLink"><a href="/live" onclick="closeMobileMenu()" style="color: #ef4444 !important; font-weight: 700;"><span style="display:inline-block; width:7px; height:7px; background:#ef4444; border-radius:50%; margin-right:5px; box-shadow:0 0 8px #ef4444;"></span>Live</a></li>
-                <li><a href="#music" onclick="closeMobileMenu()">Music</a></li>
-                <li><a href="#videos" onclick="closeMobileMenu()">Videos</a></li>
-                <li><a href="#blog" onclick="closeMobileMenu()">Devotionals</a></li>
-                <li id="navCrusadesLink" style="display: none;"><a href="#countdown" onclick="closeMobileMenu()">Crusades</a></li>
-                <li><a href="#reach" onclick="closeMobileMenu()">Global Reach</a></li>
                 <li><a href="#partner" onclick="closeMobileMenu()" class="nav-highlight">Partner</a></li>
-                <li><a href="#social" onclick="closeMobileMenu()">Social</a></li>
-                <li><a href="#prayer" onclick="closeMobileMenu()">Prayer</a></li>
-                <li><a href="#faq" onclick="closeMobileMenu()">FAQ</a></li>
-                <li><a href="#contact" onclick="closeMobileMenu()">Contact</a></li>
+                <li><a href="/contact/" onclick="closeMobileMenu()">Contact</a></li>
             </ul>
         </nav>
 
-        <!-- Right Header Tools: Global Search + Theme Toggle + Admin Portal + Mobile Hamburger -->
+        <!-- Right Header Tools: Global Search + Buy Music CTA + Theme Toggle + Mobile Hamburger -->
         <div class="header-tools">
+            <a href="/store/" class="btn-buy-music-nav" style="background: linear-gradient(135deg, #d4af37, #b89628); color: #070b14; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 20px; text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-bag-shopping"></i> Buy Music
+            </a>
+
             <!-- Global Search Trigger -->
             <button class="tool-btn" id="searchTriggerBtn" onclick="toggleSearchModal()" title="Search songs, sermons, devotionals" aria-label="Search">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -1824,15 +1827,16 @@
             <div class="footer-col">
                 <h4>Quick Navigation</h4>
                 <ul class="footer-links">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#music">Music & Lyrics</a></li>
-                    <li><a href="#videos">Videos & Sermons</a></li>
-                    <li><a href="#blog">Devotionals & Blog</a></li>
-                    <li><a href="#partner">Partner With Us</a></li>
-                    <li><a href="#contact">Contact Us</a></li>
-                    <li><a href="sitemap.xml" target="_blank"><i class="fa-solid fa-sitemap"></i> Sitemap (XML)</a></li>
-                    <li><a href="rss.xml" target="_blank"><i class="fa-solid fa-rss"></i> RSS Feed</a></li>
-                    <li><a href="javascript:void(0)" onclick="openAdminPortal()"><i class="fa-solid fa-user-shield"></i> Admin Portal</a></li>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about/">About Minister Ali</a></li>
+                    <li><a href="/music/">Music & Lyrics</a></li>
+                    <li><a href="/store/"><i class="fa-solid fa-cart-shopping" style="color: #d4af37;"></i> Digital Store</a></li>
+                    <li><a href="/videos/">Videos & Sermons</a></li>
+                    <li><a href="/gallery/">Ministry Gallery</a></li>
+                    <li><a href="/events/">Crusades & Events</a></li>
+                    <li><a href="/blog/">Devotionals & Blog</a></li>
+                    <li><a href="/contact/">Contact & Bookings</a></li>
+                    <li><a href="/admin/"><i class="fa-solid fa-user-shield"></i> Admin CMS</a></li>
                 </ul>
             </div>
 

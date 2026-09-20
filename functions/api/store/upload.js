@@ -10,15 +10,22 @@
  * - Safe master replacement tracking
  */
 
-function jsonResponse(data, status = 200) {
+import { validateEnvironmentConfig } from '../security/env.js';
+import { checkRateLimit, buildRateLimitResponse } from '../security/rateLimit.js';
+import { recordAuditEvent } from '../security/audit.js';
+
+function jsonResponse(data, status = 200, requestId = null) {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Asset-Type, X-Product-Id, X-Version-Id, X-Filename, X-Admin-Role, X-Admin-Secret, X-Request-Id'
+    };
+    if (requestId) headers['X-Request-Id'] = requestId;
+
     return new Response(JSON.stringify(data), {
         status,
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Asset-Type, X-Product-Id, X-Version-Id, X-Filename, X-Admin-Role'
-        }
+        headers
     });
 }
 
@@ -28,7 +35,7 @@ export async function onRequestOptions() {
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Asset-Type, X-Product-Id, X-Version-Id, X-Filename, X-Admin-Role'
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Asset-Type, X-Product-Id, X-Version-Id, X-Filename, X-Admin-Role, X-Admin-Secret, X-Request-Id'
         }
     });
 }
@@ -95,15 +102,58 @@ export async function onRequestPut(context) {
 async function handleUpload(context) {
     const { request, env } = context;
 
+    // 1. Strict Administrative Rate Limiting (5 uploads / 5 min per IP)
+    const rateCheck = await checkRateLimit('upload', request);
+    if (!rateCheck.allowed) {
+        await recordAuditEvent(context, {
+            eventType: 'UPLOAD_RATE_LIMIT_TRIGGERED',
+            result: rateCheck.status,
+            requestId: rateCheck.requestId,
+            hashedIdentifier: rateCheck.hashedIdentifier
+        });
+        return buildRateLimitResponse(rateCheck);
+    }
+
+    const requestId = rateCheck.requestId;
+
+    // 2. Server-Side Environment Guardrails
+    const envValidation = validateEnvironmentConfig(env);
+    if (!envValidation.valid) {
+        return jsonResponse({
+            success: false,
+            error: "Environment configuration error: " + envValidation.errors[0]
+        }, 500, requestId);
+    }
+
     try {
         const headers = request.headers;
-        const role = headers.get('x-admin-role') || 'SUPER_ADMIN';
+        const authHeader = headers.get('authorization') || '';
+        const adminSecretHeader = headers.get('x-admin-secret') || '';
+        const role = headers.get('x-admin-role') || '';
+        const configuredSecret = env.ADMIN_API_SECRET;
+
+        // Strict Admin Authorization Verification
+        const isSecretMatched = configuredSecret && (authHeader === `Bearer ${configuredSecret}` || adminSecretHeader === configuredSecret);
+        const hasAdminRole = role === 'ADMIN' || role === 'SUPER_ADMIN';
+
+        if (!isSecretMatched && !hasAdminRole) {
+            await recordAuditEvent(context, {
+                eventType: 'UNAUTHORIZED_UPLOAD_ATTEMPT',
+                result: 'BLOCKED',
+                requestId,
+                hashedIdentifier: rateCheck.hashedIdentifier
+            });
+            return jsonResponse({
+                success: false,
+                error: "Unauthorized: Uploading master and preview assets requires verified administrator credentials."
+            }, 401, requestId);
+        }
 
         if (role === 'SALES_VIEWER') {
             return jsonResponse({
                 success: false,
                 error: "Unauthorized: SALES_VIEWER accounts cannot upload media assets."
-            }, 403);
+            }, 403, requestId);
         }
 
         let assetType = headers.get('x-asset-type') || 'master'; // 'master', 'preview', 'artwork'
@@ -141,7 +191,7 @@ async function handleUpload(context) {
             return jsonResponse({
                 success: false,
                 error: `Security Violation: File extension .${ext} is strictly forbidden.`
-            }, 400);
+            }, 400, requestId);
         }
 
         if (assetType === 'master' || assetType === 'preview') {
@@ -150,7 +200,7 @@ async function handleUpload(context) {
                 return jsonResponse({
                     success: false,
                     error: `Invalid audio format (.${ext}). Accepted audio formats: MP3, WAV, M4A, FLAC, AAC.`
-                }, 400);
+                }, 400, requestId);
             }
         } else if (assetType === 'artwork') {
             const validImageExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
@@ -158,7 +208,7 @@ async function handleUpload(context) {
                 return jsonResponse({
                     success: false,
                     error: `Invalid artwork format (.${ext}). Accepted formats: JPG, PNG, WebP.`
-                }, 400);
+                }, 400, requestId);
             }
         }
 
@@ -179,15 +229,15 @@ async function handleUpload(context) {
         const r2Bucket = env.R2_BUCKET || env.MUSIC_BUCKET;
 
         if (bodyBuffer.byteLength === 0) {
-            return jsonResponse({ success: false, error: "Uploaded payload is empty." }, 400);
+            return jsonResponse({ success: false, error: "Uploaded payload is empty." }, 400, requestId);
         }
 
         // Enforce 100MB limit on audio, 15MB on artwork
         if ((assetType === 'master' || assetType === 'preview') && bodyBuffer.byteLength > 100 * 1024 * 1024) {
-            return jsonResponse({ success: false, error: "Audio file exceeds 100MB maximum limit." }, 400);
+            return jsonResponse({ success: false, error: "Audio file exceeds 100MB maximum limit." }, 400, requestId);
         }
         if (assetType === 'artwork' && bodyBuffer.byteLength > 15 * 1024 * 1024) {
-            return jsonResponse({ success: false, error: "Artwork file exceeds 15MB maximum limit." }, 400);
+            return jsonResponse({ success: false, error: "Artwork file exceeds 15MB maximum limit." }, 400, requestId);
         }
 
         if (r2Bucket) {
@@ -219,7 +269,7 @@ async function handleUpload(context) {
                 filename: cleanName,
                 fileSize: bodyBuffer.byteLength,
                 message: `${assetType === 'master' ? 'Private master audio' : assetType} uploaded and verified in Cloudflare R2.`
-            });
+            }, 200, requestId);
         } else {
             // Fallback for environments where R2 is configured via external CDN/Storage
             return jsonResponse({
@@ -233,11 +283,11 @@ async function handleUpload(context) {
                 filename: cleanName,
                 fileSize: bodyBuffer.byteLength,
                 note: "Stored reference key for R2 storage."
-            });
+            }, 200, requestId);
         }
 
     } catch (err) {
         console.error("Upload error:", err);
-        return jsonResponse({ success: false, error: err.message }, 500);
+        return jsonResponse({ success: false, error: err.message }, 500, requestId);
     }
 }

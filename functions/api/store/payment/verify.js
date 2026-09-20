@@ -5,15 +5,22 @@
  * and retrieve/create the authorized download entitlement.
  */
 
-function jsonResponse(data, status = 200) {
+import { validateEnvironmentConfig } from '../../security/env.js';
+import { checkRateLimit, buildRateLimitResponse } from '../../security/rateLimit.js';
+import { recordAuditEvent } from '../../security/audit.js';
+
+function jsonResponse(data, status = 200, requestId = null) {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-Id'
+    };
+    if (requestId) headers['X-Request-Id'] = requestId;
+
     return new Response(JSON.stringify(data), {
         status,
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-        }
+        headers
     });
 }
 
@@ -23,7 +30,7 @@ export async function onRequestOptions() {
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-Id'
         }
     });
 }
@@ -32,12 +39,42 @@ const FIREBASE_DB_URL = "https://gospelsphere-default-rtdb.europe-west1.firebase
 
 export async function onRequestGet(context) {
     const { request, env } = context;
+
+    // 1. Rate Limiting Protection (verify profile: 15 req / 5 min, burst 5 / 10s)
+    const rateCheck = await checkRateLimit('verify', request);
+    if (!rateCheck.allowed) {
+        await recordAuditEvent(context, {
+            eventType: 'RATE_LIMIT_TRIGGERED',
+            result: rateCheck.status,
+            requestId: rateCheck.requestId,
+            hashedIdentifier: rateCheck.hashedIdentifier
+        });
+        return buildRateLimitResponse(rateCheck);
+    }
+
+    const requestId = rateCheck.requestId;
+
+    // 2. Server-Side Environment Guardrails Validation
+    const envValidation = validateEnvironmentConfig(env);
+    if (!envValidation.valid) {
+        await recordAuditEvent(context, {
+            eventType: 'ENVIRONMENT_GUARDRAIL_VIOLATION',
+            result: 'BLOCKED',
+            requestId,
+            metadata: { errors: envValidation.errors }
+        });
+        return jsonResponse({
+            success: false,
+            error: "Payment verification guardrail violation: " + envValidation.errors[0]
+        }, 500, requestId);
+    }
+
     const url = new URL(request.url);
     const reference = url.searchParams.get('reference');
     const orderId = url.searchParams.get('orderId');
 
     if (!orderId && !reference) {
-        return jsonResponse({ success: false, error: "Order ID or Payment Reference is required." }, 400);
+        return jsonResponse({ success: false, error: "Order ID or Payment Reference is required." }, 400, requestId);
     }
 
     try {
@@ -102,6 +139,17 @@ export async function onRequestGet(context) {
                 const paidAmountKobo = verifyData.data.amount;
 
                 if (txStatus === 'success') {
+                    // Check currency match
+                    const paidCurrency = (verifyData.data.currency || '').toUpperCase();
+                    const expectedCurrency = (orderData.currency === 'KSh' ? 'KES' : (orderData.currency || 'KES')).toUpperCase();
+                    if (paidCurrency && expectedCurrency && paidCurrency !== expectedCurrency) {
+                        return jsonResponse({
+                            success: false,
+                            status: "CURRENCY_MISMATCH",
+                            error: `Payment currency mismatch. Expected ${expectedCurrency}, received ${paidCurrency}.`
+                        }, 400);
+                    }
+
                     // Check amount match
                     const expectedAmountKobo = Math.round((orderData.amount || 100) * 100);
                     if (paidAmountKobo < expectedAmountKobo) {
@@ -112,8 +160,10 @@ export async function onRequestGet(context) {
                         }, 400);
                     }
 
-                    // Fulfill order: generate entitlement
-                    const token = `tok_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+                    // Fulfill order: generate high-entropy 256-bit cryptographically random entitlement token
+                    const randBytes = new Uint8Array(24);
+                    crypto.getRandomValues(randBytes);
+                    const token = 'aw_dl_' + Array.from(randBytes).map(b => b.toString(16).padStart(2, '0')).join('');
                     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
                     const entitlement = {
@@ -136,6 +186,16 @@ export async function onRequestGet(context) {
                         body: JSON.stringify(entitlement)
                     });
 
+                    // Capture actual gateway fee and payment channel telemetry
+                    const rawFees = verifyData.data.fees; // in kobo/cents
+                    const gatewayFee = typeof rawFees === 'number' ? (rawFees / 100) : null;
+                    const channel = verifyData.data.channel || 'paystack';
+                    const auth = verifyData.data.authorization || {};
+                    const cardType = auth.brand || auth.card_type || null;
+                    const cardCountry = auth.country_code || null;
+                    const isInternational = cardCountry ? (cardCountry.toUpperCase() !== 'KE') : false;
+                    const netSettlement = gatewayFee !== null ? Math.max(0, (orderData.amount || 0) - gatewayFee) : null;
+
                     const paidTimestamp = new Date().toISOString();
                     await fetch(`${FIREBASE_DB_URL}/aliwelekhasia/orders/${targetOrderId}.json`, {
                         method: 'PATCH',
@@ -145,7 +205,14 @@ export async function onRequestGet(context) {
                             fulfillmentStatus: 'FULFILLED',
                             paidAt: paidTimestamp,
                             downloadToken: token,
-                            gatewayTransactionId: verifyData.data.id || null
+                            gatewayTransactionId: verifyData.data.id || null,
+                            paymentChannel: channel,
+                            gatewayChannel: channel,
+                            gatewayFee,
+                            cardType,
+                            cardCountry,
+                            isInternational,
+                            netSettlement
                         })
                     });
 

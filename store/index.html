@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Music Store | Ali Welekhasia — Direct Digital Master Audio</title>
+    <meta name="description" content="Buy and instantly download high-fidelity studio master tracks from Minister Ali Welekhasia. Secure checkout via Paystack with M-Pesa and Card.">
+    <link rel="canonical" href="https://aliwelekhasia.co.ke/store/">
+    <link rel="icon" type="image/jpeg" href="../hero.jpg">
+
+    <!-- Open Graph / Social SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Official Music Store | Ali Welekhasia — Direct Digital Master Audio">
+    <meta property="og:description" content="Buy and instantly download high-fidelity studio master tracks from Minister Ali Welekhasia. Secure checkout via Paystack with M-Pesa and Card.">
+    <meta property="og:url" content="https://aliwelekhasia.co.ke/store/">
+    <meta property="og:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Official Music Store | Ali Welekhasia">
+    <meta property="twitter:description" content="Buy and instantly download high-fidelity studio master tracks from Minister Ali Welekhasia.">
+    <meta property="twitter:image" content="https://aliwelekhasia.co.ke/hero.jpg">
+
+    <!-- FontAwesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Firebase SDK v10 Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+
+    <style>
+        .store-hero {
+            padding: 130px 20px 40px;
+            background: linear-gradient(180deg, #070b14 0%, #0d1527 100%);
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .store-hero .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid #d4af37;
+            color: #fbbf24;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .store-hero h1 {
+            font-size: 40px;
+            color: #fff;
+            margin-bottom: 12px;
+            font-family: 'Cinzel', serif;
+        }
+        .store-hero p {
+            color: #cbd5e1;
+            font-size: 16px;
+            max-width: 680px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .store-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Guarantees Bar */
+        .store-guarantees-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+        .store-guarantee-card {
+            background: #0e1626;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .store-guarantee-card i {
+            font-size: 26px;
+            color: #d4af37;
+        }
+        .store-guarantee-card h4 {
+            color: #fff;
+            font-size: 14.5px;
+            margin-bottom: 3px;
+        }
+        .store-guarantee-card p {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-bottom: 0;
+            line-height: 1.4;
+        }
+
+        /* Controls Bar */
+        .store-controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            background: #0e1626;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .store-search-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+        }
+        .store-search-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+        .store-search-wrap input {
+            width: 100%;
+            background: #070b14;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 10px 14px 10px 40px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .store-search-wrap input:focus {
+            border-color: #d4af37;
+        }
+
+        /* Store Products Grid */
+        .store-products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .store-product-card {
+            background: #0e1626;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+        }
+        .store-product-card:hover {
+            transform: translateY(-4px);
+            border-color: #d4af37;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+        }
+        .store-product-artwork {
+            position: relative;
+            width: 100%;
+            padding-top: 100%;
+            background: #070b14;
+            overflow: hidden;
+        }
+        .store-product-artwork img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .store-product-card:hover .store-product-artwork img {
+            transform: scale(1.04);
+        }
+        .store-price-tag {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(7, 11, 20, 0.9);
+            backdrop-filter: blur(6px);
+            border: 1px solid #d4af37;
+            color: #fbbf24;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13.5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+        .store-preview-btn {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(7, 11, 20, 0.85);
+            border: 1px solid rgba(212, 175, 55, 0.6);
+            color: #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .store-preview-btn:hover {
+            background: #d4af37;
+            color: #070b14;
+            transform: scale(1.1);
+        }
+
+        .store-product-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .store-product-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+            font-family: 'Cinzel', serif;
+        }
+        .store-product-artist {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+        .store-product-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .store-badge {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #cbd5e1;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .store-badge-gold {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: #d4af37;
+            color: #fbbf24;
+        }
+
+        .btn-buy-product {
+            width: 100%;
+            background: linear-gradient(135deg, #d4af37, #b89628);
+            color: #070b14;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: auto;
+            box-shadow: 0 4px 15px rgba(212,175,55,0.25);
+        }
+        .btn-buy-product:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212,175,55,0.4);
+        }
+
+        /* Persistent Player Bar */
+        .store-persistent-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(7, 11, 20, 0.97);
+            backdrop-filter: blur(14px);
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 12px 24px;
+            z-index: 90;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        /* Modals */
+        .store-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .store-modal-box {
+            background: #0e1626;
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 480px;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+            position: relative;
+        }
+        .store-modal-close {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: rgba(255,255,255,0.06);
+            border: none;
+            color: #94a3b8;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+        .store-modal-close:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.15);
+        }
+    </style>
+</head>
+<body style="background-color: #070b14; color: #fff;">
+
+    <!-- UNIFIED WEBSITE HEADER -->
+    <header class="main-header" style="position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <a href="/" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff;">
+            <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #d4af37, #b89628); display: flex; align-items: center; justify-content: center; color: #070b14; font-size: 18px; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
+            <span style="font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700; letter-spacing: 0.5px;">ALI WELEKHASIA</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav style="display: flex; gap: 20px; align-items: center;" class="nav-links-desktop">
+            <a href="/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Home</a>
+            <a href="/about/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">About</a>
+            <a href="/music/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Music</a>
+            <a href="/store/" style="color: #d4af37; text-decoration: none; font-size: 14px; font-weight: 600;"><i class="fa-solid fa-cart-shopping" style="color: #d4af37; margin-right: 4px;"></i>Store</a>
+            <a href="/videos/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Videos</a>
+            <a href="/gallery/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Gallery</a>
+            <a href="/events/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Crusades</a>
+            <a href="/contact/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Contact</a>
+        </nav>
+
+        <!-- Header Actions: My Purchases & Mobile Menu Button -->
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <button onclick="openMyPurchasesModal()" style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-receipt"></i> My Purchases
+            </button>
+            <button onclick="toggleStoreMobileMenu()" class="mobile-menu-btn" style="background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; display: none;" aria-label="Toggle Menu">
+                <i class="fa-solid fa-bars" id="storeMenuBarIcon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer Navigation -->
+    <div id="storeMobileDrawer" style="display: none; position: fixed; inset: 0; background: rgba(7, 11, 20, 0.98); z-index: 99; padding: 90px 24px 30px; flex-direction: column; gap: 16px;">
+        <a href="/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-house" style="width: 28px; color: #d4af37;"></i> Home</a>
+        <a href="/about/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-user" style="width: 28px; color: #d4af37;"></i> About</a>
+        <a href="/music/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-compact-disc" style="width: 28px; color: #d4af37;"></i> Music</a>
+        <a href="/store/" style="color: #d4af37; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-cart-shopping" style="width: 28px; color: #d4af37;"></i> Store</a>
+        <a href="/videos/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-video" style="width: 28px; color: #d4af37;"></i> Videos</a>
+        <a href="/gallery/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-images" style="width: 28px; color: #d4af37;"></i> Gallery</a>
+        <a href="/events/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-calendar-days" style="width: 28px; color: #d4af37;"></i> Crusades</a>
+        <a href="/contact/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0;"><i class="fa-solid fa-envelope" style="width: 28px; color: #d4af37;"></i> Contact</a>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="store-hero">
+        <span class="hero-tag"><i class="fa-solid fa-bag-shopping"></i> Direct-to-Fan Digital Music Store</span>
+        <h1>OFFICIAL MUSIC STORE</h1>
+        <p>Buy, download, and keep high-fidelity studio master tracks (320kbps MP3) directly from Minister Ali Welekhasia. Secure payment via Paystack with M-Pesa STK Push and Cards.</p>
+    </section>
+
+    <!-- STORE CONTAINER -->
+    <main class="store-container">
+
+        <!-- GUARANTEES GRID -->
+        <div class="store-guarantees-grid">
+            <div class="store-guarantee-card">
+                <i class="fa-solid fa-compact-disc"></i>
+                <div>
+                    <h4>320kbps Studio Master</h4>
+                    <p>Highest fidelity audio files directly from the original recording studio.</p>
+                </div>
+            </div>
+            <div class="store-guarantee-card">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+                <div>
+                    <h4>Pay with M-Pesa or Card</h4>
+                    <p>Seamless checkout via Paystack with instant STK push to your mobile phone.</p>
+                </div>
+            </div>
+            <div class="store-guarantee-card">
+                <i class="fa-solid fa-cloud-arrow-down"></i>
+                <div>
+                    <h4>Instant Digital Delivery</h4>
+                    <p>Immediate download link upon payment, plus lifetime access using your email.</p>
+                </div>
+            </div>
+            <div class="store-guarantee-card">
+                <i class="fa-solid fa-hands-holding-child"></i>
+                <div>
+                    <h4>Direct Ministry Support</h4>
+                    <p>Every purchase funds upcoming gospel crusades, audio production, and outreach.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROLS & SEARCH BAR -->
+        <div class="store-controls-bar">
+            <div class="store-search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="storeSearchInput" placeholder="Search track name, genre, or keyword..." oninput="handleStoreSearch()">
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <span id="storeProductsCount" style="color: #94a3b8; font-size: 13.5px;">Loading tracks...</span>
+            </div>
+        </div>
+
+        <!-- PRODUCTS GRID -->
+        <div id="storeProductsGrid" class="store-products-grid">
+            <!-- Rendered dynamically -->
+        </div>
+
+    </main>
+
+    <!-- PERSISTENT AUDIO PREVIEW BAR -->
+    <div id="storePersistentPlayer" class="store-persistent-player">
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <img id="playerThumb" src="../hero.jpg" alt="Now Playing" style="width: 48px; height: 48px; border-radius: 6px; object-fit: cover; border: 1px solid #d4af37;">
+            <div>
+                <div id="playerTitle" style="color: #fff; font-weight: 600; font-size: 14px;">Preview Track</div>
+                <div id="playerArtist" style="color: #94a3b8; font-size: 12px;">Ali Welekhasia</div>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <button id="playerToggleBtn" onclick="togglePreviewPlay()" style="width: 40px; height: 40px; border-radius: 50%; background: #d4af37; color: #070b14; border: none; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-play" id="playerToggleIcon"></i>
+            </button>
+            <button onclick="closePreviewPlayer()" style="background: none; border: none; color: #64748b; font-size: 16px; cursor: pointer;">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <audio id="globalPreviewAudio" preload="none"></audio>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div id="storeCheckoutModal" class="store-modal-overlay">
+        <div class="store-modal-box">
+            <button class="store-modal-close" onclick="closeStoreModal('storeCheckoutModal')"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span style="color: #d4af37; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">Direct Music Store</span>
+                <h3 style="color: #fff; font-family: 'Cinzel', serif; font-size: 22px; margin-top: 4px;">Complete Your Purchase</h3>
+            </div>
+
+            <!-- Product Card Preview -->
+            <div style="display: flex; align-items: center; gap: 14px; background: #070b14; border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 10px; margin-bottom: 20px;">
+                <img id="checkoutThumb" src="../hero.jpg" style="width: 56px; height: 56px; border-radius: 6px; object-fit: cover; border: 1px solid #d4af37;">
+                <div style="flex: 1;">
+                    <div id="checkoutTitle" style="color: #fff; font-weight: 700; font-size: 15px;">Song Title</div>
+                    <div id="checkoutArtist" style="color: #94a3b8; font-size: 12.5px;">Ali Welekhasia</div>
+                </div>
+                <div id="checkoutPriceBadge" style="background: rgba(212, 175, 55, 0.15); border: 1px solid #d4af37; color: #fbbf24; font-weight: 700; font-size: 14px; padding: 4px 10px; border-radius: 6px;">
+                    KSh 100
+                </div>
+            </div>
+
+            <!-- Checkout Form -->
+            <form id="storeCheckoutForm" onsubmit="handleStoreCheckoutSubmit(event)">
+                <input type="hidden" id="checkoutInput_productId">
+                <input type="hidden" id="checkoutInput_provider" value="paystack">
+
+                <div style="margin-bottom: 14px;">
+                    <label style="display: block; color: #cbd5e1; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Your Email Address <span style="color: #ef4444;">*</span></label>
+                    <input type="email" id="checkoutInput_email" required placeholder="name@example.com" style="width: 100%; background: #070b14; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 14px; outline: none;">
+                    <span style="font-size: 11.5px; color: #64748b; margin-top: 4px; display: block;">Your secure download link will be delivered to this email.</span>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; color: #cbd5e1; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Mobile Phone (M-Pesa Prompt)</label>
+                    <input type="tel" id="checkoutInput_phone" placeholder="0712 345 678" style="width: 100%; background: #070b14; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 14px; outline: none;">
+                    <span style="font-size: 11.5px; color: #64748b; margin-top: 4px; display: block;">Required if choosing M-Pesa STK push.</span>
+                </div>
+
+                <div id="checkoutErrorMessage" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px;"></div>
+
+                <button type="submit" id="checkoutSubmitBtn" style="width: 100%; background: linear-gradient(135deg, #d4af37, #b89628); color: #070b14; border: none; padding: 12px 18px; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(212,175,55,0.3);">
+                    <i class="fa-solid fa-lock"></i> Pay <span id="checkoutBtnPrice">KSh 100</span> with Paystack
+                </button>
+            </form>
+
+            <div style="display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 20px; font-size: 12px; color: #64748b;">
+                <span><i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> 256-bit Encrypted</span>
+                <span>•</span>
+                <span>M-Pesa & Cards via Paystack</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- PURCHASE SUCCESS / DOWNLOAD MODAL -->
+    <div id="storeSuccessModal" class="store-modal-overlay">
+        <div class="store-modal-box" style="text-align: center;">
+            <button class="store-modal-close" onclick="closeStoreModal('storeSuccessModal')"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); border: 2px solid #10b981; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 16px;">
+                <i class="fa-solid fa-check"></i>
+            </div>
+
+            <h3 style="color: #fff; font-family: 'Cinzel', serif; font-size: 24px; margin-bottom: 8px;">Payment Verified!</h3>
+            <p style="color: #cbd5e1; font-size: 14.5px; line-height: 1.6; margin-bottom: 20px;">
+                Thank you for supporting Minister Ali Welekhasia's gospel ministry. Your high-fidelity master audio is ready for download.
+            </p>
+
+            <div id="successDetailsBox" style="background: #070b14; border: 1px solid rgba(255,255,255,0.08); padding: 14px; border-radius: 10px; margin-bottom: 20px; text-align: left; font-size: 13px;">
+                <!-- Filled dynamically -->
+            </div>
+
+            <a id="successDownloadBtn" href="#" target="_blank" style="width: 100%; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 13px 18px; border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(16,185,129,0.3); margin-bottom: 12px;">
+                <i class="fa-solid fa-download"></i> Download Master Audio (MP3)
+            </a>
+
+            <button onclick="closeStoreModal('storeSuccessModal')" style="background: none; border: none; color: #94a3b8; font-size: 13px; cursor: pointer;">
+                Close & Return to Store
+            </button>
+        </div>
+    </div>
+
+    <!-- MY PURCHASES MODAL -->
+    <div id="storePurchasesModal" class="store-modal-overlay">
+        <div class="store-modal-box" style="max-width: 540px;">
+            <button class="store-modal-close" onclick="closeStoreModal('storePurchasesModal')"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #fff; font-family: 'Cinzel', serif; font-size: 22px; margin-bottom: 6px;"><i class="fa-solid fa-receipt" style="color: #10b981; margin-right: 8px;"></i>My Digital Purchases</h3>
+                <p style="color: #94a3b8; font-size: 13.5px;">Enter the email you used when purchasing songs to retrieve your secure download links.</p>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="email" id="purchasesLookupEmail" placeholder="your-email@example.com" style="flex: 1; background: #070b14; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 14px; outline: none;">
+                <button onclick="lookupCustomerPurchases()" style="background: #10b981; color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    Find Orders
+                </button>
+            </div>
+
+            <div id="purchasesResultsContainer">
+                <!-- Orders rendered dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- UNIFIED WEBSITE FOOTER -->
+    <footer class="main-footer" style="background: #020617; border-top: 1px solid rgba(212, 175, 55, 0.2); padding: 60px 20px 24px; margin-top: 80px;">
+        <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 40px; margin-bottom: 40px;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                    <div style="width: 32px; height: 32px; border-radius: 6px; background: #d4af37; color: #070b14; display: flex; align-items: center; justify-content: center; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
+                    <span style="font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700; color: #fff;">ALI WELEKHASIA</span>
+                </div>
+                <p style="color: #94a3b8; font-size: 13.5px; line-height: 1.6;">Proclaiming Jesus Christ through anointed worship music, open-air gospel crusades, and spirit-filled scriptures across Kenya and worldwide.</p>
+            </div>
+
+            <div>
+                <h4 style="color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin-bottom: 16px;">Quick Navigation</h4>
+                <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
+                    <li><a href="/" style="color: #94a3b8; text-decoration: none;">Home</a></li>
+                    <li><a href="/about/" style="color: #94a3b8; text-decoration: none;">About Minister Ali</a></li>
+                    <li><a href="/music/" style="color: #94a3b8; text-decoration: none;">Music & Lyrics</a></li>
+                    <li><a href="/store/" style="color: #d4af37; text-decoration: none; font-weight: 600;">Digital Music Store</a></li>
+                    <li><a href="/videos/" style="color: #94a3b8; text-decoration: none;">Videos & Sermons</a></li>
+                    <li><a href="/events/" style="color: #94a3b8; text-decoration: none;">Crusades & Events</a></li>
+                    <li><a href="/contact/" style="color: #94a3b8; text-decoration: none;">Contact Ministry</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 style="color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin-bottom: 16px;">Direct Store Support</h4>
+                <p style="color: #94a3b8; font-size: 13.5px; margin-bottom: 8px;"><i class="fa-solid fa-envelope" style="color: #d4af37; margin-right: 8px;"></i> ali.werekhasia01@gmail.com</p>
+                <p style="color: #94a3b8; font-size: 13.5px; margin-bottom: 8px;"><i class="fa-solid fa-phone" style="color: #d4af37; margin-right: 8px;"></i> +254 736 024 024</p>
+                <p style="color: #94a3b8; font-size: 13.5px; margin-bottom: 8px;"><i class="fa-solid fa-mobile-screen" style="color: #d4af37; margin-right: 8px;"></i> M-Pesa: +254 705 575 437</p>
+                <p style="color: #94a3b8; font-size: 13.5px;"><i class="fa-solid fa-circle-check" style="color: #10b981; margin-right: 8px;"></i> Verified Paystack Integration</p>
+            </div>
+
+            <div>
+                <h4 style="color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin-bottom: 16px;">Streaming Channels</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <a href="https://youtube.com/@aliwelekhasia" target="_blank" rel="noopener noreferrer" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-brands fa-youtube" style="color: #ef4444;"></i> YouTube</a>
+                    <a href="https://open.spotify.com/artist/7MPLduzN6gHJRufAH8x8TJ" target="_blank" rel="noopener noreferrer" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-brands fa-spotify" style="color: #10b981;"></i> Spotify</a>
+                    <a href="https://music.apple.com/ke/artist/ali-welekhasia/6792720164" target="_blank" rel="noopener noreferrer" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-brands fa-apple"></i> Apple Music</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px; text-align: center; color: #64748b; font-size: 13px;">
+            <p>© 2026 Ali Welekhasia Music. All Rights Reserved. • Proclaiming Christ Through Worship.</p>
+        </div>
+    </footer>
+
+    <!-- STORE CLIENT SCRIPTS -->
+    <script>
+        let storeProducts = [];
+        let currentlyPlayingAudio = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStoreProducts();
+            checkPostPurchaseVerification();
+        });
+
+        // 1. Load Products from Firebase or Fallback
+        function loadStoreProducts() {
+            const countEl = document.getElementById('storeProductsCount');
+            const gridEl = document.getElementById('storeProductsGrid');
+
+            // Default curated catalog
+            const defaultTracks = [
+                { id: "zawadi", title: "Zawadi", artist: "Ali Welekhasia", price: 100, currency: "KSh", genre: "Worship", artworkUrl: "../hero.jpg", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", status: "PUBLISHED" },
+                { id: "ni_wewe", title: "Ni Wewe", artist: "Ali Welekhasia", price: 100, currency: "KSh", genre: "Praise", artworkUrl: "../hero.jpg", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", status: "PUBLISHED" },
+                { id: "bado", title: "Bado", artist: "Ali Welekhasia", price: 100, currency: "KSh", genre: "Worship", artworkUrl: "../hero.jpg", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", status: "PUBLISHED" },
+                { id: "nasimama", title: "Nasimama", artist: "Ali Welekhasia", price: 100, currency: "KSh", genre: "Worship", artworkUrl: "../hero.jpg", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3", status: "PUBLISHED" },
+                { id: "njooni_tumwimbie", title: "Njooni Tumwimbie", artist: "Ali Welekhasia", price: 100, currency: "KSh", genre: "Praise", artworkUrl: "../hero.jpg", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3", status: "PUBLISHED" },
+                { id: "lamweli_umependwa", title: "Lamweli Umependwa", artist: "Ali Welekhasia", price: 100, currency: "KSh", genre: "Gospel", artworkUrl: "../hero.jpg", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3", status: "PUBLISHED" },
+                { id: "nachenda_mushialo", title: "Nachenda Mushialo", artist: "Ali Welekhasia", price: 100, currency: "KSh", genre: "Luhya Gospel", artworkUrl: "../hero.jpg", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3", status: "PUBLISHED" },
+                { id: "alibeba", title: "Alibeba", artist: "Ali Welekhasia", price: 100, currency: "KSh", genre: "Worship", artworkUrl: "../hero.jpg", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3", status: "PUBLISHED" },
+                { id: "vumilia_moyo", title: "Vumilia Moyo", artist: "Ali Welekhasia", price: 100, currency: "KSh", genre: "Worship", artworkUrl: "../hero.jpg", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3", status: "PUBLISHED" },
+                { id: "umetenda_haya", title: "Umetenda Haya", artist: "Ali Welekhasia", price: 100, currency: "KSh", genre: "Thanksgiving", artworkUrl: "../hero.jpg", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3", status: "PUBLISHED" }
+            ];
+
+            if (typeof firebase !== 'undefined' && firebase.database) {
+                const db = firebase.database();
+                db.ref('store/products').once('value')
+                    .then(snapshot => {
+                        const val = snapshot.val();
+                        if (val) {
+                            const firebaseSongs = Object.keys(val).map(k => ({ id: k, ...val[k] }))
+                                .filter(s => s.status === 'PUBLISHED' || !s.status);
+                            if (firebaseSongs.length > 0) {
+                                storeProducts = firebaseSongs;
+                            } else {
+                                storeProducts = defaultTracks;
+                            }
+                        } else {
+                            storeProducts = defaultTracks;
+                        }
+                        renderStoreProducts(storeProducts);
+                    })
+                    .catch(err => {
+                        console.warn("Using default store tracks:", err);
+                        storeProducts = defaultTracks;
+                        renderStoreProducts(storeProducts);
+                    });
+            } else {
+                storeProducts = defaultTracks;
+                renderStoreProducts(storeProducts);
+            }
+        }
+
+        function renderStoreProducts(products) {
+            const countEl = document.getElementById('storeProductsCount');
+            const gridEl = document.getElementById('storeProductsGrid');
+            if (countEl) countEl.innerText = `${products.length} Track${products.length === 1 ? '' : 's'} Available`;
+
+            if (products.length === 0) {
+                gridEl.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: #0e1626; border-radius: 12px;">
+                        <i class="fa-solid fa-magnifying-glass" style="font-size: 36px; color: #64748b; margin-bottom: 12px;"></i>
+                        <h4 style="color: #fff; font-size: 18px;">No Tracks Found</h4>
+                        <p style="color: #94a3b8; font-size: 14px;">Try modifying your search keywords.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            gridEl.innerHTML = products.map(p => {
+                const price = typeof p.price === 'number' && p.price > 0 ? p.price : 100;
+                const currency = p.currency || 'KSh';
+                const pId = p.id || `song_${p.title.toLowerCase().replace(/\s+/g, '_')}`;
+
+                return `
+                    <div class="store-product-card">
+                        <div class="store-product-artwork">
+                            <img src="${p.artworkUrl || '../hero.jpg'}" alt="${escapeHtml(p.title)}" onerror="this.src='../hero.jpg'">
+                            <div class="store-price-tag">${currency} ${price}</div>
+                            ${p.audioUrl ? `
+                                <button class="store-preview-btn" onclick="playStorePreview('${escapeHtml(p.title)}', '${escapeHtml(p.artist || 'Ali Welekhasia')}', '${p.audioUrl}', '${p.artworkUrl || '../hero.jpg'}')" title="Preview 30s Audio">
+                                    <i class="fa-solid fa-play"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                        <div class="store-product-body">
+                            <div class="store-product-title">${escapeHtml(p.title)}</div>
+                            <div class="store-product-artist">${escapeHtml(p.artist || 'Ali Welekhasia')}</div>
+                            <div class="store-product-badges">
+                                <span class="store-badge store-badge-gold">Studio Master (320kbps)</span>
+                                <span class="store-badge">${escapeHtml(p.genre || 'Gospel')}</span>
+                            </div>
+                            <button class="btn-buy-product" onclick="openStoreCheckout('${pId}')">
+                                <i class="fa-solid fa-cart-shopping"></i> Buy & Download • ${currency} ${price}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleStoreSearch() {
+            const q = document.getElementById('storeSearchInput').value.toLowerCase().trim();
+            if (!q) {
+                renderStoreProducts(storeProducts);
+                return;
+            }
+            const filtered = storeProducts.filter(p => 
+                (p.title && p.title.toLowerCase().includes(q)) ||
+                (p.genre && p.genre.toLowerCase().includes(q)) ||
+                (p.artist && p.artist.toLowerCase().includes(q))
+            );
+            renderStoreProducts(filtered);
+        }
+
+        // 2. Audio Preview Player
+        function playStorePreview(title, artist, url, artwork) {
+            const player = document.getElementById('storePersistentPlayer');
+            const audio = document.getElementById('globalPreviewAudio');
+            const toggleIcon = document.getElementById('playerToggleIcon');
+
+            document.getElementById('playerTitle').innerText = title;
+            document.getElementById('playerArtist').innerText = artist;
+            document.getElementById('playerThumb').src = artwork;
+
+            player.style.display = 'flex';
+            audio.src = url;
+            audio.play();
+            toggleIcon.className = 'fa-solid fa-pause';
+        }
+
+        function togglePreviewPlay() {
+            const audio = document.getElementById('globalPreviewAudio');
+            const toggleIcon = document.getElementById('playerToggleIcon');
+            if (audio.paused) {
+                audio.play();
+                toggleIcon.className = 'fa-solid fa-pause';
+            } else {
+                audio.pause();
+                toggleIcon.className = 'fa-solid fa-play';
+            }
+        }
+
+        function closePreviewPlayer() {
+            const player = document.getElementById('storePersistentPlayer');
+            const audio = document.getElementById('globalPreviewAudio');
+            audio.pause();
+            player.style.display = 'none';
+        }
+
+        // 3. Checkout Modal
+        function openStoreCheckout(songId) {
+            const song = storeProducts.find(s => (s.id || `song_${s.title.toLowerCase().replace(/\s+/g, '_')}`) === songId) || storeProducts[0];
+            if (!song) return;
+
+            const price = typeof song.price === 'number' && song.price > 0 ? song.price : 100;
+            const currency = song.currency || 'KSh';
+
+            document.getElementById('checkoutInput_productId').value = song.id || songId;
+            document.getElementById('checkoutThumb').src = song.artworkUrl || '../hero.jpg';
+            document.getElementById('checkoutTitle').innerText = song.title;
+            document.getElementById('checkoutArtist').innerText = song.artist || 'Ali Welekhasia';
+            document.getElementById('checkoutPriceBadge').innerText = `${currency} ${price}`;
+            document.getElementById('checkoutBtnPrice').innerText = `${currency} ${price}`;
+
+            const savedEmail = localStorage.getItem('ali_customer_email') || '';
+            const savedPhone = localStorage.getItem('ali_customer_phone') || '';
+            if (savedEmail) document.getElementById('checkoutInput_email').value = savedEmail;
+            if (savedPhone) document.getElementById('checkoutInput_phone').value = savedPhone;
+
+            document.getElementById('checkoutErrorMessage').style.display = 'none';
+            document.getElementById('storeCheckoutModal').style.display = 'flex';
+        }
+
+        function closeStoreModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.style.display = 'none';
+        }
+
+        async function handleStoreCheckoutSubmit(e) {
+            if (e) e.preventDefault();
+
+            const productId = document.getElementById('checkoutInput_productId').value;
+            const customerEmail = document.getElementById('checkoutInput_email').value.trim();
+            const customerPhone = document.getElementById('checkoutInput_phone').value.trim();
+            const paymentProvider = document.getElementById('checkoutInput_provider').value;
+            const errBox = document.getElementById('checkoutErrorMessage');
+            const submitBtn = document.getElementById('checkoutSubmitBtn');
+
+            if (!customerEmail || !customerEmail.includes('@')) {
+                errBox.innerText = 'Please enter a valid email address.';
+                errBox.style.display = 'block';
+                return;
+            }
+
+            localStorage.setItem('ali_customer_email', customerEmail);
+            if (customerPhone) localStorage.setItem('ali_customer_phone', customerPhone);
+
+            errBox.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Initializing Paystack...`;
+
+            try {
+                const res = await fetch('/api/store/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        productId,
+                        customerEmail,
+                        customerPhone,
+                        paymentProvider
+                    })
+                });
+
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.error || 'Failed to initialize payment gateway.');
+                }
+
+                if (data.checkoutUrl || data.authorizationUrl) {
+                    window.location.href = data.checkoutUrl || data.authorizationUrl;
+                } else {
+                    window.location.href = `/store/?purchase=success&orderId=${data.orderId}&reference=${data.paymentReference}`;
+                }
+            } catch (err) {
+                console.error("Payment init error:", err);
+                errBox.innerText = err.message || 'Error communicating with payment gateway.';
+                errBox.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Retry Paystack Checkout`;
+            }
+        }
+
+        // 4. Post-Purchase Verification
+        async function checkPostPurchaseVerification() {
+            const params = new URLSearchParams(window.location.search);
+            const reference = params.get('reference') || params.get('trxref');
+            const orderId = params.get('orderId');
+
+            if (!reference && !orderId) return;
+
+            // Open success modal in verifying state
+            const detailsBox = document.getElementById('successDetailsBox');
+            const downloadBtn = document.getElementById('successDownloadBtn');
+            const modal = document.getElementById('storeSuccessModal');
+
+            detailsBox.innerHTML = `
+                <div style="text-align:center; padding: 20px 0;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 28px; color: #d4af37; margin-bottom: 10px;"></i>
+                    <p style="color: #cbd5e1;">Verifying your Paystack transaction reference...</p>
+                </div>
+            `;
+            downloadBtn.style.display = 'none';
+            modal.style.display = 'flex';
+
+            try {
+                const verifyUrl = `/api/store/payment/verify?reference=${encodeURIComponent(reference || '')}${orderId ? '&orderId=' + encodeURIComponent(orderId) : ''}`;
+                const res = await fetch(verifyUrl);
+                const data = await res.json();
+
+                if (data.success && data.downloadToken) {
+                    const ord = data.order || {};
+                    const song = data.song || {};
+                    const songTitle = song.title || ord.productTitle || 'Gospel Master Audio';
+                    const customerEmail = ord.customerEmail || '';
+
+                    detailsBox.innerHTML = `
+                        <div><strong>Order Reference:</strong> <span style="color: #10b981;">${escapeHtml(ord.paymentReference || reference)}</span></div>
+                        <div style="margin-top: 4px;"><strong>Track:</strong> ${escapeHtml(songTitle)}</div>
+                        <div style="margin-top: 4px;"><strong>Format:</strong> High-Fidelity 320kbps MP3 (Master Audio)</div>
+                        <div style="margin-top: 4px;"><strong>License:</strong> Minister Ali Welekhasia Official Digital License (Up to 10 downloads)</div>
+                    `;
+
+                    downloadBtn.href = `/api/store/download?token=${encodeURIComponent(data.downloadToken)}`;
+                    downloadBtn.style.display = 'flex';
+                } else {
+                    detailsBox.innerHTML = `
+                        <div style="color: #fca5a5;"><i class="fa-solid fa-triangle-exclamation"></i> ${data.message || data.error || 'Verification could not be confirmed.'}</div>
+                    `;
+                }
+            } catch (err) {
+                console.warn("Verification fetch error:", err);
+                detailsBox.innerHTML = `
+                    <div style="color: #fca5a5;"><i class="fa-solid fa-triangle-exclamation"></i> Unable to verify transaction online. Please contact ministry support with reference: ${escapeHtml(reference || orderId || '')}</div>
+                `;
+            }
+        }
+
+        // 5. My Purchases Lookup (Secure Passwordless Recovery)
+        function openMyPurchasesModal() {
+            const savedEmail = localStorage.getItem('ali_customer_email') || '';
+            const input = document.getElementById('purchasesLookupEmail');
+            if (savedEmail && input) {
+                input.value = savedEmail;
+            }
+            document.getElementById('storePurchasesModal').style.display = 'flex';
+        }
+
+        async function lookupCustomerPurchases() {
+            const email = document.getElementById('purchasesLookupEmail').value.trim();
+            const container = document.getElementById('purchasesResultsContainer');
+            if (!email || !email.includes('@')) {
+                container.innerHTML = `<div style="color: #fca5a5; font-size: 13px;">Please enter a valid email address.</div>`;
+                return;
+            }
+
+            container.innerHTML = `<div style="text-align: center; color: #cbd5e1; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Establishing secure recovery session...</div>`;
+
+            try {
+                // Step 1: Initiate secure passwordless recovery session
+                const initRes = await fetch('/api/store/purchases', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const initData = await initRes.json();
+
+                if (!initRes.ok || !initData.success) {
+                    container.innerHTML = `<div style="color: #fca5a5; font-size: 13px;">${escapeHtml(initData.error || 'Unable to initiate recovery session.')}</div>`;
+                    return;
+                }
+
+                if (!initData.hasPurchases || !initData.recoveryToken) {
+                    container.innerHTML = `
+                        <div style="text-align: center; color: #94a3b8; padding: 20px 0; font-size: 13.5px;">
+                            No verified purchases found under <strong>${escapeHtml(email)}</strong>.<br>Please verify you entered the exact email address used at checkout.
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Step 2: Retrieve authorized purchases with the short-lived recovery token
+                const recRes = await fetch(`/api/store/purchases?recoveryToken=${encodeURIComponent(initData.recoveryToken)}`);
+                const recData = await recRes.json();
+
+                if (!recRes.ok || !recData.success || recData.purchases.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; color: #94a3b8; padding: 20px 0; font-size: 13.5px;">
+                            No active purchases found.
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div style="font-size: 12px; color: #10b981; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); border-radius: 6px; padding: 8px 12px; margin-bottom: 12px;">
+                        <i class="fa-solid fa-shield-halved"></i> Secure Access Active for <strong>${escapeHtml(recData.authorizedEmail || email)}</strong> (Valid for 20 mins)
+                    </div>
+                ` + recData.purchases.map(o => `
+                    <div style="display: flex; align-items: center; justify-content: space-between; background: #070b14; border: 1px solid rgba(255,255,255,0.08); padding: 12px 14px; border-radius: 8px; margin-bottom: 8px; gap: 10px; flex-wrap: wrap;">
+                        <div>
+                            <div style="color: #fff; font-weight: 600; font-size: 14px;">${escapeHtml(o.productTitle || 'Gospel Master Audio')}</div>
+                            <div style="color: #64748b; font-size: 11.5px;">Order #${escapeHtml(o.orderNumber)} • ${new Date(o.paidAt || Date.now()).toLocaleDateString('en-GB')}</div>
+                        </div>
+                        <a href="${o.downloadUrl}" target="_blank" style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; padding: 6px 12px; border-radius: 6px; font-size: 12.5px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-download"></i> Download MP3
+                        </a>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                container.innerHTML = `<div style="color: #fca5a5; font-size: 13px;">Error communicating with secure recovery service.</div>`;
+            }
+        }
+
+        function toggleStoreMobileMenu() {
+            var drawer = document.getElementById('storeMobileDrawer');
+            var icon = document.getElementById('storeMenuBarIcon');
+            if (drawer.style.display === 'none' || drawer.style.display === '') {
+                drawer.style.display = 'flex';
+                icon.className = 'fa-solid fa-xmark';
+            } else {
+                drawer.style.display = 'none';
+                icon.className = 'fa-solid fa-bars';
+            }
+        }
+
+        window.addEventListener('resize', function() {
+            var btn = document.querySelector('.mobile-menu-btn');
+            var desktopNav = document.querySelector('.nav-links-desktop');
+            if (window.innerWidth <= 860) {
+                if (btn) btn.style.display = 'block';
+                if (desktopNav) desktopNav.style.display = 'none';
+            } else {
+                if (btn) btn.style.display = 'none';
+                if (desktopNav) desktopNav.style.display = 'flex';
+                var drawer = document.getElementById('storeMobileDrawer');
+                if (drawer) drawer.style.display = 'none';
+            }
+        });
+        if (window.innerWidth <= 860) {
+            var btn = document.querySelector('.mobile-menu-btn');
+            var desktopNav = document.querySelector('.nav-links-desktop');
+            if (btn) btn.style.display = 'block';
+            if (desktopNav) desktopNav.style.display = 'none';
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, function (m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+            });
+        }
+    </script>
+</body>
+</html>

@@ -124,23 +124,46 @@
 </head>
 <body style="background-color: #070b14; color: #fff;">
 
-    <!-- Navigation Header -->
-    <header class="main-header" style="position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding: 15px 24px; display: flex; align-items: center; justify-content: space-between;">
-        <a href="../" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff;">
+    <!-- UNIFIED WEBSITE HEADER -->
+    <header class="main-header" style="position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <a href="/" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff;">
             <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #d4af37, #b89628); display: flex; align-items: center; justify-content: center; color: #070b14; font-size: 18px; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
-            <span style="font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700;">ALI WELEKHASIA</span>
+            <span style="font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700; letter-spacing: 0.5px;">ALI WELEKHASIA</span>
         </a>
-        <nav style="display: flex; gap: 20px; align-items: center;">
-            <a href="../" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Home</a>
+
+        <!-- Desktop Navigation -->
+        <nav style="display: flex; gap: 20px; align-items: center;" class="nav-links-desktop">
+            <a href="/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Home</a>
+            <a href="/about/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">About</a>
             <a href="/music/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Music</a>
-            <a href="/lyrics/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Lyrics</a>
+            <a href="/store/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;"><i class="fa-solid fa-cart-shopping" style="color: #d4af37; margin-right: 4px;"></i>Store</a>
             <a href="/videos/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Videos</a>
             <a href="/gallery/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Gallery</a>
             <a href="/events/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Crusades</a>
-            <a href="/blog/" style="color: #d4af37; text-decoration: none; font-size: 14px; font-weight: 600;">Devotionals</a>
-            <a href="/live" style="color: #ef4444; text-decoration: none; font-size: 14px; font-weight: 700;"><i class="fa-solid fa-circle" style="font-size: 8px; margin-right: 4px;"></i>Live</a>
+            <a href="/contact/" style="color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500;">Contact</a>
         </nav>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <a href="/store/" style="background: linear-gradient(135deg, #d4af37, #b89628); color: #070b14; font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 20px; text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-bag-shopping"></i> Buy Music
+            </a>
+            <button onclick="toggleBlogMobileMenu()" class="mobile-menu-btn" style="background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; display: none;" aria-label="Toggle Menu">
+                <i class="fa-solid fa-bars" id="blogMenuBarIcon"></i>
+            </button>
+        </div>
     </header>
+
+    <!-- Mobile Drawer Navigation -->
+    <div id="blogMobileDrawer" style="display: none; position: fixed; inset: 0; background: rgba(7, 11, 20, 0.98); z-index: 99; padding: 90px 24px 30px; flex-direction: column; gap: 16px;">
+        <a href="/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-house" style="width: 28px; color: #d4af37;"></i> Home</a>
+        <a href="/about/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-user" style="width: 28px; color: #d4af37;"></i> About</a>
+        <a href="/music/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-compact-disc" style="width: 28px; color: #d4af37;"></i> Music</a>
+        <a href="/store/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-cart-shopping" style="width: 28px; color: #d4af37;"></i> Store</a>
+        <a href="/videos/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-video" style="width: 28px; color: #d4af37;"></i> Videos</a>
+        <a href="/gallery/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-images" style="width: 28px; color: #d4af37;"></i> Gallery</a>
+        <a href="/events/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);"><i class="fa-solid fa-calendar-days" style="width: 28px; color: #d4af37;"></i> Crusades</a>
+        <a href="/contact/" style="color: #cbd5e1; text-decoration: none; font-size: 18px; font-weight: 600; padding: 8px 0;"><i class="fa-solid fa-envelope" style="width: 28px; color: #d4af37;"></i> Contact</a>
+    </div>
 
     <div class="blog-page-hero">
         <h1>Devotionals & Prophetic Reflections</h1>
@@ -153,7 +176,86 @@
         </div>
     </div>
 
+    <!-- UNIFIED WEBSITE FOOTER -->
+    <footer class="main-footer" style="background: #020617; border-top: 1px solid rgba(212, 175, 55, 0.2); padding: 60px 20px 24px; margin-top: 80px;">
+        <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 40px; margin-bottom: 40px;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                    <div style="width: 32px; height: 32px; border-radius: 6px; background: #d4af37; color: #070b14; display: flex; align-items: center; justify-content: center; font-weight: bold;"><i class="fa-solid fa-crown"></i></div>
+                    <span style="font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700; color: #fff;">ALI WELEKHASIA</span>
+                </div>
+                <p style="color: #94a3b8; font-size: 13.5px; line-height: 1.6;">Proclaiming Jesus Christ through anointed worship music, open-air gospel crusades, and spirit-filled scriptures across Kenya and worldwide.</p>
+            </div>
+
+            <div>
+                <h4 style="color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin-bottom: 16px;">Quick Navigation</h4>
+                <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
+                    <li><a href="/" style="color: #94a3b8; text-decoration: none;">Home</a></li>
+                    <li><a href="/about/" style="color: #94a3b8; text-decoration: none;">About Minister Ali</a></li>
+                    <li><a href="/music/" style="color: #94a3b8; text-decoration: none;">Music & Songs</a></li>
+                    <li><a href="/store/" style="color: #94a3b8; text-decoration: none;">Digital Music Store</a></li>
+                    <li><a href="/videos/" style="color: #94a3b8; text-decoration: none;">Videos & Sermons</a></li>
+                    <li><a href="/gallery/" style="color: #94a3b8; text-decoration: none;">Gallery</a></li>
+                    <li><a href="/events/" style="color: #94a3b8; text-decoration: none;">Crusades & Events</a></li>
+                    <li><a href="/contact/" style="color: #94a3b8; text-decoration: none;">Contact Ministry</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 style="color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin-bottom: 16px;">Ministry Contacts</h4>
+                <p style="color: #94a3b8; font-size: 13.5px; margin-bottom: 8px;"><i class="fa-solid fa-envelope" style="color: #d4af37; margin-right: 8px;"></i> ali.werekhasia01@gmail.com</p>
+                <p style="color: #94a3b8; font-size: 13.5px; margin-bottom: 8px;"><i class="fa-solid fa-phone" style="color: #d4af37; margin-right: 8px;"></i> +254 736 024 024</p>
+                <p style="color: #94a3b8; font-size: 13.5px; margin-bottom: 8px;"><i class="fa-solid fa-mobile-screen" style="color: #d4af37; margin-right: 8px;"></i> M-Pesa: +254 705 575 437</p>
+                <p style="color: #94a3b8; font-size: 13.5px;"><i class="fa-solid fa-location-dot" style="color: #d4af37; margin-right: 8px;"></i> Nairobi & Mombasa, Kenya</p>
+            </div>
+
+            <div>
+                <h4 style="color: #fff; font-family: 'Cinzel', serif; font-size: 16px; margin-bottom: 16px;">Streaming Channels</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <a href="https://youtube.com/@aliwelekhasia" target="_blank" rel="noopener noreferrer" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-brands fa-youtube" style="color: #ef4444;"></i> YouTube</a>
+                    <a href="https://open.spotify.com/artist/7MPLduzN6gHJRufAH8x8TJ" target="_blank" rel="noopener noreferrer" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-brands fa-spotify" style="color: #10b981;"></i> Spotify</a>
+                    <a href="https://music.apple.com/ke/artist/ali-welekhasia/6792720164" target="_blank" rel="noopener noreferrer" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"><i class="fa-brands fa-apple"></i> Apple Music</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px; text-align: center; color: #64748b; font-size: 13px;">
+            <p>© 2026 Ali Welekhasia Music. All Rights Reserved. • Proclaiming Christ Through Worship.</p>
+        </div>
+    </footer>
+
     <script>
+        function toggleBlogMobileMenu() {
+            var drawer = document.getElementById('blogMobileDrawer');
+            var icon = document.getElementById('blogMenuBarIcon');
+            if (drawer.style.display === 'none' || drawer.style.display === '') {
+                drawer.style.display = 'flex';
+                icon.className = 'fa-solid fa-xmark';
+            } else {
+                drawer.style.display = 'none';
+                icon.className = 'fa-solid fa-bars';
+            }
+        }
+
+        window.addEventListener('resize', function() {
+            var btn = document.querySelector('.mobile-menu-btn');
+            var desktopNav = document.querySelector('.nav-links-desktop');
+            if (window.innerWidth <= 860) {
+                if (btn) btn.style.display = 'block';
+                if (desktopNav) desktopNav.style.display = 'none';
+            } else {
+                if (btn) btn.style.display = 'none';
+                if (desktopNav) desktopNav.style.display = 'flex';
+                var drawer = document.getElementById('blogMobileDrawer');
+                if (drawer) drawer.style.display = 'none';
+            }
+        });
+        if (window.innerWidth <= 860) {
+            var btn = document.querySelector('.mobile-menu-btn');
+            var desktopNav = document.querySelector('.nav-links-desktop');
+            if (btn) btn.style.display = 'block';
+            if (desktopNav) desktopNav.style.display = 'none';
+        }
         document.addEventListener('DOMContentLoaded', () => {
             loadPublicBlog();
         });

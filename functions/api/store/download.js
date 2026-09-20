@@ -10,15 +10,22 @@
  *   so browser triggers automatic file download seamlessly on mobile & desktop.
  */
 
-function jsonResponse(data, status = 200) {
+import { validateEnvironmentConfig } from '../security/env.js';
+import { checkRateLimit, buildRateLimitResponse } from '../security/rateLimit.js';
+import { recordAuditEvent } from '../security/audit.js';
+
+function jsonResponse(data, status = 200, requestId = null) {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-Id'
+    };
+    if (requestId) headers['X-Request-Id'] = requestId;
+
     return new Response(JSON.stringify(data), {
         status,
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-        }
+        headers
     });
 }
 
@@ -28,7 +35,7 @@ export async function onRequestOptions() {
         headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-Id'
         }
     });
 }
@@ -45,11 +52,41 @@ export async function onRequestPost(context) {
 
 async function handleDownloadRequest(context) {
     const { request, env = {} } = context;
+
+    // 1. Request-level Rate Limiting (25 req / 5 min, burst 8 / 10s - protects against byte flooding/scraping while respecting legitimate downloads)
+    const rateCheck = await checkRateLimit('download', request);
+    if (!rateCheck.allowed) {
+        await recordAuditEvent(context, {
+            eventType: 'DOWNLOAD_RATE_LIMIT_TRIGGERED',
+            result: rateCheck.status,
+            requestId: rateCheck.requestId,
+            hashedIdentifier: rateCheck.hashedIdentifier
+        });
+        return buildRateLimitResponse(rateCheck);
+    }
+
+    const requestId = rateCheck.requestId;
+
+    // 2. Server-Side Environment Guardrails
+    const envValidation = validateEnvironmentConfig(env);
+    if (!envValidation.valid) {
+        await recordAuditEvent(context, {
+            eventType: 'ENVIRONMENT_GUARDRAIL_VIOLATION',
+            result: 'BLOCKED',
+            requestId,
+            metadata: { errors: envValidation.errors }
+        });
+        return jsonResponse({
+            success: false,
+            error: "Delivery service configuration error: " + envValidation.errors[0]
+        }, 500, requestId);
+    }
+
     const url = new URL(request.url);
     const token = url.searchParams.get('token');
 
     if (!token) {
-        return jsonResponse({ success: false, error: "Download authorization token is missing or invalid." }, 400);
+        return jsonResponse({ success: false, error: "Download authorization token is missing or invalid." }, 400, requestId);
     }
 
     try {
@@ -102,33 +139,50 @@ async function handleDownloadRequest(context) {
             }, 404);
         }
 
-        // 5. Increment Download Count on entitlement & order
-        const newCount = currentDownloads + 1;
-        await fetch(`${FIREBASE_DB_URL}/aliwelekhasia/download_entitlements/${token}/downloadCount.json`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newCount)
-        });
-
-        if (entitlement.orderId) {
-            await fetch(`${FIREBASE_DB_URL}/aliwelekhasia/orders/${entitlement.orderId}/downloadCount.json`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newCount)
-            });
-        }
-
-        // 6. Handle Private Cloudflare R2 Storage or Private Proxy Streaming
-        const mode = url.searchParams.get('mode'); // 'json' or default binary stream
-        if (mode === 'json') {
+        // 4. Inspection / Metadata Mode (Does NOT consume a download count)
+        const mode = url.searchParams.get('mode'); // 'json' or 'info'
+        if (mode === 'json' || mode === 'info') {
             return jsonResponse({
                 success: true,
                 title: songData.title,
                 artist: songData.artist || 'Ali Welekhasia',
-                downloadsRemaining: maxDownloads - newCount
+                downloadsRemaining: Math.max(0, maxDownloads - currentDownloads),
+                downloadCount: currentDownloads,
+                maxDownloads,
+                expiresAt: entitlement.expiresAt,
+                policy: "Ali Welekhasia Ministry standard digital license allows up to 10 downloads within 7 days of purchase."
             });
         }
 
+        // 5. Handle Range Requests (Avoid burning download counts on byte-range probes)
+        const rangeHeader = request.headers.get('range');
+        const isInitialRequest = !rangeHeader || rangeHeader.startsWith('bytes=0-');
+
+        // Only increment the download count on the primary initial request, not subsequent byte chunks
+        let newCount = currentDownloads;
+        if (isInitialRequest) {
+            newCount = currentDownloads + 1;
+            await fetch(`${FIREBASE_DB_URL}/aliwelekhasia/download_entitlements/${token}/downloadCount.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newCount)
+            });
+
+            if (entitlement.orderId) {
+                await fetch(`${FIREBASE_DB_URL}/aliwelekhasia/orders/${entitlement.orderId}/downloadCount.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newCount)
+                });
+                await fetch(`${FIREBASE_DB_URL}/aliwelekhasia/orders/${entitlement.orderId}/lastDownloadAt.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(Date.now())
+                });
+            }
+        }
+
+        // 6. Handle Private Cloudflare R2 Storage or Private Proxy Streaming
         const safeTitle = (songData.title || 'Gospel_Track').replace(/[^a-zA-Z0-9_\-]/g, '_');
         const filename = `Ali_Welekhasia_${safeTitle}.mp3`;
         const r2Bucket = env.R2_BUCKET || env.MUSIC_BUCKET || env.R2_MUSIC_BUCKET;
@@ -139,11 +193,19 @@ async function handleDownloadRequest(context) {
         streamHeaders.set('Content-Disposition', `attachment; filename="${filename}"`);
         streamHeaders.set('Cache-Control', 'no-cache, no-store, must-revalidate');
         streamHeaders.set('Pragma', 'no-cache');
+        streamHeaders.set('Accept-Ranges', 'bytes');
         streamHeaders.set('Access-Control-Allow-Origin', '*');
+        streamHeaders.set('X-Downloads-Remaining', String(Math.max(0, maxDownloads - newCount)));
+
+        let responseStatus = 200;
 
         if (r2Bucket && (targetAudioUrl.startsWith('r2://') || !targetAudioUrl.startsWith('http'))) {
             const objectKey = targetAudioUrl.replace(/^r2:\/\//, '').replace(/^\//, '');
-            const r2Object = await r2Bucket.get(objectKey);
+            const r2Options = {};
+            if (rangeHeader) {
+                r2Options.range = request.headers;
+            }
+            const r2Object = await r2Bucket.get(objectKey, r2Options);
             if (!r2Object) {
                 return jsonResponse({ success: false, error: "Private master file object not found in R2 bucket." }, 404);
             }
@@ -151,19 +213,35 @@ async function handleDownloadRequest(context) {
             if (r2Object.httpMetadata && r2Object.httpMetadata.contentType) {
                 streamHeaders.set('Content-Type', r2Object.httpMetadata.contentType);
             }
-        } else {
-            const fileFetchRes = await fetch(targetAudioUrl);
-            if (!fileFetchRes.ok) {
-                return Response.redirect(targetAudioUrl, 302);
+            if (r2Object.range) {
+                responseStatus = 206;
+                streamHeaders.set('Content-Range', `bytes ${r2Object.range.offset}-${r2Object.range.offset + r2Object.range.length - 1}/${r2Object.size}`);
+                streamHeaders.set('Content-Length', String(r2Object.range.length));
+            } else {
+                streamHeaders.set('Content-Length', String(r2Object.size));
             }
+        } else {
+            const fileFetchRes = await fetch(targetAudioUrl, {
+                headers: rangeHeader ? { 'Range': rangeHeader } : {}
+            });
+            if (!fileFetchRes.ok) {
+                return jsonResponse({ success: false, error: "The requested audio master file could not be retrieved." }, 502);
+            }
+            responseStatus = fileFetchRes.status;
             streamBody = fileFetchRes.body;
             if (fileFetchRes.headers.get('content-type')) {
                 streamHeaders.set('Content-Type', fileFetchRes.headers.get('content-type'));
             }
+            if (fileFetchRes.headers.get('content-length')) {
+                streamHeaders.set('Content-Length', fileFetchRes.headers.get('content-length'));
+            }
+            if (fileFetchRes.headers.get('content-range')) {
+                streamHeaders.set('Content-Range', fileFetchRes.headers.get('content-range'));
+            }
         }
 
         return new Response(streamBody, {
-            status: 200,
+            status: responseStatus,
             headers: streamHeaders
         });
 

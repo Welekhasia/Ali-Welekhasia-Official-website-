@@ -434,8 +434,40 @@
                 <section id="tabView_orders" class="tab-view-container" style="display: none;">
                     <div class="view-header">
                         <div>
-                            <h1><i class="fa-solid fa-cart-shopping"></i> Direct Music Store Orders</h1>
-                            <p>Track sales, payment verifications, customer digital download fulfillment, and transaction references.</p>
+                            <h1><i class="fa-solid fa-cart-shopping"></i> Direct Music Store Orders & Financial Analytics</h1>
+                            <p>Authoritative order records, payment channel verification, gateway fee breakdown (M-Pesa / Local / International), and digital delivery fulfillment.</p>
+                        </div>
+                    </div>
+
+                    <!-- Financial Summary Metric Cards -->
+                    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 20px;">
+                        <div class="stat-card" style="padding: 14px 18px;">
+                            <div class="stat-info">
+                                <div class="stat-label">Paid Orders</div>
+                                <div class="stat-value" id="orderStatPaidCount" style="font-size: 24px; color: #10b981;">0</div>
+                                <div class="stat-sub" id="orderStatPendingCount" style="color: var(--adm-text-subtle);">0 pending</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="padding: 14px 18px;">
+                            <div class="stat-info">
+                                <div class="stat-label" style="color: #34d399;">Gross Revenue</div>
+                                <div class="stat-value" id="orderStatGross" style="font-size: 22px; color: #34d399;">KSh 0</div>
+                                <div class="stat-sub">From paid transactions</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="padding: 14px 18px;">
+                            <div class="stat-info">
+                                <div class="stat-label" style="color: #f59e0b;">Gateway Fees (Recorded)</div>
+                                <div class="stat-value" id="orderStatFees" style="font-size: 22px; color: #f59e0b;">KSh 0</div>
+                                <div class="stat-sub" id="orderStatFeeCoverage">From captured telemetry</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="padding: 14px 18px;">
+                            <div class="stat-info">
+                                <div class="stat-label" style="color: var(--adm-gold);">Net Settlement Est.</div>
+                                <div class="stat-value" id="orderStatNet" style="font-size: 22px; color: var(--adm-gold);">KSh 0</div>
+                                <div class="stat-sub">Net receivable estimate</div>
+                            </div>
                         </div>
                     </div>
 
@@ -443,13 +475,20 @@
                         <div class="toolbar-left">
                             <div class="search-input-wrap">
                                 <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="text" id="ordersSearchInput" placeholder="Search order #, customer email, phone, or reference..." oninput="renderOrdersTable()">
+                                <input type="text" id="ordersSearchInput" placeholder="Search order #, customer email, phone, reference, or channel..." oninput="renderOrdersTable()">
                             </div>
                             <select id="ordersStatusFilter" class="filter-select" onchange="renderOrdersTable()">
                                 <option value="ALL">All Payment Statuses</option>
                                 <option value="PAID">Paid & Fulfilled</option>
                                 <option value="PENDING">Pending Payment</option>
                                 <option value="FAILED">Failed / Cancelled</option>
+                            </select>
+                            <select id="ordersChannelFilter" class="filter-select" onchange="renderOrdersTable()">
+                                <option value="ALL">All Payment Channels</option>
+                                <option value="MPESA">M-PESA / Mobile Money</option>
+                                <option value="LOCAL_CARD">Local Card</option>
+                                <option value="INTL_CARD">International Card</option>
+                                <option value="CARD">Card (Other)</option>
                             </select>
                         </div>
                     </div>
@@ -460,10 +499,10 @@
                                 <tr>
                                     <th>Order # & Date</th>
                                     <th>Song Purchased</th>
-                                    <th>Customer Contact</th>
-                                    <th>Amount</th>
-                                    <th>Payment Status</th>
-                                    <th>Gateway Ref</th>
+                                    <th>Customer</th>
+                                    <th>Channel & Ref</th>
+                                    <th>Gross / Fee / Net</th>
+                                    <th>Status</th>
                                     <th>Fulfillment</th>
                                 </tr>
                             </thead>

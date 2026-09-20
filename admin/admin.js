@@ -861,20 +861,79 @@ function renderOrdersTable() {
     if (!tableBody) return;
 
     const orders = Object.values(AdminState.orders || {}).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-    const searchVal = (document.getElementById('ordersSearchInput')?.value || '').toLowerCase();
+    const searchVal = (document.getElementById('ordersSearchInput')?.value || '').toLowerCase().trim();
     const statusFilter = document.getElementById('ordersStatusFilter')?.value || 'ALL';
+    const channelFilter = document.getElementById('ordersChannelFilter')?.value || 'ALL';
+
+    // Summary Totals Calculation across all orders
+    let paidCount = 0;
+    let pendingCount = 0;
+    let grossTotal = 0;
+    let recordedFeesTotal = 0;
+    let ordersWithRecordedFees = 0;
+
+    orders.forEach(ord => {
+        if (!ord) return;
+        if (ord.paymentStatus === 'PAID') {
+            paidCount++;
+            const amt = parseFloat(ord.amount || 0);
+            grossTotal += amt;
+
+            // Extract authoritative captured fee if present (do not invent fee)
+            const capturedFee = ord.gatewayFee !== undefined ? parseFloat(ord.gatewayFee) : (ord.fee !== undefined ? parseFloat(ord.fee) : null);
+            if (capturedFee !== null && !isNaN(capturedFee)) {
+                recordedFeesTotal += capturedFee;
+                ordersWithRecordedFees++;
+            }
+        } else {
+            pendingCount++;
+        }
+    });
+
+    // Update Summary Dashboard Metric Cards
+    if (document.getElementById('orderStatPaidCount')) document.getElementById('orderStatPaidCount').innerText = paidCount;
+    if (document.getElementById('orderStatPendingCount')) document.getElementById('orderStatPendingCount').innerText = `${pendingCount} pending / failed`;
+    if (document.getElementById('orderStatGross')) document.getElementById('orderStatGross').innerText = `KSh ${grossTotal.toLocaleString()}`;
+    if (document.getElementById('orderStatFees')) document.getElementById('orderStatFees').innerText = `KSh ${recordedFeesTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    if (document.getElementById('orderStatNet')) {
+        const netTotal = grossTotal - recordedFeesTotal;
+        document.getElementById('orderStatNet').innerText = `KSh ${netTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+    if (document.getElementById('orderStatFeeCoverage')) {
+        document.getElementById('orderStatFeeCoverage').innerText = `${ordersWithRecordedFees} of ${paidCount} paid orders with verified telemetry`;
+    }
 
     const filtered = orders.filter(ord => {
         if (!ord) return false;
+
+        // Search Match
         const matchesSearch = !searchVal || 
             (ord.orderNumber && ord.orderNumber.toLowerCase().includes(searchVal)) ||
             (ord.customerEmail && ord.customerEmail.toLowerCase().includes(searchVal)) ||
             (ord.customerPhone && ord.customerPhone.toLowerCase().includes(searchVal)) ||
             (ord.paymentReference && ord.paymentReference.toLowerCase().includes(searchVal)) ||
+            (ord.paymentChannel && ord.paymentChannel.toLowerCase().includes(searchVal)) ||
             (ord.productTitle && ord.productTitle.toLowerCase().includes(searchVal));
         
+        // Status Match
         const matchesStatus = statusFilter === 'ALL' || ord.paymentStatus === statusFilter;
-        return matchesSearch && matchesStatus;
+
+        // Payment Channel Match
+        let matchesChannel = true;
+        const channelRaw = (ord.paymentChannel || ord.channel || '').toLowerCase();
+        const cardCountry = (ord.cardCountry || '').toUpperCase();
+
+        if (channelFilter === 'MPESA') {
+            matchesChannel = channelRaw.includes('mobile') || channelRaw.includes('mpesa') || (ord.paymentProvider || '').toUpperCase() === 'MPESA';
+        } else if (channelFilter === 'LOCAL_CARD') {
+            matchesChannel = channelRaw.includes('card') && (cardCountry === 'KE' || ord.cardType === 'local');
+        } else if (channelFilter === 'INTL_CARD') {
+            matchesChannel = channelRaw.includes('card') && (cardCountry !== 'KE' && cardCountry !== '');
+        } else if (channelFilter === 'CARD') {
+            matchesChannel = channelRaw.includes('card');
+        }
+
+        return matchesSearch && matchesStatus && matchesChannel;
     });
 
     if (filtered.length === 0) {
@@ -894,6 +953,30 @@ function renderOrdersTable() {
         const isPaid = ord.paymentStatus === 'PAID';
         const statusClass = isPaid ? 'status-published' : (ord.paymentStatus === 'FAILED' ? 'status-draft' : 'status-draft');
 
+        // Channel & Card Distinction
+        const channelRaw = (ord.paymentChannel || ord.channel || '').toLowerCase();
+        const cardCountry = (ord.cardCountry || '').toUpperCase();
+        let channelBadge = '<span class="status-badge" style="background: rgba(100,116,139,0.2); color: #94a3b8; font-size: 11px;">Standard Gateway</span>';
+
+        if (channelRaw.includes('mobile') || channelRaw.includes('mpesa') || (ord.paymentProvider || '').toUpperCase() === 'MPESA') {
+            channelBadge = '<span class="status-badge" style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 11px;"><i class="fa-solid fa-mobile-screen"></i> M-PESA</span>';
+        } else if (channelRaw.includes('card')) {
+            if (cardCountry === 'KE' || ord.cardType === 'local') {
+                channelBadge = '<span class="status-badge" style="background: rgba(59,130,246,0.15); color: #60a5fa; font-size: 11px;"><i class="fa-solid fa-credit-card"></i> Local Card (KE)</span>';
+            } else if (cardCountry && cardCountry !== 'KE') {
+                channelBadge = `<span class="status-badge" style="background: rgba(168,85,247,0.15); color: #c084fc; font-size: 11px;"><i class="fa-solid fa-globe"></i> Intl Card (${escapeHtml(cardCountry)})</span>`;
+            } else {
+                channelBadge = '<span class="status-badge" style="background: rgba(59,130,246,0.15); color: #60a5fa; font-size: 11px;"><i class="fa-solid fa-credit-card"></i> Card</span>';
+            }
+        }
+
+        // Financial Breakdown: Gross, Gateway Fee, Net Settlement
+        const grossAmount = parseFloat(ord.amount || 0);
+        const currency = ord.currency || 'KSh';
+        const hasFee = (ord.gatewayFee !== undefined && ord.gatewayFee !== null) || (ord.fee !== undefined && ord.fee !== null);
+        const feeAmount = hasFee ? parseFloat(ord.gatewayFee !== undefined ? ord.gatewayFee : ord.fee) : null;
+        const netAmount = (hasFee && feeAmount !== null) ? (grossAmount - feeAmount) : null;
+
         return `
             <tr>
                 <td>
@@ -909,17 +992,28 @@ function renderOrdersTable() {
                     <div style="font-size: 11.5px; color: var(--adm-text-subtle);">${escapeHtml(ord.customerPhone || '—')}</div>
                 </td>
                 <td>
-                    <strong style="color: var(--adm-gold); font-size: 14px;">${escapeHtml(ord.currency || 'KSh')} ${ord.amount || 100}</strong>
+                    <div style="margin-bottom: 4px;">${channelBadge}</div>
+                    <code style="font-size: 11px; color: #cbd5e1; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">${escapeHtml(ord.paymentReference || '—')}</code>
+                </td>
+                <td>
+                    <div><strong style="color: #34d399; font-size: 13.5px;">Gross: ${escapeHtml(currency)} ${grossAmount.toLocaleString()}</strong></div>
+                    <div style="font-size: 11.5px; margin-top: 2px;">
+                        ${hasFee && feeAmount !== null 
+                            ? `<span style="color: #f59e0b;">Fee: ${escapeHtml(currency)} ${feeAmount.toFixed(2)}</span>` 
+                            : `<span style="color: var(--adm-text-subtle); font-style: italic;">Fee data unavailable</span>`}
+                    </div>
+                    <div style="font-size: 11.5px; margin-top: 2px;">
+                        ${netAmount !== null 
+                            ? `<strong style="color: var(--adm-gold);">Net: ${escapeHtml(currency)} ${netAmount.toFixed(2)}</strong>` 
+                            : `<span style="color: var(--adm-text-subtle);">Net: —</span>`}
+                    </div>
                 </td>
                 <td>
                     <span class="status-badge ${statusClass}">${escapeHtml(ord.paymentStatus || 'PENDING')}</span>
                 </td>
                 <td>
-                    <code style="font-size: 11.5px; color: #cbd5e1; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">${escapeHtml(ord.paymentReference || '—')}</code>
-                </td>
-                <td>
                     ${isPaid && ord.downloadToken ? `
-                        <a href="/api/store/download?token=${ord.downloadToken}" target="_blank" class="btn btn-sm btn-gold" style="font-size: 11px; padding: 4px 10px;" title="Test Download Asset">
+                        <a href="/api/store/download?token=${encodeURIComponent(ord.downloadToken)}" target="_blank" class="btn btn-sm btn-gold" style="font-size: 11px; padding: 4px 10px;" title="Test Download Asset">
                             <i class="fa-solid fa-download"></i> Fulfilled (${ord.downloadCount || 0})
                         </a>
                     ` : `<span style="color: var(--adm-text-subtle); font-size: 12px;">Pending Payment</span>`}
