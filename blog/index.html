@@ -256,7 +256,59 @@
             if (btn) btn.style.display = 'block';
             if (desktopNav) desktopNav.style.display = 'none';
         }
+        let blogImageObserver = null;
+
+        function initBlogImageObserver() {
+            if ('IntersectionObserver' in window) {
+                if (blogImageObserver) blogImageObserver.disconnect();
+                blogImageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            const src = img.getAttribute('data-src');
+                            if (src) {
+                                img.src = src;
+                                img.removeAttribute('data-src');
+                            }
+                            img.onload = () => {
+                                img.classList.add('loaded');
+                                if (img.parentElement && img.parentElement.classList.contains('img-placeholder-skeleton')) {
+                                    img.parentElement.classList.remove('img-placeholder-skeleton');
+                                }
+                            };
+                            if (img.complete && img.naturalWidth > 0) {
+                                img.classList.add('loaded');
+                            }
+                            observer.unobserve(img);
+                        }
+                    });
+                }, { rootMargin: '200px 0px', threshold: 0.01 });
+
+                observeBlogImages();
+            } else {
+                document.querySelectorAll('img[data-src]').forEach(img => {
+                    img.src = img.getAttribute('data-src');
+                    img.classList.add('loaded');
+                });
+            }
+        }
+
+        function observeBlogImages() {
+            const container = document.getElementById('publicBlogList');
+            if (!container) return;
+            const images = container.querySelectorAll('img[data-src]');
+            images.forEach(img => {
+                if (blogImageObserver) {
+                    blogImageObserver.observe(img);
+                } else {
+                    img.src = img.getAttribute('data-src');
+                    img.classList.add('loaded');
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            initBlogImageObserver();
             loadPublicBlog();
         });
 
@@ -335,8 +387,14 @@
                 return;
             }
 
-            container.innerHTML = articles.map(a => `
+            container.innerHTML = articles.map(a => {
+                const imgUrl = a.imageUrl || a.image || null;
+                return `
                 <article class="article-card">
+                    ${imgUrl ? `
+                    <div style="height: 200px; border-radius: 8px; overflow: hidden; margin-bottom: 16px;" class="img-placeholder-skeleton">
+                        <img data-src="${imgUrl}" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 300'></svg>" alt="${escapeHtml(a.title || 'Devotional Cover')}" class="progressive-img lazy-img" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none';">
+                    </div>` : ''}
                     <span class="tag-pill">${escapeHtml(a.category || 'Devotional')}</span>
                     <h2>${escapeHtml(a.title || 'Ministry Message')}</h2>
                     ${a.scripture ? `<span class="scripture-anchor"><i class="fa-solid fa-bible"></i> ${escapeHtml(a.scripture)}</span>` : ''}
@@ -346,7 +404,9 @@
                         <span>${a.createdAt ? new Date(a.createdAt).toLocaleDateString() : (escapeHtml(a.date || 'Published'))}</span>
                     </div>
                 </article>
-            `).join('');
+            `}).join('');
+
+            observeBlogImages();
         }
 
         function escapeHtml(str) {

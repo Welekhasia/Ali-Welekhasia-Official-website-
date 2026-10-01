@@ -223,37 +223,88 @@ export async function onRequestGet(context) {
     const requestId = rateCheck.requestId;
 
     const url = new URL(request.url);
-    const orderId = url.searchParams.get('orderId');
+    const orderIdQuery = (url.searchParams.get('orderId') || url.searchParams.get('orderNumber') || '').trim();
+    const emailQuery = (url.searchParams.get('email') || '').trim().toLowerCase();
 
-    if (!orderId) {
-        return jsonResponse({ success: false, error: "Order ID parameter is required." }, 400, requestId);
+    if (!orderIdQuery) {
+        return jsonResponse({ success: false, error: "Order ID or Order Number parameter is required." }, 400, requestId);
     }
 
     try {
-        const orderRes = await fetch(`${FIREBASE_DB_URL}/aliwelekhasia/orders/${orderId}.json`);
-        const orderData = await orderRes.json();
+        let orderData = null;
 
+        // Try direct fetch by order ID first
+        const directRes = await fetch(`${FIREBASE_DB_URL}/aliwelekhasia/orders/${orderIdQuery}.json`);
+        orderData = await directRes.json();
+
+        // If not found by key, search all orders by orderNumber, id, or paymentReference
         if (!orderData) {
-            return jsonResponse({ success: false, error: "Order not found." }, 404, requestId);
+            const allOrdersRes = await fetch(`${FIREBASE_DB_URL}/aliwelekhasia/orders.json`);
+            const allOrders = await allOrdersRes.json();
+            if (allOrders) {
+                const found = Object.values(allOrders).find(ord => 
+                    ord && (
+                        ord.id === orderIdQuery || 
+                        ord.orderNumber === orderIdQuery || 
+                        ord.paymentReference === orderIdQuery
+                    )
+                );
+                if (found) orderData = found;
+            }
         }
 
-        // Return strictly sanitized public status info; NEVER leak PII or downloadToken
+        if (!orderData) {
+            return jsonResponse({ 
+                success: false, 
+                error: `No order record found matching "${orderIdQuery}". Please check your Order ID/Number.` 
+            }, 404, requestId);
+        }
+
+        // Email Verification Check
+        if (emailQuery) {
+            const customerEmail = (orderData.customerEmail || '').toLowerCase().trim();
+            if (customerEmail !== emailQuery) {
+                return jsonResponse({ 
+                    success: false, 
+                    error: "The provided email address does not match the customer email on this order." 
+                }, 403, requestId);
+            }
+        }
+
+        const isPaid = (orderData.paymentStatus || 'PENDING').toUpperCase() === 'PAID';
+        const downloadToken = orderData.downloadToken || null;
+        const downloadUrl = (isPaid && downloadToken) 
+            ? `/api/store/download?token=${encodeURIComponent(downloadToken)}` 
+            : null;
+
         const sanitized = {
             id: orderData.id,
-            orderNumber: orderData.orderNumber,
-            productTitle: orderData.productTitle,
-            productArtist: orderData.productArtist,
+            orderNumber: orderData.orderNumber || orderData.id,
+            productTitle: orderData.productTitle || 'Gospel Master Audio',
+            productArtist: orderData.productArtist || 'Ali Welekhasia',
             amount: orderData.amount,
-            currency: orderData.currency,
-            paymentStatus: orderData.paymentStatus,
-            createdAt: orderData.createdAt
+            currency: orderData.currency || 'KES',
+            paymentStatus: orderData.paymentStatus || 'PENDING',
+            fulfillmentStatus: orderData.fulfillmentStatus || 'UNFULFILLED',
+            paymentProvider: orderData.paymentProvider || 'PAYSTACK',
+            paymentReference: orderData.paymentReference || null,
+            createdAt: orderData.createdAt,
+            paidAt: orderData.paidAt || null,
+            downloadCount: orderData.downloadCount || 0,
+            maxDownloads: 10,
+            downloadStatus: isPaid 
+                ? (orderData.downloadCount >= 10 ? 'EXHAUSTED' : 'AVAILABLE') 
+                : 'LOCKED',
+            downloadUrl
         };
 
         return jsonResponse({
             success: true,
             order: sanitized
         }, 200, requestId);
+
     } catch (err) {
-        return jsonResponse({ success: false, error: "Error retrieving order details." }, 500, requestId);
+        console.error("Order Lookup Error:", err);
+        return jsonResponse({ success: false, error: "Error retrieving order status details." }, 500, requestId);
     }
 }

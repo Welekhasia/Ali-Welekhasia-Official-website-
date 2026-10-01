@@ -6540,6 +6540,143 @@ a.contact-method-val:hover {
     animation: livePulse 1.6s infinite ease-in-out;
 }
 
+/* ==========================================================================
+   PROGRESSIVE IMAGE LOADING STRATEGY (INTERSECTION OBSERVER)
+   ========================================================================== */
+.progressive-img, .lazy-img {
+    opacity: 0;
+    filter: blur(12px);
+    transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1), filter 0.55s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s ease;
+    will-change: opacity, filter;
+    background-color: var(--bg-surface, #1e293b);
+}
+
+.progressive-img.loaded, .lazy-img.loaded {
+    opacity: 1;
+    filter: blur(0);
+}
+
+.img-placeholder-skeleton {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(90deg, var(--bg-surface, #1e293b) 25%, #2d3d54 50%, var(--bg-surface, #1e293b) 75%);
+    background-size: 200% 100%;
+    animation: shimmerPlaceholder 1.5s infinite;
+}
+
+@keyframes shimmerPlaceholder {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ==========================================================================
+   MY PURCHASES & ORDER STATUS TRACKING UI
+   ========================================================================== */
+.purchases-tab-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: var(--bg-main, #070b14);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.purchases-tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-muted, #94a3b8);
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.purchases-tab-btn:hover {
+    color: var(--text-main, #ffffff);
+}
+
+.purchases-tab-btn.active {
+    background: var(--bg-surface, #1e293b);
+    color: var(--gold, #d4af37);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.order-status-card {
+    background: var(--bg-main, #070b14);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 12px;
+    padding: 18px;
+    margin-top: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.order-status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge-paid {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid #10b981;
+    color: #10b981;
+}
+
+.status-badge-pending {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid #f59e0b;
+    color: #fbbf24;
+}
+
+.status-badge-failed {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid #ef4444;
+    color: #fca5a5;
+}
+
+.order-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-muted, #94a3b8);
+    margin-bottom: 16px;
+}
+
+.order-detail-item strong {
+    color: var(--text-main, #ffffff);
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
 
 
 

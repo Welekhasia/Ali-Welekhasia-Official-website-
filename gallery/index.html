@@ -287,8 +287,59 @@
             if (desktopNav) desktopNav.style.display = 'none';
         }
         let allGalleryItems = [];
+        let galleryImageObserver = null;
+
+        function initGalleryImageObserver() {
+            if ('IntersectionObserver' in window) {
+                if (galleryImageObserver) galleryImageObserver.disconnect();
+                galleryImageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            const src = img.getAttribute('data-src');
+                            if (src) {
+                                img.src = src;
+                                img.removeAttribute('data-src');
+                            }
+                            img.onload = () => {
+                                img.classList.add('loaded');
+                                if (img.parentElement && img.parentElement.classList.contains('img-placeholder-skeleton')) {
+                                    img.parentElement.classList.remove('img-placeholder-skeleton');
+                                }
+                            };
+                            if (img.complete && img.naturalWidth > 0) {
+                                img.classList.add('loaded');
+                            }
+                            observer.unobserve(img);
+                        }
+                    });
+                }, { rootMargin: '200px 0px', threshold: 0.01 });
+
+                observeGalleryImages();
+            } else {
+                document.querySelectorAll('img[data-src]').forEach(img => {
+                    img.src = img.getAttribute('data-src');
+                    img.classList.add('loaded');
+                });
+            }
+        }
+
+        function observeGalleryImages() {
+            const grid = document.getElementById('publicGalleryGrid');
+            if (!grid) return;
+            const images = grid.querySelectorAll('img[data-src]');
+            images.forEach(img => {
+                if (galleryImageObserver) {
+                    galleryImageObserver.observe(img);
+                } else {
+                    img.src = img.getAttribute('data-src');
+                    img.classList.add('loaded');
+                }
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
+            initGalleryImageObserver();
             loadPublicGallery();
         });
 
@@ -375,8 +426,8 @@
 
             container.innerHTML = items.map(item => `
                 <div class="gallery-photo-card">
-                    <div class="gallery-photo-box">
-                        <img src="${item.imageUrl || '../images/hero.jpg'}" alt="${escapeHtml(item.title || 'Photo')}" loading="lazy" onerror="this.src='../images/hero.jpg'">
+                    <div class="gallery-photo-box img-placeholder-skeleton">
+                        <img data-src="${item.imageUrl || '../images/hero.jpg'}" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'></svg>" alt="${escapeHtml(item.title || 'Ministry Photo')}" class="progressive-img lazy-img" onerror="this.src='../images/hero.jpg'; this.classList.add('loaded');">
                     </div>
                     <div class="gallery-photo-details">
                         <h4>${escapeHtml(item.title || 'Ministry Photo')}</h4>
@@ -384,6 +435,8 @@
                     </div>
                 </div>
             `).join('');
+
+            observeGalleryImages();
         }
 
         function filterGallery(category, btnElem) {

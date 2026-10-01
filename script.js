@@ -97,6 +97,78 @@ function dismissLiveBanner() {
     }
 }
 
+// --- PROGRESSIVE IMAGE LOADING OBSERVER SYSTEM (INTERSECTION OBSERVER) ---
+let globalProgressiveImageObserver = null;
+
+function initProgressiveImageObserver() {
+    if ('IntersectionObserver' in window) {
+        if (globalProgressiveImageObserver) {
+            globalProgressiveImageObserver.disconnect();
+        }
+        globalProgressiveImageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const src = img.getAttribute('data-src');
+                    const srcset = img.getAttribute('data-srcset');
+
+                    if (src) {
+                        img.src = src;
+                        img.removeAttribute('data-src');
+                    }
+                    if (srcset) {
+                        img.srcset = srcset;
+                        img.removeAttribute('data-srcset');
+                    }
+
+                    img.onload = () => {
+                        img.classList.add('loaded');
+                        if (img.parentElement && img.parentElement.classList.contains('img-placeholder-skeleton')) {
+                            img.parentElement.classList.remove('img-placeholder-skeleton');
+                        }
+                    };
+
+                    if (img.complete && img.naturalWidth > 0) {
+                        img.classList.add('loaded');
+                    }
+
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '200px 0px',
+            threshold: 0.01
+        });
+
+        observeProgressiveImages();
+    } else {
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            const src = img.getAttribute('data-src');
+            if (src) {
+                img.src = src;
+                img.removeAttribute('data-src');
+            }
+            img.classList.add('loaded');
+        });
+    }
+}
+
+function observeProgressiveImages(container = document) {
+    if (!globalProgressiveImageObserver) {
+        initProgressiveImageObserver();
+        return;
+    }
+    const lazyImages = container.querySelectorAll('img[data-src], img.progressive-img, img.lazy-img');
+    lazyImages.forEach(img => {
+        if (img.getAttribute('data-src')) {
+            globalProgressiveImageObserver.observe(img);
+        } else if (img.complete && img.naturalWidth > 0) {
+            img.classList.add('loaded');
+        }
+    });
+}
+
 // --- MOBILE NAVIGATION & BACKDROP ---
 function toggleMobileMenu() {
     const navMenu = document.getElementById('navMenu');
@@ -5888,6 +5960,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     initBackToTop();
     initFirebaseAuth();
+    initProgressiveImageObserver();
 
     // Show initial skeleton loaders to ensure pristine perceived load performance
     showComponentSkeletons('all');
