@@ -7,7 +7,7 @@ account_id = "aeb41c9c812d6807027c3c5bb5dcefbe"
 [[d1_databases]]
 binding = "DB"
 database_name = "ali-welekhasia-production-db"
-database_id = "55bae613-dfba-4c87-ad76-48f4c5d0b6c7"
+database_id = "55bae613-dfba-4c87-ad76-48c4f5d0b6c7"
 migrations_dir = "migrations"
 
 # 2. Cloudflare R2 Object Storage Binding (Single Bucket with Prefixes)

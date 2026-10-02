@@ -49,7 +49,7 @@ export async function onRequestGet(context) {
 
     if (action === 'verify' && key) {
         key = key.replace(/^r2:\/\//, '').replace(/^\//, '');
-        const r2Bucket = env.R2_BUCKET || env.MUSIC_BUCKET;
+        const r2Bucket = env.BUCKET || env.R2_BUCKET || env.MUSIC_BUCKET;
 
         if (!r2Bucket) {
             // Local/dev mock verification
@@ -226,7 +226,7 @@ async function handleUpload(context) {
             storageKey = `artwork/${productId}/${timestamp}_${randStr}.${ext || 'jpg'}`;
         }
 
-        const r2Bucket = env.R2_BUCKET || env.MUSIC_BUCKET;
+        const r2Bucket = env.BUCKET || env.R2_BUCKET || env.MUSIC_BUCKET;
 
         if (bodyBuffer.byteLength === 0) {
             return jsonResponse({ success: false, error: "Uploaded payload is empty." }, 400, requestId);

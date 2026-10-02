@@ -185,7 +185,7 @@ async function handleDownloadRequest(context) {
         // 6. Handle Private Cloudflare R2 Storage or Private Proxy Streaming
         const safeTitle = (songData.title || 'Gospel_Track').replace(/[^a-zA-Z0-9_\-]/g, '_');
         const filename = `Ali_Welekhasia_${safeTitle}.mp3`;
-        const r2Bucket = env.R2_BUCKET || env.MUSIC_BUCKET || env.R2_MUSIC_BUCKET;
+        const r2Bucket = env.BUCKET || env.R2_BUCKET || env.MUSIC_BUCKET || env.R2_MUSIC_BUCKET;
 
         let streamBody = null;
         let streamHeaders = new Headers();

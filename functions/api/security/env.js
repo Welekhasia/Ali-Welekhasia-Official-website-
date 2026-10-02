@@ -53,7 +53,7 @@ export function validateEnvironmentConfig(env = {}) {
     const currentEnv = getEnvironment(env);
     const paystackSecret = (env.PAYSTACK_SECRET_KEY || '').trim();
     const paystackPublic = (env.PAYSTACK_PUBLIC_KEY || '').trim();
-    const r2Bucket = env.R2_BUCKET || env.MUSIC_BUCKET;
+    const r2Bucket = env.BUCKET || env.R2_BUCKET || env.MUSIC_BUCKET;
     const errors = [];
     const warnings = [];
 
@@ -103,7 +103,7 @@ export function getSafeEnvironmentSummary(env = {}) {
     const currentEnv = getEnvironment(env);
     const paystackSecret = (env.PAYSTACK_SECRET_KEY || '').trim();
     const paystackPublic = (env.PAYSTACK_PUBLIC_KEY || '').trim();
-    const hasR2 = !!(env.R2_BUCKET || env.MUSIC_BUCKET);
+    const hasR2 = !!(env.BUCKET || env.R2_BUCKET || env.MUSIC_BUCKET);
     const hasWebhookSecret = !!env.PAYSTACK_WEBHOOK_SECRET;
 
     let paystackMode = 'unconfigured';
