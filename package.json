@@ -1,0 +1,25 @@
+{
+  "name": "aliwelekhasia-official",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Ali Welekhasia Official Music Website & Production Cloudflare Platform",
+  "main": "src/worker.js",
+  "scripts": {
+    "git:status": "node scripts/git-helper.js status",
+    "git:check": "node scripts/git-helper.js check",
+    "git:diff": "git diff",
+    "git:staged": "git diff --cached --stat",
+    "test": "node --test tests/production-hardening-test.js tests/cloudflare-backend-test.js"
+  },
+  "keywords": [
+    "ali-welekhasia",
+    "gospel-music",
+    "cloudflare-worker",
+    "d1-database",
+    "r2-storage",
+    "paystack",
+    "firebase-auth"
+  ],
+  "author": "Ali Welekhasia Platform",
+  "license": "ISC"
+}

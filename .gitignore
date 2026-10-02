@@ -1,0 +1,42 @@
+# ==============================================================================
+# ALI WELEKHASIA WEBSITE - GIT IGNORE SECURITY POLICY
+# ==============================================================================
+
+# Environment files & Secrets
+.env
+.env.local
+.env.production
+.env.staging
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*credentials*
+*secret*
+service-account*.json
+
+# Android Signing & Keystores (CRITICAL - DO NOT TRACK OR CHANGE)
+debug.keystore
+debug.keystore.base64
+*.keystore
+*.jks
+
+# Build Artifacts & Temporary Directories
+.gradle/
+.kotlin/
+.build-outputs/
+build/
+app/build/
+.wrangler/
+dist/
+node_modules/
+
+# OS / IDE Artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+.idea/
+.vscode/
