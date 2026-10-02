@@ -68,7 +68,7 @@ class MainViewModel : ViewModel() {
         ),
         Song(
             id = "3",
-            title = "UMETENDA HAYA",
+            title = "UMETENDA HAYA (Feat. RICHARD ALIWA)",
             artist = "Ali Welekhasia",
             type = "Official Audio",
             durationSeconds = 245,

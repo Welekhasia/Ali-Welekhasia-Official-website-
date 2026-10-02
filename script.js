@@ -457,6 +457,8 @@ const songDatabase = {
         artist: "Ali Welekhasia",
         key: "Key of D Major (BPM: 76)",
         snippet: "Zawadi ya uzima, zawadi ya wokovu, Ulinipa bure Yesu wangu...",
+        youtubeUrl: "https://youtu.be/MbUcxQEeMUY?si=HOFeRQWDmyQek2wM",
+        amazonUrl: "https://www.amazon.com/s?k=ali+welekhasia&crid=1NGWEUHAECYZ4&sprefix=%2Caps%2C4137&ref=nb_sb_ss_recent_1_0_recent",
         lyrics: `[Verse 1]
 Nilikuwa gizani, sikuwa na tumaini
 Ukanitazama kwa jicho la rehema
@@ -1089,10 +1091,12 @@ But joy comes with the morning dawn!`
     },
 
     "UMETENDA HAYA": {
-        title: "UMETENDA HAYA",
+        title: "UMETENDA HAYA (Feat. RICHARD ALIWA)",
         artist: "Ali Welekhasia",
         key: "Key of C Major (BPM: 98)",
         snippet: "Umetenda haya Bwana, Mungu wangu Mkuu, Sifa na utukufu zikurudie Wewe milele...",
+        youtubeUrl: "https://youtu.be/MsXvaoX8sp8?si=jHuRQukJOUjNrDp-",
+        amazonUrl: "https://www.amazon.com/s?k=ali+welekhasia&crid=1NGWEUHAECYZ4&sprefix=%2Caps%2C4137&ref=nb_sb_ss_recent_1_0_recent",
         lyrics: `[Verse 1]
 Nikitazama nilikotoka na nilipo sasa
 Sina la kusema ila kutoa shukrani
@@ -2797,13 +2801,28 @@ function initFAQAccordion() {
 }
 
 // --- CLIPBOARD & MODAL HELPERS ---
-function copyToClipboard(text, label) {
+function copyToClipboard(valOrId, label) {
+    let textToCopy = valOrId || '';
+    const el = typeof valOrId === 'string' ? document.getElementById(valOrId) : null;
+    if (el) {
+        textToCopy = el.value !== undefined ? el.value : (el.innerText || el.textContent || '');
+    }
+
+    if (!textToCopy) {
+        if (typeof showToast === 'function') {
+            showToast(`No ${label || 'content'} available to copy.`, 'warning');
+        }
+        return;
+    }
+
     if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => {
-            showToast(`Copied ${label || text} to clipboard!`, 'success', 2500);
-        }).catch(() => fallbackCopy(text, label));
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            if (typeof showToast === 'function') {
+                showToast(`${label || 'Copied'} copied to clipboard!`, 'success', 2500);
+            }
+        }).catch(() => fallbackCopy(textToCopy, label));
     } else {
-        fallbackCopy(text, label);
+        fallbackCopy(textToCopy, label);
     }
 }
 
@@ -6860,21 +6879,7 @@ function toggleStreamKeyMask() {
     }
 }
 
-function copyToClipboard(elementId, label) {
-    const el = document.getElementById(elementId);
-    if (!el || !el.value) {
-        showToast(`No ${label} available to copy.`, 'warning');
-        return;
-    }
 
-    navigator.clipboard.writeText(el.value).then(() => {
-        showToast(`${label} copied to clipboard!`, 'success');
-    }).catch(() => {
-        el.select();
-        document.execCommand('copy');
-        showToast(`${label} copied!`, 'success');
-    });
-}
 
 // 7. DIRECT BROWSER CAMERA ("GO LIVE FROM THIS DEVICE")
 async function toggleDeviceCameraPreview() {

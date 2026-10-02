@@ -394,7 +394,23 @@ function seedDefaultSongs() {
             bpm: 76,
             artworkUrl: "images/hero.jpg",
             audioUrl: "",
-            youtubeUrl: "https://youtube.com/@aliwelekhasia?si=6w-rHCcN9Tb8PRVo",
+            youtubeUrl: "https://youtu.be/MbUcxQEeMUY?si=HOFeRQWDmyQek2wM",
+            amazonUrl: "https://www.amazon.com/s?k=ali+welekhasia&crid=1NGWEUHAECYZ4&sprefix=%2Caps%2C4137&ref=nb_sb_ss_recent_1_0_recent",
+            status: "PUBLISHED",
+            featured: true,
+            createdAt: Date.now()
+        },
+        "song_umetenda": {
+            id: "song_umetenda",
+            title: "UMETENDA HAYA (Feat. RICHARD ALIWA)",
+            artist: "Ali Welekhasia",
+            genre: "Praise & Thanksgiving",
+            key: "C Major",
+            bpm: 98,
+            artworkUrl: "images/hero.jpg",
+            audioUrl: "",
+            youtubeUrl: "https://youtu.be/MsXvaoX8sp8?si=jHuRQukJOUjNrDp-",
+            amazonUrl: "https://www.amazon.com/s?k=ali+welekhasia&crid=1NGWEUHAECYZ4&sprefix=%2Caps%2C4137&ref=nb_sb_ss_recent_1_0_recent",
             status: "PUBLISHED",
             featured: true,
             createdAt: Date.now()
@@ -1070,6 +1086,7 @@ function openAddSongModal(songId = null) {
         setVal('songInput_spotifyUrl', s.spotifyUrl || '');
         setVal('songInput_appleMusicUrl', s.appleMusicUrl || '');
         setVal('songInput_boomplayUrl', s.boomplayUrl || '');
+        setVal('songInput_amazonUrl', s.amazonUrl || '');
         setVal('songInput_songwriter', s.songwriter || 'Ali Welekhasia');
         setVal('songInput_producer', s.producer || '');
         setVal('songInput_status', s.status || 'DRAFT');
@@ -1493,6 +1510,7 @@ async function handleSongFormSubmit(event) {
         spotifyUrl: getVal('songInput_spotifyUrl'),
         appleMusicUrl: getVal('songInput_appleMusicUrl'),
         boomplayUrl: getVal('songInput_boomplayUrl'),
+        amazonUrl: getVal('songInput_amazonUrl'),
         songwriter: getVal('songInput_songwriter'),
         producer: getVal('songInput_producer'),
         status: targetStatus,

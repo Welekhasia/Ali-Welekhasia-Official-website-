@@ -4890,6 +4890,12 @@ textarea {
     border-color: #1db954;
 }
 
+.streaming-pill.pill-amazon:hover {
+    background: #ff9900;
+    color: #000000;
+    border-color: #ff9900;
+}
+
 .streaming-pill.pill-boomplay:hover {
     background: #0088ff;
     color: #ffffff;
