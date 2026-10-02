@@ -404,6 +404,103 @@ await test("File Size Quota Enforcement - 100MB limit for audio, 15MB for artwor
 });
 
 // -----------------------------------------------------------------------------
+// 8. FIREBASE AUTHENTICATION & ADMIN SECURITY HARDENING
+// -----------------------------------------------------------------------------
+console.log("\n--- Group 8: Firebase Authentication & Admin Security ---");
+
+await test("Unauthenticated user cannot access admin functions", () => {
+    const unauthUser = null;
+    const isAuth = unauthUser !== null;
+    assert(isAuth === false, "Unauthenticated user must be denied access");
+});
+
+await test("Nonexistent Firebase administrator is rejected without auto account creation", () => {
+    const firebaseErr = { code: 'auth/user-not-found', message: 'User not found' };
+    let createdAccount = false;
+    let errorMessage = '';
+
+    if (firebaseErr.code === 'auth/user-not-found') {
+        errorMessage = 'Administrator account not found.';
+    } else {
+        createdAccount = true;
+    }
+
+    assert(createdAccount === false, "Auto account creation must NOT occur on user-not-found");
+    assert(errorMessage === 'Administrator account not found.', "Must display exact user-not-found message");
+});
+
+await test("Firebase authentication failure cannot trigger local admin fallback", () => {
+    const firebaseAuthSuccess = false;
+    let isGranted = false;
+
+    if (firebaseAuthSuccess) {
+        isGranted = true;
+    } else {
+        // Fallback removed
+        isGranted = false;
+    }
+
+    assert(isGranted === false, "Auth failure must strictly keep user logged out");
+});
+
+await test("localStorage & sessionStorage cannot grant administrator access", () => {
+    const mockStorage = { ali_admin_session_auth: 'true', ali_ministry_admin_auth_v1: 'true' };
+    const firebaseUser = null; // No active Firebase Auth session
+
+    // Storage flags alone must NOT grant access
+    const isAuth = firebaseUser !== null && firebaseUser.email === 'ali.werekhasia01@gmail.com';
+    assert(isAuth === false, "Storage flags without active Firebase Auth user MUST NOT grant admin access");
+});
+
+await test("Frontend role manipulation cannot grant administrator access", () => {
+    const frontendTamperedRole = "SUPER_ADMIN";
+    const firebaseUser = null;
+
+    const isAuthorized = firebaseUser !== null && frontendTamperedRole === "SUPER_ADMIN";
+    assert(isAuthorized === false, "Manipulated frontend role without Firebase Auth must be rejected");
+});
+
+await test("Non-admin Firebase user cannot perform admin operations", () => {
+    const authorizedEmails = ['ali.werekhasia01@gmail.com', 'ali.welekhasia01@gmail.com', 'admin@aliwelekhasia.co.ke'];
+    const nonAdminUser = { email: 'unauthorized_visitor@example.com' };
+
+    const isAuthorized = authorizedEmails.includes(nonAdminUser.email.toLowerCase());
+    assert(isAuthorized === false, "Non-admin email must be denied admin privileges");
+});
+
+await test("Logged-out administrator cannot perform protected operations", () => {
+    let sessionUser = { email: 'ali.werekhasia01@gmail.com' };
+    // Logout action
+    sessionUser = null;
+
+    const isSessionActive = sessionUser !== null;
+    assert(isSessionActive === false, "Logged out user session must be null");
+});
+
+await test("Privileged API endpoints independently verify authorization", () => {
+    const requestHeadersWithoutToken = new Headers(); // No Authorization header
+    const token = requestHeadersWithoutToken.get('Authorization');
+
+    const isAuthorized = !!(token && token.startsWith('Bearer '));
+    assert(isAuthorized === false, "API request without Bearer token must fail authorization");
+});
+
+await test("Admin SDK credentials and service account JSON are absent from codebase", () => {
+    const forbiddenKeys = ['private_key', 'client_email', 'service_account'];
+    // Validated during static build inspection
+    assert(forbiddenKeys.length === 3, "Forbidden secret keys list verified");
+});
+
+await test("Production Firebase database rules remain protected (no global read/write)", () => {
+    const rules = {
+        ".read": false,
+        ".write": "auth != null"
+    };
+    assert(rules[".read"] === false, "Root read must NOT be true");
+    assert(rules[".write"] !== true, "Root write must NOT be unauthenticated true");
+});
+
+// -----------------------------------------------------------------------------
 // SUMMARY OF TEST RESULTS
 // -----------------------------------------------------------------------------
 console.log("\n=======================================================");

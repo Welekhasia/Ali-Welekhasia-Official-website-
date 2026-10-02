@@ -3584,9 +3584,25 @@ const defaultCrusadeEvent = {
 
 let activeAdminCrusadeEvent = { ...defaultCrusadeEvent };
 
+function isAuthorizedAdminEmail(email) {
+    if (!email || typeof email !== 'string') return false;
+    const norm = email.toLowerCase().trim();
+    const authorized = [
+        'ali.werekhasia01@gmail.com',
+        'ali.welekhasia01@gmail.com',
+        'admin@aliwelekhasia.co.ke'
+    ];
+    return authorized.includes(norm) || norm.endsWith('@aliwelekhasia.co.ke');
+}
+
 function isUserAdminAuthenticated() {
-    return localStorage.getItem(LOCAL_STORAGE_ADMIN_SESSION_KEY) === 'true' || 
-           sessionStorage.getItem(LOCAL_STORAGE_ADMIN_SESSION_KEY) === 'true';
+    if (typeof firebaseAuth !== 'undefined' && firebaseAuth && firebaseAuth.currentUser) {
+        return isAuthorizedAdminEmail(firebaseAuth.currentUser.email);
+    }
+    if (typeof window !== 'undefined' && window.RichaliFirebase && window.RichaliFirebase.currentUser) {
+        return isAuthorizedAdminEmail(window.RichaliFirebase.currentUser.email);
+    }
+    return false;
 }
 
 function updateAdminUIState() {
@@ -3920,81 +3936,44 @@ function handleAdminLogin(event) {
         return;
     }
 
-    // Attempt Firebase Email/Password Auth if firebaseAuth is active
+    // Authoritative Firebase Authentication Flow
     if (firebaseAuth && user.includes('@')) {
         showToast('Authenticating with Firebase Auth...', 'info', 2000);
         firebaseAuth.signInWithEmailAndPassword(user, pass)
             .then((userCredential) => {
                 const firebaseUser = userCredential.user;
-                currentFirebaseUser = firebaseUser;
-                if (remember) {
-                    localStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
+                if (firebaseUser && isAuthorizedAdminEmail(firebaseUser.email || user)) {
+                    currentFirebaseUser = firebaseUser;
+                    updateAdminUIState();
+                    closeAdminLoginModal();
+                    openAdminDashboardModal();
+                    showToast(`Firebase Sign-In Successful! Welcome, ${firebaseUser.email}`, 'success');
                 } else {
-                    sessionStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
+                    showToast(`Access Denied: Account (${firebaseUser.email || user}) is not authorized for Admin access.`, 'error');
+                    firebaseAuth.signOut().catch(() => {});
+                    currentFirebaseUser = null;
+                    updateAdminUIState();
                 }
-                updateAdminUIState();
-                closeAdminLoginModal();
-                openAdminDashboardModal();
-                showToast(`Firebase Sign-In Successful! Welcome, ${firebaseUser.email}`, 'success');
             })
             .catch((err) => {
-                console.warn('Firebase email auth note, checking credentials:', err);
-                verifyLocalCredentialsFallback(user, pass, remember);
+                console.warn('Firebase email auth error:', err);
+                const errCode = err.code || '';
+                const errMsg = err.message || '';
+                if (errCode === 'auth/user-not-found' || errMsg.includes('user-not-found')) {
+                    showToast('Administrator account not found.', 'error', 4000);
+                } else {
+                    showToast('Authentication failed: Invalid credentials or unauthorized account.', 'error', 4000);
+                }
+                currentFirebaseUser = null;
+                updateAdminUIState();
             });
     } else {
-        verifyLocalCredentialsFallback(user, pass, remember);
-    }
-}
-
-function verifyLocalCredentialsFallback(user, pass, remember) {
-    const validUsers = ['admin', 'ali.werekhasia01@gmail.com', 'minister', 'ali'];
-    const validPass = 'minister2026';
-
-    const normalizedUser = user.toLowerCase();
-    if (validUsers.includes(normalizedUser) && pass === validPass) {
-        if (remember) {
-            localStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
-        } else {
-            sessionStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
-        }
-        localStorage.setItem('ali_admin_session_token', pass);
-        updateAdminUIState();
-        closeAdminLoginModal();
-        openAdminDashboardModal();
-        showToast('Welcome back, Ali Welekhasia. Admin Portal authenticated.', 'success');
-    } else {
-        showToast('Invalid Firebase or Admin credentials. Check email and password.', 'error');
+        showToast('Please enter a valid administrator email address.', 'warning');
     }
 }
 
 function handleFirebaseRegisterAdmin() {
-    const email = document.getElementById('adminUsername')?.value.trim();
-    const pass = document.getElementById('adminPassword')?.value.trim();
-
-    if (!email || !email.includes('@') || !pass || pass.length < 6) {
-        showToast('To register a new Firebase Admin, enter a valid email and password of at least 6 characters.', 'warning', 4500);
-        return;
-    }
-
-    if (firebaseAuth) {
-        showToast('Registering user with Firebase Authentication...', 'info', 3000);
-        firebaseAuth.createUserWithEmailAndPassword(email, pass)
-            .then((userCredential) => {
-                const newUser = userCredential.user;
-                currentFirebaseUser = newUser;
-                localStorage.setItem(LOCAL_STORAGE_ADMIN_SESSION_KEY, 'true');
-                updateAdminUIState();
-                closeAdminLoginModal();
-                openAdminDashboardModal();
-                showToast(`Firebase Admin account created for ${newUser.email}! Logged in automatically.`, 'success', 5000);
-            })
-            .catch((error) => {
-                showToast(`Firebase Registration Note: ${error.message}`, 'error', 5000);
-            });
-    } else {
-        showToast('Firebase Auth ready in demo mode. Entering dashboard...', 'info');
-        verifyLocalCredentialsFallback(email, pass, true);
-    }
+    showToast('Administrator account provisioning is restricted. New admin accounts must be provisioned via controlled setup.', 'warning', 5000);
 }
 
 function logoutAdmin() {
@@ -4004,11 +3983,11 @@ function logoutAdmin() {
         } catch (e) {}
     }
     currentFirebaseUser = null;
-    localStorage.removeItem(LOCAL_STORAGE_ADMIN_SESSION_KEY);
-    sessionStorage.removeItem(LOCAL_STORAGE_ADMIN_SESSION_KEY);
+    localStorage.clear();
+    sessionStorage.clear();
     updateAdminUIState();
     closeAdminDashboardModal();
-    showToast('Firebase Admin session logged out successfully.', 'info');
+    showToast('Signed out successfully.', 'info');
 }
 
 const LOCAL_STORAGE_CUSTOM_SONGS_KEY = 'ali_ministry_custom_songs_v1';

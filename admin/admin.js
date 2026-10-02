@@ -1,3 +1,5 @@
+import { signInWithEmailAndPassword, signOut as firebaseSignOut, onAuthStateChanged } from '../src/lib/firebase/auth.js';
+
 /**
  * ==============================================================================
  * ALI WELEKHASIA MUSIC - PRODUCTION ADMIN CMS CONTROLLER
@@ -38,51 +40,59 @@ document.addEventListener('DOMContentLoaded', () => {
     initAdminSession();
 });
 
+function isAuthorizedAdminEmail(email) {
+    if (!email || typeof email !== 'string') return false;
+    const norm = email.toLowerCase().trim();
+    const authorized = [
+        'ali.werekhasia01@gmail.com',
+        'ali.welekhasia01@gmail.com',
+        'admin@aliwelekhasia.co.ke'
+    ];
+    return authorized.includes(norm) || norm.endsWith('@aliwelekhasia.co.ke');
+}
+
 function initAdminSession() {
-    // 1. Check existing session
-    const isAuth = localStorage.getItem('ali_admin_session_auth') === 'true' || 
-                   sessionStorage.getItem('ali_admin_session_auth') === 'true';
-    const email = localStorage.getItem('ali_admin_user_email') || 'ali.werekhasia01@gmail.com';
-    const role = localStorage.getItem('ali_admin_user_role') || 'SUPER_ADMIN';
+    // Default to login screen until Firebase Auth resolves authoritative state
+    showLoginScreen(true);
 
-    if (isAuth) {
-        setAuthenticatedState(true, { email, role });
-    } else {
-        showLoginScreen(true);
-    }
-
-    // 2. Listen to Firebase Auth state if SDK initialized
-    if (window.RichaliFirebase && window.RichaliFirebase.auth) {
-        window.RichaliFirebase.onAuth((fbUser) => {
-            if (fbUser) {
-                const userEmail = fbUser.email || 'ali.werekhasia01@gmail.com';
-                const userRole = (userEmail.toLowerCase().includes('ali') || userEmail.toLowerCase().includes('admin')) 
-                    ? 'SUPER_ADMIN' : 'ADMIN';
-                setAuthenticatedState(true, { email: userEmail, role: userRole });
+    // Listen to Firebase Auth state as authoritative source of identity
+    try {
+        onAuthStateChanged((fbUser) => {
+            if (fbUser && fbUser.email && isAuthorizedAdminEmail(fbUser.email)) {
+                const userEmail = fbUser.email;
+                setAuthenticatedState(true, { email: userEmail, uid: fbUser.uid, role: 'SUPER_ADMIN' });
+            } else {
+                if (fbUser) {
+                    showAdminToast(`Access Denied: Account (${fbUser.email}) is not authorized for Admin CMS access.`, 'error');
+                    firebaseSignOut().catch(() => {});
+                }
+                setAuthenticatedState(false);
             }
         });
+    } catch (e) {
+        console.warn('[Admin CMS] Firebase Auth listener notice:', e);
     }
 
-    // 3. Setup Hash Route listener
+    // Hash Route listener
     window.addEventListener('hashchange', handleRouteHash);
 }
 
 function setAuthenticatedState(isAuth, userData = {}) {
     AdminState.isAuthenticated = isAuth;
-    AdminState.user = userData;
-    AdminState.userRole = userData.role || 'ADMIN';
+    AdminState.user = isAuth ? userData : null;
+    AdminState.userRole = isAuth ? (userData.role || 'SUPER_ADMIN') : null;
 
     const loginScreen = document.getElementById('adminLoginScreen');
     const dashboardApp = document.getElementById('adminDashboardApp');
 
-    if (isAuth) {
+    if (isAuth && userData.email && isAuthorizedAdminEmail(userData.email)) {
         if (loginScreen) loginScreen.style.display = 'none';
         if (dashboardApp) dashboardApp.style.display = 'flex';
 
         // Update UI User Display
         const emailEl = document.getElementById('sidebarUserEmail');
         const roleBadge = document.getElementById('sidebarUserRole');
-        if (emailEl) emailEl.innerText = userData.email || 'Minister Ali';
+        if (emailEl) emailEl.innerText = userData.email;
         if (roleBadge) roleBadge.innerText = userData.role || 'SUPER ADMIN';
 
         // Initialize Realtime Database listeners
@@ -101,75 +111,57 @@ async function handleAdminLogin(event) {
     if (event) event.preventDefault();
     const emailInput = document.getElementById('loginEmail');
     const passwordInput = document.getElementById('loginPassword');
-    const rememberInput = document.getElementById('loginRemember');
 
     const email = emailInput ? emailInput.value.trim() : '';
     const pass = passwordInput ? passwordInput.value : '';
-    const remember = rememberInput ? rememberInput.checked : false;
 
     if (!email || !pass) {
         showAdminToast('Please enter both email and password.', 'warning');
         return;
     }
 
-    // Fallback credentials for immediate ministry portal access
-    const validAdmins = ['admin', 'ali.werekhasia01@gmail.com', 'minister', 'ali'];
-    const validPass = 'minister2026';
+    // Authoritative Firebase Authentication Flow
+    try {
+        showAdminToast('Verifying Firebase Authentication...', 'info');
+        const userCredential = await signInWithEmailAndPassword(email, pass);
+        const fbUser = userCredential.user;
 
-    const isLocalAdmin = validAdmins.includes(email.toLowerCase()) && (pass === validPass || pass.length >= 6);
-
-    // Try Firebase Authentication
-    if (window.RichaliFirebase && window.RichaliFirebase.auth) {
-        try {
-            showAdminToast('Verifying Firebase Authentication...', 'info');
-            await window.RichaliFirebase.signInWithEmail(email, pass);
-            storeSession(email, 'SUPER_ADMIN', remember, pass);
+        if (fbUser && isAuthorizedAdminEmail(fbUser.email || email)) {
             showAdminToast('Signed in successfully via Firebase Auth.', 'success');
-            return;
-        } catch (err) {
-            console.warn('Firebase login attempt fallback:', err);
-            if (isLocalAdmin) {
-                storeSession(email, 'SUPER_ADMIN', remember, pass);
-                setAuthenticatedState(true, { email, role: 'SUPER_ADMIN' });
-                showAdminToast(`Authenticated as Super Admin (${email}).`, 'success');
-                return;
-            }
-            showAdminToast('Authentication failed: ' + (err.message || 'Invalid credentials'), 'error');
-            return;
+            setAuthenticatedState(true, { email: fbUser.email || email, uid: fbUser.uid, role: 'SUPER_ADMIN' });
+        } else {
+            showAdminToast('Access Denied: Account is not authorized for administrator access.', 'error');
+            await firebaseSignOut();
+            setAuthenticatedState(false);
         }
-    }
+    } catch (err) {
+        console.warn('Firebase authentication failed:', err);
+        const errCode = err.code || '';
+        const errMsg = err.message || '';
 
-    if (isLocalAdmin) {
-        storeSession(email, 'SUPER_ADMIN', remember, pass);
-        setAuthenticatedState(true, { email, role: 'SUPER_ADMIN' });
-        showAdminToast('Welcome back, Minister Ali! Admin session active.', 'success');
-    } else {
-        showAdminToast('Invalid email or password. Please check your credentials.', 'error');
+        if (errCode === 'auth/user-not-found' || errMsg.includes('user-not-found')) {
+            showAdminToast('Administrator account not found.', 'error');
+        } else if (errCode === 'auth/wrong-password' || errMsg.includes('wrong-password') || errMsg.includes('invalid-credential')) {
+            showAdminToast('Authentication failed: Invalid credentials.', 'error');
+        } else {
+            showAdminToast('Authentication failed: ' + (errMsg || 'Invalid credentials'), 'error');
+        }
+        setAuthenticatedState(false);
     }
 }
 
-function storeSession(email, role, remember) {
-    const storage = remember ? localStorage : sessionStorage;
-    storage.setItem('ali_admin_session_auth', 'true');
-    storage.setItem('ali_admin_user_email', email);
-    storage.setItem('ali_admin_user_role', role);
-}
-
-function handleAdminLogout() {
+async function handleAdminLogout() {
     if (confirm('Are you sure you want to sign out of the Admin CMS?')) {
-        localStorage.removeItem('ali_admin_session_auth');
-        localStorage.removeItem('ali_admin_user_email');
-        localStorage.removeItem('ali_admin_user_role');
-        localStorage.removeItem('ali_admin_session_token');
-        sessionStorage.removeItem('ali_admin_session_auth');
-        sessionStorage.removeItem('ali_admin_user_email');
-        sessionStorage.removeItem('ali_admin_user_role');
-        if (window.RichaliFirebase) {
-            window.RichaliFirebase.signOut();
+        localStorage.clear();
+        sessionStorage.clear();
+        try {
+            await firebaseSignOut();
+        } catch (e) {
+            console.warn('[Admin CMS] SignOut notice:', e);
         }
         AdminState.isAuthenticated = false;
-        AdminState.currentUser = null;
-        showLoginScreen(true);
+        AdminState.user = null;
+        setAuthenticatedState(false);
         showAdminToast('Signed out successfully.', 'info');
     }
 }
@@ -3115,3 +3107,28 @@ function capitalizeFirst(str) {
     if (!str) return '';
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
+
+// Expose key administrative controller functions to window scope for inline HTML handlers
+Object.assign(window, {
+    handleAdminLogin,
+    handleAdminLogout,
+    switchTab,
+    filterMusicCatalogByStatus,
+    openAddSongModal,
+    openStoreDownloadsTab,
+    closeMobileSidebar,
+    toggleMobileSidebar,
+    executeBulkSongAction,
+    toggleSelectAllSongs,
+    renderSongsTable,
+    renderOrdersTable,
+    onLyricsSongSelectChanged,
+    addLyricsSection,
+    saveLyrics,
+    renderGalleryGrid,
+    openUploadPictureModal,
+    openAddVideoModal,
+    openAddEventModal,
+    openAddBlogModal
+});
+
