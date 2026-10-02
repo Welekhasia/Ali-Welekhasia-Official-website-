@@ -1164,26 +1164,26 @@
                     <h3><i class="fa-solid fa-hand-holding-heart"></i> Ways to Give & Support</h3>
                     <p class="partner-intro">Every seed sown helps print bibles, stage massive sound systems for open-air crusades, and produce spirit-filled gospel songs.</p>
 
-                    <!-- M-PESA STK PUSH (Instant Prompt to Handset) -->
+                    <!-- PAYSTACK M-PESA & CARD GIVING FORM -->
                     <div class="giving-method-card mpesa-stk-highlight-card">
                         <div class="giving-method-header">
-                            <span class="mpesa-logo"><i class="fa-solid fa-bolt" style="color: #22c55e;"></i> M-PESA Express STK Push</span>
-                            <span class="giving-badge" style="background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid #22c55e;"><i class="fa-solid fa-satellite-dish"></i> Instant Phone Pop-Up</span>
+                            <span class="mpesa-logo"><i class="fa-solid fa-shield-halved" style="color: #22c55e;"></i> Paystack M-PESA & Cards</span>
+                            <span class="giving-badge" style="background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid #22c55e;"><i class="fa-solid fa-lock"></i> Secure Gateway</span>
                         </div>
                         <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;">
-                            Enter your Safaricom mobile number and desired amount below to receive an instant M-PESA PIN prompt directly on your handset screen.
+                            Sow your covenant seed securely via Paystack using M-PESA or Visa/MasterCard.
                         </p>
                         
                         <form id="mpesaStkForm" onsubmit="handleMpesaStkInitiate(event)" class="stk-push-form">
                             <div class="form-group" style="margin-bottom: 12px;">
                                 <label for="stkPhoneNumber" class="form-label" style="font-size: 12px; font-weight: 700; color: var(--text-main);">
-                                    <i class="fa-solid fa-phone" style="color: #22c55e;"></i> Safaricom M-PESA Phone Number <span class="required-star">*</span>
+                                    <i class="fa-solid fa-phone" style="color: #22c55e;"></i> Mobile Phone Number <span class="required-star">*</span>
                                 </label>
                                 <div class="stk-phone-input-wrap">
                                     <span class="stk-phone-prefix">+254</span>
                                     <input type="tel" id="stkPhoneNumber" placeholder="705 575 437 or 07..." required pattern="[0-9+ ]{9,15}" value="0705575437">
                                 </div>
-                                <small style="font-size: 11px; color: var(--text-dim);">Accepts formats: 07XXXXXXXX, 01XXXXXXXX, or 2547XXXXXXXX</small>
+                                <small style="font-size: 11px; color: var(--text-dim);">Required for M-PESA payment notifications via Paystack</small>
                             </div>
 
                             <div class="form-group" style="margin-bottom: 12px;">
@@ -1216,7 +1216,7 @@
                             </div>
 
                             <button type="submit" class="btn btn-mpesa-stk btn-block" id="stkPushSubmitBtn">
-                                <i class="fa-solid fa-mobile-screen-button"></i> <span>Send M-PESA STK Push Prompt</span>
+                                <i class="fa-solid fa-lock"></i> <span>Give Seed via Paystack (M-PESA & Cards)</span>
                             </button>
                         </form>
                     </div>
@@ -3748,130 +3748,7 @@
         </div>
     </div>
 
-    <!-- M-PESA STK PUSH LIVE PROMPT & RECEIPT MODAL -->
-    <div id="mpesaStkModal" class="modal-overlay" onclick="handleModalBackdropClick(event, 'mpesaStkModal')" role="dialog" aria-modal="true" aria-labelledby="mpesaStkTitle">
-        <div class="modal-container mpesa-stk-modal-card">
-            <div class="mpesa-stk-header">
-                <div class="mpesa-stk-title-wrap">
-                    <span class="mpesa-green-badge"><i class="fa-solid fa-bolt"></i> Lipa Na M-PESA Online</span>
-                    <h3 id="mpesaStkTitle">M-PESA Express STK Push</h3>
-                </div>
-                <button class="modal-close-icon" onclick="closeMpesaStkModal()" aria-label="Close STK Push Dialog">&times;</button>
-            </div>
 
-            <!-- Processing / Waiting State -->
-            <div id="mpesaStkWaitingState" class="stk-modal-body">
-                <!-- Realistic Animated Phone Handset Frame -->
-                <div class="stk-phone-mockup">
-                    <div class="stk-phone-speaker"></div>
-                    <div class="stk-phone-screen">
-                        <div class="stk-prompt-bubble">
-                            <div class="stk-prompt-header">
-                                <i class="fa-solid fa-sim-card"></i> <span>M-PESA SIM TOOLKIT</span>
-                            </div>
-                            <div class="stk-prompt-body">
-                                <p class="stk-query-text">
-                                    Do you want to pay <strong>KES <span id="stkModalAmountVal">500</span></strong> to <strong>ALI WELEKHASIA MINISTRY</strong> (Acc: <span id="stkModalPurposeVal">GIVING</span>)?
-                                </p>
-                                <div class="stk-pin-field">
-                                    <span class="pin-dot"></span>
-                                    <span class="pin-dot"></span>
-                                    <span class="pin-dot"></span>
-                                    <span class="pin-dot"></span>
-                                </div>
-                                <div class="stk-prompt-footer">
-                                    <span>[Cancel]</span>
-                                    <strong style="color: #15803d;">[OK]</strong>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stk-instructions-box">
-                    <h4><i class="fa-solid fa-satellite-dish fa-beat"></i> STK Push Request Sent to Your Phone!</h4>
-                    <p>
-                        A prompt has been sent to phone number <strong id="stkModalPhoneVal">+254 705 575 437</strong>.
-                    </p>
-                    <ul class="stk-steps-list">
-                        <li><i class="fa-solid fa-circle-check"></i> 1. Check your phone screen for the M-PESA pop-up prompt.</li>
-                        <li><i class="fa-solid fa-circle-check"></i> 2. Enter your 4-digit <strong>M-PESA Secret PIN</strong>.</li>
-                        <li><i class="fa-solid fa-circle-check"></i> 3. Press <strong>OK / Send</strong> to complete the giving seed.</li>
-                    </ul>
-
-                    <div class="stk-countdown-bar">
-                        <div class="stk-countdown-track">
-                            <div class="stk-countdown-progress" id="stkCountdownProgress"></div>
-                        </div>
-                        <div class="stk-timer-label">Waiting for PIN entry: <strong id="stkTimerSeconds">45s</strong></div>
-                    </div>
-
-                    <div class="stk-action-row">
-                        <button type="button" class="btn btn-mpesa-stk" onclick="confirmSimulatedMpesaPayment()">
-                            <i class="fa-solid fa-check-double"></i> I Have Entered My PIN (Verify)
-                        </button>
-                        <button type="button" class="btn btn-outline" onclick="closeMpesaStkModal()">
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Success State: Official M-PESA Confirmation & Receipt -->
-            <div id="mpesaStkSuccessState" class="stk-modal-body" style="display: none;">
-                <div class="mpesa-receipt-card">
-                    <div class="receipt-checkmark">
-                        <i class="fa-solid fa-circle-check"></i>
-                    </div>
-                    <span class="receipt-success-badge">M-PESA PAYMENT CONFIRMED</span>
-                    <h3>Seed Received With Thanks!</h3>
-                    <p class="receipt-blessing">
-                        "May the Lord bless you and multiply your seed sown a hundredfold!" (2 Cor 9:10)
-                    </p>
-
-                    <div class="receipt-table">
-                        <div class="receipt-row">
-                            <span>M-PESA Ref ID:</span>
-                            <strong id="receiptRefId" class="receipt-ref-code">QHK88992X1</strong>
-                        </div>
-                        <div class="receipt-row">
-                            <span>Amount Paid:</span>
-                            <strong id="receiptAmount" style="color: #22c55e;">KES 500.00</strong>
-                        </div>
-                        <div class="receipt-row">
-                            <span>Phone Number:</span>
-                            <strong id="receiptPhone">+254 705 575 437</strong>
-                        </div>
-                        <div class="receipt-row">
-                            <span>Paid To:</span>
-                            <strong>Ali Welekhasia Gospel Ministries</strong>
-                        </div>
-                        <div class="receipt-row">
-                            <span>Purpose:</span>
-                            <strong id="receiptPurpose">Crusade Sound & Evangelism</strong>
-                        </div>
-                        <div class="receipt-row">
-                            <span>Date & Time:</span>
-                            <strong id="receiptDate">Today, Just Now</strong>
-                        </div>
-                        <div class="receipt-row">
-                            <span>Status:</span>
-                            <span class="receipt-status-pill"><i class="fa-solid fa-check"></i> Completed & Verified</span>
-                        </div>
-                    </div>
-
-                    <div class="receipt-actions">
-                        <button type="button" class="btn btn-gold" onclick="copyReceiptRef()">
-                            <i class="fa-solid fa-copy"></i> Copy Reference ID
-                        </button>
-                        <button type="button" class="btn btn-outline" onclick="closeMpesaStkModal()">
-                            <i class="fa-solid fa-check"></i> Done
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- SCRIPTS -->
     <!-- Official Firebase Web SDK (v10.8.0 Compat) -->

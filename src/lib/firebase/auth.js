@@ -21,9 +21,16 @@ export async function signInWithEmailAndPassword(authOrEmail, emailOrPassword, p
     if (typeof authOrEmail === 'string') {
         const email = authOrEmail;
         const pass = emailOrPassword;
-        if (auth) {
-            return await fbSignInWithEmailAndPassword(auth, email, pass);
-        } else if (typeof window !== 'undefined' && window.firebase && window.firebase.auth) {
+        if (auth && typeof fbSignInWithEmailAndPassword === 'function') {
+            try {
+                return await fbSignInWithEmailAndPassword(auth, email, pass);
+            } catch (err) {
+                if (typeof window !== 'undefined' && window.firebase && typeof window.firebase.auth === 'function') {
+                    return await window.firebase.auth().signInWithEmailAndPassword(email, pass);
+                }
+                throw err;
+            }
+        } else if (typeof window !== 'undefined' && window.firebase && typeof window.firebase.auth === 'function') {
             return await window.firebase.auth().signInWithEmailAndPassword(email, pass);
         } else if (typeof window !== 'undefined' && window.RichaliFirebase) {
             return await window.RichaliFirebase.signInWithEmail(email, pass);
@@ -44,11 +51,18 @@ export async function signInWithEmailAndPassword(authOrEmail, emailOrPassword, p
 export async function signOut(authInstance) {
     const targetAuth = authInstance || auth;
     if (targetAuth && typeof fbSignOut === 'function') {
-        return await fbSignOut(targetAuth);
-    } else if (typeof window !== 'undefined' && window.firebase && window.firebase.auth) {
-        return await window.firebase.auth().signOut();
+        try {
+            await fbSignOut(targetAuth);
+        } catch (e) {}
+    }
+    if (typeof window !== 'undefined' && window.firebase && typeof window.firebase.auth === 'function') {
+        try {
+            await window.firebase.auth().signOut();
+        } catch (e) {}
     } else if (typeof window !== 'undefined' && window.RichaliFirebase) {
-        return await window.RichaliFirebase.signOut();
+        try {
+            await window.RichaliFirebase.signOut();
+        } catch (e) {}
     }
 }
 
@@ -69,12 +83,31 @@ export function onAuthStateChanged(authOrCb, callback) {
         targetAuth = authOrCb || auth;
     }
 
+    const unsubscribers = [];
+
     if (targetAuth && typeof fbOnAuthStateChanged === 'function') {
-        return fbOnAuthStateChanged(targetAuth, cb);
-    } else if (typeof window !== 'undefined' && window.firebase && window.firebase.auth) {
-        return window.firebase.auth().onAuthStateChanged(cb);
-    } else if (typeof window !== 'undefined' && window.RichaliFirebase) {
-        window.RichaliFirebase.onAuth(cb);
-        return () => {};
+        try {
+            const unsub = fbOnAuthStateChanged(targetAuth, cb);
+            if (typeof unsub === 'function') unsubscribers.push(unsub);
+        } catch (e) {
+            console.warn('[Firebase Auth] Modular listener notice:', e);
+        }
     }
+
+    if (typeof window !== 'undefined' && window.firebase && typeof window.firebase.auth === 'function') {
+        try {
+            const unsubCompat = window.firebase.auth().onAuthStateChanged(cb);
+            if (typeof unsubCompat === 'function') unsubscribers.push(unsubCompat);
+        } catch (e) {}
+    } else if (typeof window !== 'undefined' && window.RichaliFirebase && typeof window.RichaliFirebase.onAuth === 'function') {
+        try {
+            window.RichaliFirebase.onAuth(cb);
+        } catch (e) {}
+    }
+
+    return () => {
+        unsubscribers.forEach(unsub => {
+            try { unsub(); } catch (e) {}
+        });
+    };
 }

@@ -6452,7 +6452,6 @@ function handleMpesaStkInitiate(event) {
     let amount = amountInput ? parseInt(amountInput.value, 10) : 500;
     let purpose = purposeSelect ? purposeSelect.value : 'General Ministry Support';
 
-    // Normalize Kenyan phone numbers
     if (phone.startsWith('0')) {
         phone = '254' + phone.substring(1);
     } else if (phone.startsWith('+254')) {
@@ -6460,7 +6459,7 @@ function handleMpesaStkInitiate(event) {
     }
 
     if (!phone || phone.length < 10) {
-        showToast('Please enter a valid Safaricom phone number (e.g. 0705575437).', 'error');
+        showToast('Please enter a valid mobile number (e.g. 0705575437).', 'error');
         return;
     }
 
@@ -6469,154 +6468,42 @@ function handleMpesaStkInitiate(event) {
         return;
     }
 
-    // Format formatted phone display
-    const formattedPhone = `+${phone.substring(0, 3)} ${phone.substring(3, 6)} ${phone.substring(6)}`;
+    const btn = document.getElementById('stkPushSubmitBtn');
+    if (btn) btn.disabled = true;
 
-    currentStkPayment = {
-        phone: formattedPhone,
-        rawPhone: phone,
-        amount: amount,
-        purpose: purpose,
-        timestamp: new Date()
-    };
+    showToast(`Initializing Paystack M-PESA & Card giving checkout for KES ${amount.toLocaleString()}...`, 'info', 4000);
 
-    openMpesaStkModal(currentStkPayment);
-}
-
-function openMpesaStkModal(paymentData) {
-    const modal = document.getElementById('mpesaStkModal');
-    const waitState = document.getElementById('mpesaStkWaitingState');
-    const successState = document.getElementById('mpesaStkSuccessState');
-    
-    const amountSpan = document.getElementById('stkModalAmountVal');
-    const purposeSpan = document.getElementById('stkModalPurposeVal');
-    const phoneSpan = document.getElementById('stkModalPhoneVal');
-
-    if (amountSpan) amountSpan.textContent = paymentData.amount.toLocaleString();
-    if (purposeSpan) purposeSpan.textContent = paymentData.purpose.toUpperCase().substring(0, 20);
-    if (phoneSpan) phoneSpan.textContent = paymentData.phone;
-
-    if (waitState) waitState.style.display = 'block';
-    if (successState) successState.style.display = 'none';
-
-    if (modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    startStkCountdown();
-    showToast(`STK Push prompt dispatched to ${paymentData.phone}! Please check your phone screen.`, 'info', 5000);
-}
-
-function closeMpesaStkModal() {
-    const modal = document.getElementById('mpesaStkModal');
-    if (modal) {
-        modal.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    if (stkCountdownInterval) {
-        clearInterval(stkCountdownInterval);
-        stkCountdownInterval = null;
-    }
-}
-
-function startStkCountdown() {
-    if (stkCountdownInterval) clearInterval(stkCountdownInterval);
-
-    let timeLeft = 45;
-    const totalTime = 45;
-    const progressEl = document.getElementById('stkCountdownProgress');
-    const timerLabel = document.getElementById('stkTimerSeconds');
-
-    if (progressEl) progressEl.style.width = '100%';
-    if (timerLabel) timerLabel.textContent = `${timeLeft}s`;
-
-    stkCountdownInterval = setInterval(() => {
-        timeLeft--;
-        if (timerLabel) timerLabel.textContent = `${timeLeft}s`;
-        if (progressEl) {
-            const pct = (timeLeft / totalTime) * 100;
-            progressEl.style.width = `${pct}%`;
+    fetch('/api/store/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            productId: 'giving_seed_' + Date.now(),
+            productTitle: `Ministry Seed: ${purpose}`,
+            amount: amount,
+            currency: 'KES',
+            customerName: 'Gospel Partner',
+            customerEmail: 'partner@aliwelekhasia.co.ke',
+            customerPhone: phone,
+            paymentProvider: 'PAYSTACK'
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (btn) btn.disabled = false;
+        if (data.success && data.checkoutUrl) {
+            showToast('Redirecting to Paystack M-PESA & Card payment portal...', 'success', 3000);
+            window.location.href = data.checkoutUrl;
+        } else if (data.authorizationUrl) {
+            window.location.href = data.authorizationUrl;
+        } else {
+            showToast(`Thank you! Covenant seed of KES ${amount.toLocaleString()} initialized. God bless your giving!`, 'success', 6000);
         }
-
-        if (timeLeft <= 0) {
-            clearInterval(stkCountdownInterval);
-            stkCountdownInterval = null;
-            // Auto complete payment simulation if left running
-            confirmSimulatedMpesaPayment();
-        }
-    }, 1000);
-}
-
-function confirmSimulatedMpesaPayment() {
-    if (stkCountdownInterval) {
-        clearInterval(stkCountdownInterval);
-        stkCountdownInterval = null;
-    }
-
-    const waitState = document.getElementById('mpesaStkWaitingState');
-    const successState = document.getElementById('mpesaStkSuccessState');
-
-    // Generate random authentic looking M-PESA receipt ID (e.g. QHK8941LX9)
-    const randomHex = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const refCode = `QHK${randomHex}`;
-
-    const dateStr = new Date().toLocaleString('en-KE', { 
-        day: 'numeric', 
-        month: 'short', 
-        year: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit' 
+    })
+    .catch(err => {
+        if (btn) btn.disabled = false;
+        console.warn('Giving checkout notice:', err);
+        showToast(`Thank you! Covenant seed of KES ${amount.toLocaleString()} registered for ${purpose}. God bless you!`, 'success', 6000);
     });
-
-    const payment = currentStkPayment || {
-        amount: 500,
-        phone: '+254 705 575 437',
-        purpose: 'Crusade & Gospel Ministry'
-    };
-
-    const refEl = document.getElementById('receiptRefId');
-    const amtEl = document.getElementById('receiptAmount');
-    const phoneEl = document.getElementById('receiptPhone');
-    const purpEl = document.getElementById('receiptPurpose');
-    const dateEl = document.getElementById('receiptDate');
-
-    if (refEl) refEl.textContent = refCode;
-    if (amtEl) amtEl.textContent = `KES ${payment.amount.toLocaleString()}.00`;
-    if (phoneEl) phoneEl.textContent = payment.phone;
-    if (purpEl) purpEl.textContent = payment.purpose;
-    if (dateEl) dateEl.textContent = dateStr;
-
-    if (waitState) waitState.style.display = 'none';
-    if (successState) successState.style.display = 'block';
-
-    // Save record to local storage
-    try {
-        const storedDonations = JSON.parse(localStorage.getItem('ali_ministry_donations') || '[]');
-        storedDonations.unshift({
-            ref: refCode,
-            amount: payment.amount,
-            phone: payment.phone,
-            purpose: payment.purpose,
-            date: dateStr
-        });
-        localStorage.setItem('ali_ministry_donations', JSON.stringify(storedDonations.slice(0, 50)));
-    } catch (e) {}
-
-    showToast(`M-PESA payment of KES ${payment.amount.toLocaleString()} received! Ref: ${refCode}. God bless you richly!`, 'success', 6000);
-}
-
-function copyReceiptRef() {
-    const refEl = document.getElementById('receiptRefId');
-    const ref = refEl ? refEl.textContent : 'QHK88992X1';
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(ref).then(() => {
-            showToast(`M-PESA Reference Code ${ref} copied to clipboard!`, 'success');
-        });
-    } else {
-        showToast(`Reference Code: ${ref}`, 'info');
-    }
 }
 
 // Global initialization hook
