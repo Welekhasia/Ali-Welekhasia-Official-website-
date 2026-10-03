@@ -21,6 +21,8 @@
 
     <!-- FontAwesome 6.5.1 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Paystack Inline JS SDK -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
@@ -876,6 +878,22 @@
 
                 if (data.checkoutUrl || data.authorizationUrl) {
                     window.location.href = data.checkoutUrl || data.authorizationUrl;
+                } else if (window.PaystackPop && (data.paystackPublicKey || 'pk_live_9712585962c8fd504a5a6588b4c50cfcd2ae3fb6')) {
+                    const handler = PaystackPop.setup({
+                        key: data.paystackPublicKey || 'pk_live_9712585962c8fd504a5a6588b4c50cfcd2ae3fb6',
+                        email: customerEmail,
+                        amount: Math.round((data.amount || 100) * 100),
+                        currency: 'KES',
+                        ref: data.paymentReference,
+                        onClose: function() {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Pay ${data.amount ? 'KSh ' + data.amount : ''} with Paystack`;
+                        },
+                        callback: function(response) {
+                            window.location.href = `/store/?purchase=success&orderId=${data.orderId}&reference=${response.reference || data.paymentReference}`;
+                        }
+                    });
+                    handler.openIframe();
                 } else {
                     window.location.href = `/store/?purchase=success&orderId=${data.orderId}&reference=${data.paymentReference}`;
                 }

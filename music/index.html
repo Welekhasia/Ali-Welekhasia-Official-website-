@@ -43,6 +43,7 @@
     <link rel="stylesheet" href="../style.css">
 
     <!-- Firebase SDK v10 Compat -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
@@ -788,6 +789,22 @@
                 if (data.checkoutUrl || data.authorizationUrl) {
                     // Redirect to secure payment gateway (Paystack / M-Pesa checkout)
                     window.location.href = data.checkoutUrl || data.authorizationUrl;
+                } else if (window.PaystackPop && (data.paystackPublicKey || 'pk_live_9712585962c8fd504a5a6588b4c50cfcd2ae3fb6')) {
+                    const handler = PaystackPop.setup({
+                        key: data.paystackPublicKey || 'pk_live_9712585962c8fd504a5a6588b4c50cfcd2ae3fb6',
+                        email: customerEmail,
+                        amount: Math.round((data.amount || 100) * 100),
+                        currency: 'KES',
+                        ref: data.paymentReference,
+                        onClose: function() {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Proceed to Pay`;
+                        },
+                        callback: function(response) {
+                            window.location.href = `/music/index.html?purchase=success&orderId=${data.orderId}&reference=${response.reference || data.paymentReference}`;
+                        }
+                    });
+                    handler.openIframe();
                 } else {
                     // Fallback verification if environment is pending
                     window.location.href = `/music/index.html?purchase=success&orderId=${data.orderId}&reference=${data.paymentReference}`;

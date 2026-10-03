@@ -27,6 +27,7 @@ DEFAULT_CURRENCY = "KES"
 API_HOSTNAME = "api.aliwelekhasia.co.ke"
 PRIMARY_DOMAIN = "aliwelekhasia.co.ke"
 ALLOWED_ORIGINS = "https://aliwelekhasia.co.ke,https://www.aliwelekhasia.co.ke,https://api.aliwelekhasia.co.ke"
+PAYSTACK_PUBLIC_KEY = "pk_live_9712585962c8fd504a5a6588b4c50cfcd2ae3fb6"
 
 # 4. Worker Routes / Custom Domain
 [[routes]]
